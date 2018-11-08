@@ -2,10 +2,6 @@ img {
   width: 100%;
 }
 
-.bg-primary {
-  background-color: red !important;
-}
-
 .navbar {
   background-color: #e3f2fd;
 }
@@ -34,6 +30,7 @@ img {
 
 .landing {
   position: relative;
+  /* background: url("../img/showcase.jpg") no-repeat; */
   background-size: cover;
   background-position: center;
   height: 100vh;
