@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 
-const CreateProjectButton = () => {
+function CreateProjectButton() {
   return (
     <Fragment>
       {/*react fragment is a react block which means we dont have to use another div */}
@@ -10,6 +10,5 @@ const CreateProjectButton = () => {
       </Link>
     </Fragment>
   );
-};
-
+}
 export default CreateProjectButton;
