@@ -1,6 +1,10 @@
 # ScrumBan
 This is a small project, to learn about using Java Spring Boot, with React.js and Redux.js.
 
+# How To Use:
+When you pull the project, the master branch only contains the ReadMe file. if you want to see the frontend client, please checkout the branch named "scrumban-frontend". To view the backend, use the branch "scrumban-backend".
+
+
 The idea is to create similar CRUD functionalities to what applications such as JIRA or TRELLO use, such that I can create my own scrum / kanban board.
 
 It will consist of features including:
