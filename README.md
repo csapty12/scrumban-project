@@ -1,4 +1,4 @@
-# ScrumBan
+# ScrumBanlo Board
 
 This is a small project, to learn about using Java Spring Boot, with React.js and Redux.js.
 
