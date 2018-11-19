@@ -14,18 +14,15 @@ class AddProject extends Component {
       startDate: "",
       endDate: ""
     };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
+  handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value
     });
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit = event => {
     event.preventDefault();
     const newProject = {
       projectName: this.state.projectName,
@@ -35,7 +32,7 @@ class AddProject extends Component {
       endDate: this.state.endDate
     };
     console.log(newProject);
-  }
+  };
 
   render() {
     return (
