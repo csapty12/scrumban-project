@@ -39,10 +39,13 @@ public class ProjectController {
 
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
+
         projectIdentifier = projectIdentifier.toUpperCase();
         Project project = projectService.getProject(projectIdentifier);
+
         if (project != null) {
-            return new ResponseEntity<>(project, HttpStatus.FOUND);
+            System.out.println("found projct: " + project.getProjectName());
+            return new ResponseEntity<>(project, HttpStatus.OK);
         }
         throw new ProjectIdException("no project found with identifier: " + projectIdentifier);
     }

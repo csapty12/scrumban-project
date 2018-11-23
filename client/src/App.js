@@ -8,6 +8,7 @@ import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import AddProject from "./components/Project/AddProject";
+import UpdateProject from "./components/Project/UpdateProject";
 import { Provider } from "react-redux";
 import store from "./Store";
 
@@ -20,6 +21,11 @@ class App extends Component {
             <Navbar />
             <Route exact path="/dashboard" component={Dashboard} />
             <Route exact path="/addProject" component={AddProject} />
+            <Route
+              exact
+              path="/updateProject/:projectIdentifier"
+              component={UpdateProject}
+            />
           </div>
         </Router>
       </Provider>

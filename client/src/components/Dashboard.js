@@ -14,7 +14,6 @@ class Dashboard extends Component {
 
   render() {
     const allProjects = this.props.project.projects;
-    console.log(allProjects);
     return (
       <div className="projects">
         <div className="container">

@@ -1,6 +1,7 @@
 //this is what a project object will look like
 
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 class ProjectItem extends Component {
   render() {
@@ -16,9 +17,12 @@ class ProjectItem extends Component {
             <a href="#" className="list-group-item list-group-item-action">
               Project Dashboard
             </a>
-            <a href="#" className="list-group-item list-group-item-action">
+            <Link
+              to={`/updateProject/${project.projectIdentifier}`}
+              className="list-group-item list-group-item-action"
+            >
               Update Project Info
-            </a>
+            </Link>
             <a href="#" className="list-group-item list-group-item-action">
               Delete Project
             </a>
