@@ -1,16 +1,10 @@
-# ScrumBanlo Board
+# The Idea
+To create my own custom version of trello, for personal projects. 
 
-This is a small project, to learn about using Java Spring Boot, with React.js and Redux.js.
+# The Purpose
 
-# How To Use:
-
-- To use the frontend:
-  - first use npm install to get all node dependencies
-  - use npm start to start up the front end. This will automatically open localhost:3000
-  
-- To use the backend:
-  - use mvn spring-boot:run to start the backend service. 
-  - currently, you can fire queries to the backend, whcih are saved to an H2 db, however this will beacome a dockerised MySQL db soon.
+To learn about using Java Spring Boot, with React.js and Redux.js.
+I will be deploying to AWS or Heroku once the project has been compelte. 
 
 # The Idea
 
@@ -26,3 +20,14 @@ It will consist of features including:
 - Delete a project
 
 The front end will have a similar look to Jira, created using React.js component, and Redux.js to store application state such as JWT's.
+
+# How To Use:
+
+- To use the frontend:
+  - use npm install to get all node dependencies
+  - use npm start to start up the front end. This will automatically open localhost:3000
+  
+- To use the backend:
+  - use mvn spring-boot:run to start the backend service. 
+  - currently, you can fire queries to the backend, whcih are saved to an H2 db, however this will beacome a dockerised MySQL db soon.
+- please ensure that you start both if you want to have both backend and frontend functionality! :)
