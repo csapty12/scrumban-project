@@ -44,7 +44,7 @@ public class ProjectController {
         Project project = projectService.getProject(projectIdentifier);
 
         if (project != null) {
-            System.out.println("found projct: " + project.getProjectName());
+            System.out.println("found projct: ");
             return new ResponseEntity<>(project, HttpStatus.OK);
         }
         throw new ProjectIdException("no project found with identifier: " + projectIdentifier);

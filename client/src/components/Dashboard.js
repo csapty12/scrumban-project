@@ -3,17 +3,25 @@ this is where you can click the form to create a new project.*/
 import React, { Component } from "react";
 import ProjectItem from "./Project/ProjectItem";
 import CreateProjectButton from "./Project/CreateProjectButton";
-import { connect } from "react-redux";
-import { getProjects } from "../actions/ProjectActions";
-import PropTypes from "prop-types";
+import axios from "axios";
 
 class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      allProjects: []
+    };
+  }
   componentDidMount() {
-    this.props.getProjects();
+    const res = axios.get("http://localhost:8080/api/project").then(json => {
+      this.setState({
+        allProjects: json.data
+      });
+    });
   }
 
   render() {
-    const allProjects = this.props.project.projects;
+    const allProjects = this.state.allProjects;
     return (
       <div className="projects">
         <div className="container">
@@ -40,14 +48,4 @@ class Dashboard extends Component {
     );
   }
 }
-Dashboard.propTypes = {
-  project: PropTypes.object.isRequired,
-  getProjects: PropTypes.func.isRequired
-};
-const mapStateToProps = state => ({
-  project: state.project
-});
-export default connect(
-  mapStateToProps,
-  { getProjects }
-)(Dashboard);
+export default Dashboard;
