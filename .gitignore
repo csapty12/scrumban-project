@@ -44,4 +44,4 @@ yarn-error.log*
 hs_err_pid*
 .DS_Store
 */.idea/**
-*/server/target/**
+./server/target/*
