@@ -1,9 +1,0 @@
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/model/Project.java
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/exception/ProjectIdException.java
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/exception/CustomResponseEntityExceptionHandler.java
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/ScrumbanApplication.java
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/exception/ProjectIdResponseException.java
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/service/ValidationErrorService.java
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/service/ProjectService.java
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/controller/ProjectController.java
-/Users/saptarshic/Documents/scrumbanProject/scrumban-project/server/scrumban/src/main/java/com/scrumban/repository/ProjectRepository.java
