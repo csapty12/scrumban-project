@@ -1,16 +1,27 @@
 import React, { Component } from "react";
-import { getProject } from "../../actions/ProjectActions";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import axios from "axios";
 // import classnames from "classnames";
 
 class UpdateProject extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      projectName: "",
+      project: {}
+    };
+  }
   componentDidMount() {
     const { projectIdentifier } = this.props.match.params;
-    console.log("id is: " + projectIdentifier);
-    this.props.getProject(projectIdentifier, this.props.history);
+    const res = axios
+      .get(`http://localhost:8080/api/project/${projectIdentifier}`)
+      .then(json =>
+        this.setState({
+          project: json.data
+        })
+      );
   }
   render() {
+    const currentProject = this.state.project;
     return (
       <div className="project">
         <div className="container">
@@ -25,6 +36,7 @@ class UpdateProject extends Component {
                     type="text"
                     placeholder="Project Name"
                     name="projectName"
+                    value={currentProject.projectName}
                   />
                 </div>
                 <div className="form-group">
@@ -33,6 +45,7 @@ class UpdateProject extends Component {
                     type="text"
                     placeholder="Project Identifier"
                     name="projectIdentifier"
+                    value={currentProject.projectIdentifier}
                     disabled
                   />
                 </div>
@@ -41,6 +54,7 @@ class UpdateProject extends Component {
                     className="form-control form-control-sm"
                     placeholder="Project Description"
                     name="description"
+                    value={currentProject.description}
                   />
                 </div>
                 <h6>Start Date</h6>
@@ -49,6 +63,7 @@ class UpdateProject extends Component {
                     type="date"
                     className="form-control form-control-sm"
                     name="startDate"
+                    value={currentProject.startDate}
                   />
                 </div>
 
@@ -58,6 +73,7 @@ class UpdateProject extends Component {
                     type="date"
                     className="form-control form-control-sm"
                     name="endDate"
+                    value={currentProject.endDate}
                   />
                 </div>
                 <input
@@ -72,15 +88,5 @@ class UpdateProject extends Component {
     );
   }
 }
-UpdateProject.propTypes = {
-  getProject: PropTypes.func.isRequired,
-  project: PropTypes.object.isRequired
-};
 
-const mapStateToProps = state => ({
-  project: state.project.project
-});
-export default connect(
-  mapStateToProps,
-  { getProject }
-)(UpdateProject);
+export default UpdateProject;

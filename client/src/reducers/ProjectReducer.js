@@ -1,4 +1,4 @@
-import { GET_PROJECTS, GET_PROJECT } from "../actions/Types"; //you have to import the action type that you want to use for the reducer.
+import { GET_PROJECTS } from "../actions/Types"; //you have to import the action type that you want to use for the reducer.
 
 //errors must have an inital state to begin with
 const initalState = {
@@ -12,11 +12,6 @@ export default function(state = initalState, action) {
       return {
         ...state,
         projects: action.payload
-      };
-    case GET_PROJECT:
-      return {
-        ...state,
-        project: action.payload
       };
     default:
       return state;
