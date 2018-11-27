@@ -35,6 +35,7 @@ public class ProjectController {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
         System.out.println("hit here");
         if (errorMap != null) {
+            System.out.println("error map: " + errorMap);
             return errorMap;
         }
         Project theProject = projectService.saveOrUpdate(project);

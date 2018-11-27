@@ -12,7 +12,7 @@ class AddProject extends Component {
       description: "",
       startDate: "",
       endDate: "",
-      errors: { projectName: "", projectIdentifier: "", description: "" }
+      errors: {}
     };
   }
 
@@ -41,11 +41,19 @@ class AddProject extends Component {
           errors: {
             projectName: errorResponse.projectName,
             projectIdentifier: errorResponse.projectIdentifier,
-            description: errorResponse.description
+            description: errorResponse.description,
+            startDate: errorResponse.startDate,
+            endDate: errorResponse.endDate
           }
         });
       });
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors });
+    }
+  }
 
   render() {
     const { errors } = this.state;
@@ -107,21 +115,31 @@ class AddProject extends Component {
                 <div className="form-group">
                   <input
                     type="date"
-                    className="form-control form-control-sm"
+                    className={classnames("form-control form-control-sm", {
+                      "is-invalid": errors.startDate
+                    })}
                     name="startDate"
                     value={this.state.startDate}
                     onChange={this.handleChange}
                   />
+                  {errors.startDate && (
+                    <div className="invalid-feedback">{errors.startDate}</div>
+                  )}
                 </div>
                 <h6>Estimated End Date</h6>
                 <div className="form-group">
                   <input
                     type="date"
-                    className="form-control form-control-sm"
+                    className={classnames("form-control form-control-sm", {
+                      "is-invalid": errors.endDate
+                    })}
                     name="endDate"
                     value={this.state.endDate}
                     onChange={this.handleChange}
                   />
+                  {errors.endDate && (
+                    <div className="invalid-feedback">{errors.endDate}</div>
+                  )}
                 </div>
 
                 <input

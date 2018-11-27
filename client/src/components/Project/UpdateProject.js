@@ -12,9 +12,16 @@ class UpdateProject extends Component {
       description: "",
       startDate: "",
       endDate: "",
-      errors: { projectName: "", projectIdentifier: "", description: "" }
+      errors: {}
     };
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors });
+    }
+  }
+
   componentDidMount() {
     const { projectIdentifier } = this.props.match.params;
 
@@ -59,14 +66,15 @@ class UpdateProject extends Component {
           errors: {
             projectName: errorResponse.projectName,
             projectIdentifier: errorResponse.projectIdentifier,
-            description: errorResponse.description
+            description: errorResponse.description,
+            startDate: errorResponse.startDate,
+            endDate: errorResponse.endDate
           }
         });
       });
   };
   render() {
     const { errors } = this.state;
-    console.log("errrrrsss: " + JSON.stringify(errors));
     return (
       <div className="project">
         <div className="container">
@@ -117,21 +125,31 @@ class UpdateProject extends Component {
                 <div className="form-group">
                   <input
                     type="date"
-                    className="form-control form-control-sm"
+                    className={classnames("form-control form-control-sm", {
+                      "is-invalid": errors.startDate
+                    })}
                     name="startDate"
                     value={this.state.startDate}
                     onChange={this.onChange}
                   />
+                  {errors.startDate && (
+                    <div className="invalid-feedback">{errors.startDate}</div>
+                  )}
                 </div>
                 <h6>End Date</h6>
                 <div className="form-group">
                   <input
                     type="date"
-                    className="form-control form-control-sm"
+                    className={classnames("form-control form-control-sm", {
+                      "is-invalid": errors.endDate
+                    })}
                     name="endDate"
                     value={this.state.endDate}
                     onChange={this.onChange}
                   />
+                  {errors.endDate && (
+                    <div className="invalid-feedback">{errors.endDate}</div>
+                  )}
                 </div>
                 <input
                   type="submit"
