@@ -1,11 +1,11 @@
 //this is what will use axios to send the data to the backend.
 //upon response, it will dispatch the data to the state
 import axios from "axios";
-import { GET_ERRORS, GET_PROJECTS } from "./Types";
+import { GET_ERRORS } from "./Types";
 
 export const createProject = (project, history) => async dispatch => {
   try {
-    const res = await axios.post("http://localhost:8080/api/project", project);
+    await axios.post("http://localhost:8080/api/project", project);
     history.push("/dashboard");
   } catch (err) {
     dispatch({

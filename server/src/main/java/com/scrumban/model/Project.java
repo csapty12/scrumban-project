@@ -48,6 +48,4 @@ public class Project {
     protected void onUpdate(){
         this.updatedAt = new Date();
     }
-
-
 }

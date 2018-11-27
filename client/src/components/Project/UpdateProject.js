@@ -6,13 +6,12 @@ class UpdateProject extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      projectName: "",
       project: {}
     };
   }
   componentDidMount() {
     const { projectIdentifier } = this.props.match.params;
-    const res = axios
+    axios
       .get(`http://localhost:8080/api/project/${projectIdentifier}`)
       .then(json =>
         this.setState({
@@ -36,7 +35,7 @@ class UpdateProject extends Component {
                     type="text"
                     placeholder="Project Name"
                     name="projectName"
-                    value={currentProject.projectName}
+                    defaultValue={currentProject.projectName}
                   />
                 </div>
                 <div className="form-group">
@@ -45,7 +44,7 @@ class UpdateProject extends Component {
                     type="text"
                     placeholder="Project Identifier"
                     name="projectIdentifier"
-                    value={currentProject.projectIdentifier}
+                    defaultValue={currentProject.projectIdentifier}
                     disabled
                   />
                 </div>
@@ -63,7 +62,7 @@ class UpdateProject extends Component {
                     type="date"
                     className="form-control form-control-sm"
                     name="startDate"
-                    value={currentProject.startDate}
+                    defaultValue={currentProject.startDate}
                   />
                 </div>
 
@@ -73,7 +72,7 @@ class UpdateProject extends Component {
                     type="date"
                     className="form-control form-control-sm"
                     name="endDate"
-                    value={currentProject.endDate}
+                    defaultValue={currentProject.endDate}
                   />
                 </div>
                 <input

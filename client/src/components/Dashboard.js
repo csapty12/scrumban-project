@@ -13,7 +13,7 @@ class Dashboard extends Component {
     };
   }
   componentDidMount() {
-    const res = axios.get("http://localhost:8080/api/project").then(json => {
+    axios.get("http://localhost:8080/api/project").then(json => {
       this.setState({
         allProjects: json.data
       });

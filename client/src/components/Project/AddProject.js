@@ -3,9 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { createProject } from "../../actions/ProjectActions";
 import classnames from "classnames";
-{
-  /* remember that class components can hold application state where as functional components can only hold property values*/
-}
+
 class AddProject extends Component {
   constructor() {
     super();
