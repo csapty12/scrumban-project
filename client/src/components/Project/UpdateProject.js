@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import axios from "axios";
-// import classnames from "classnames";
+import classnames from "classnames";
 
 class UpdateProject extends Component {
   constructor(props) {
@@ -10,22 +11,28 @@ class UpdateProject extends Component {
       projectIdentifier: "",
       description: "",
       startDate: "",
-      endDate: ""
+      endDate: "",
+      errors: { projectName: "", projectIdentifier: "", description: "" }
     };
   }
   componentDidMount() {
     const { projectIdentifier } = this.props.match.params;
+
     axios
       .get(`http://localhost:8080/api/project/${projectIdentifier}`)
       .then(json =>
         this.setState({
+          id: json.data.id,
           projectName: json.data.projectName,
           projectIdentifier: json.data.projectIdentifier,
           description: json.data.description,
           startDate: json.data.startDate,
           endDate: json.data.endDate
         })
-      );
+      )
+      .catch(err => {
+        this.props.history.push("/dashboard");
+      });
   }
 
   onChange = event => {
@@ -35,6 +42,7 @@ class UpdateProject extends Component {
   onSubmit = event => {
     event.preventDefault();
     const updatedProjectState = {
+      id: this.state.id,
       projectName: this.state.projectName,
       projectIdentifier: this.state.projectIdentifier,
       description: this.state.description,
@@ -42,10 +50,23 @@ class UpdateProject extends Component {
       endDate: this.state.endDate
     };
     console.log("project id: " + JSON.stringify(updatedProjectState));
+    axios
+      .post("http://localhost:8080/api/project", updatedProjectState)
+      .then(() => alert("thank you, your project has been updated"))
+      .catch(error => {
+        const errorResponse = error.response.data;
+        this.setState({
+          errors: {
+            projectName: errorResponse.projectName,
+            projectIdentifier: errorResponse.projectIdentifier,
+            description: errorResponse.description
+          }
+        });
+      });
   };
   render() {
-    // const currentProject = this.state.project;
-    // console.log("currenProject: " + JSON.stringify(currentProject));
+    const { errors } = this.state;
+    console.log("errrrrsss: " + JSON.stringify(errors));
     return (
       <div className="project">
         <div className="container">
@@ -56,13 +77,18 @@ class UpdateProject extends Component {
               <form onSubmit={this.onSubmit}>
                 <div className="form-group">
                   <input
-                    className="form-control form-control-sm"
+                    className={classnames("form-control form-control-sm", {
+                      "is-invalid": errors.projectName
+                    })}
                     type="text"
                     placeholder="Project Name"
                     name="projectName"
                     value={this.state.projectName}
                     onChange={this.onChange}
                   />
+                  {errors.projectName && (
+                    <div className="invalid-feedback">{errors.projectName}</div>
+                  )}
                 </div>
                 <div className="form-group">
                   <input
@@ -75,12 +101,17 @@ class UpdateProject extends Component {
                 </div>
                 <div className="form-group">
                   <textarea
-                    className="form-control form-control-sm"
+                    className={classnames("form-control form-control-sm", {
+                      "is-invalid": errors.description
+                    })}
                     placeholder="Project Description"
                     name="description"
                     value={this.state.description}
                     onChange={this.onChange}
                   />
+                  {errors.description && (
+                    <div className="invalid-feedback">{errors.description}</div>
+                  )}
                 </div>
                 <h6>Start Date</h6>
                 <div className="form-group">

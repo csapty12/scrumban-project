@@ -33,11 +33,12 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<?> createProject(@Valid @RequestBody Project project, BindingResult bindingResult) {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
-
+        System.out.println("hit here");
         if (errorMap != null) {
             return errorMap;
         }
         Project theProject = projectService.saveOrUpdate(project);
+        System.out.println("the project: "+ theProject.getProjectName());
         return new ResponseEntity<>(theProject, HttpStatus.CREATED);
     }
 
