@@ -35,6 +35,7 @@ public class Project {
     private Date endDate; //end date of project.
 
     @JsonFormat(pattern = "yyyy-mm-dd")
+    @Column(updatable = false)
     private Date createdAt; //keeps track of whenever the object has been created or something has been updated.
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updatedAt;

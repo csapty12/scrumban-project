@@ -4,6 +4,7 @@ import com.scrumban.exception.ProjectIdException;
 import com.scrumban.model.Project;
 import com.scrumban.service.ProjectService;
 import com.scrumban.service.ValidationErrorService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -13,9 +14,12 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
+
 @RestController
 @RequestMapping("/api/project")
 @CrossOrigin
+@Slf4j
 public class ProjectController {
 
     private ProjectService projectService;
@@ -44,7 +48,7 @@ public class ProjectController {
         Project project = projectService.getProject(projectIdentifier);
 
         if (project != null) {
-            System.out.println("found projct: ");
+
             return new ResponseEntity<>(project, HttpStatus.OK);
         }
         throw new ProjectIdException("no project found with identifier: " + projectIdentifier);
