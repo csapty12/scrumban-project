@@ -1,12 +1,10 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { createProject } from "../../actions/ProjectActions";
 import classnames from "classnames";
+import axios from "axios";
 
 class AddProject extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       projectName: "",
@@ -14,7 +12,7 @@ class AddProject extends Component {
       description: "",
       startDate: "",
       endDate: "",
-      errors: {}
+      errors: { projectName: "", projectIdentifier: "", description: "" }
     };
   }
 
@@ -33,17 +31,21 @@ class AddProject extends Component {
       startDate: this.state.startDate,
       endDate: this.state.endDate
     };
-    console.log(newProject);
-    this.props.createProject(newProject, this.props.history);
-  };
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({
-        errors: nextProps.errors
+    axios
+      .post("http://localhost:8080/api/project", newProject)
+      .then(() => alert("thank you, your project has been created"))
+      .catch(error => {
+        const errorResponse = error.response.data;
+        this.setState({
+          errors: {
+            projectName: errorResponse.projectName,
+            projectIdentifier: errorResponse.projectIdentifier,
+            description: errorResponse.description
+          }
+        });
       });
-    }
-  }
+  };
 
   render() {
     const { errors } = this.state;
@@ -134,15 +136,4 @@ class AddProject extends Component {
     );
   }
 }
-AddProject.propTypes = {
-  createProject: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired
-};
-
-const mapStateToProps = state => ({
-  errors: state.errors
-});
-export default connect(
-  mapStateToProps,
-  { createProject }
-)(AddProject);
+export default AddProject;
