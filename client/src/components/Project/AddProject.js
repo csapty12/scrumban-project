@@ -35,6 +35,7 @@ class AddProject extends Component {
     axios
       .post("http://localhost:8080/api/project", newProject)
       .then(() => alert("thank you, your project has been created"))
+      .then(this.props.history.push("/dashboard"))
       .catch(error => {
         const errorResponse = error.response.data;
         this.setState({

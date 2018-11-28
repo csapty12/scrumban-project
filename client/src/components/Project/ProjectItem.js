@@ -4,6 +4,9 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 class ProjectItem extends Component {
+  handleDelete = project => {
+    this.props.deleteProject(project);
+  };
   render() {
     const { project } = this.props;
     return (
@@ -23,9 +26,12 @@ class ProjectItem extends Component {
             >
               Update Project Info
             </Link>
-            <a href="#" className="list-group-item list-group-item-action">
+            <li
+              className="list-group-item list-group-item-action"
+              onClick={this.handleDelete.bind(this, project)}
+            >
               Delete Project
-            </a>
+            </li>
           </div>
         </div>
       </div>

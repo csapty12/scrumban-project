@@ -20,6 +20,20 @@ class Dashboard extends Component {
     });
   }
 
+  handleProjectDelete = project => {
+    const currentProjects = this.state.allProjects;
+    const { projectIdentifier } = project;
+    axios
+      .delete(`http://localhost:8080/api/project/${projectIdentifier}`)
+      .then(() => alert(`project: ${projectIdentifier} has been deleted`))
+      .then(() => {
+        let filteredProjects = currentProjects.filter(
+          item => item.projectIdentifier !== projectIdentifier
+        );
+        this.setState({ allProjects: filteredProjects });
+      });
+  };
+
   render() {
     const allProjects = this.state.allProjects;
     return (
@@ -36,7 +50,11 @@ class Dashboard extends Component {
                 <div className="container">
                   <div className="row">
                     {allProjects.map(project => (
-                      <ProjectItem key={project.id} project={project} />
+                      <ProjectItem
+                        key={project.id}
+                        project={project}
+                        deleteProject={this.handleProjectDelete}
+                      />
                     ))}
                   </div>
                 </div>

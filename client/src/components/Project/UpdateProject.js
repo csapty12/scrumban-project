@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
 import axios from "axios";
 import classnames from "classnames";
 
@@ -60,6 +59,7 @@ class UpdateProject extends Component {
     axios
       .post("http://localhost:8080/api/project", updatedProjectState)
       .then(() => alert("thank you, your project has been updated"))
+      .then(this.props.history.push("/dashboard"))
       .catch(error => {
         const errorResponse = error.response.data;
         this.setState({
