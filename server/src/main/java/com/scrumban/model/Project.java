@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Getter
 @Setter
@@ -41,6 +43,9 @@ public class Project {
     private Date createdAt; //keeps track of whenever the object has been created or something has been updated.
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updatedAt;
+
+    @OneToOne(fetch = EAGER, cascade = CascadeType.ALL, mappedBy = "project") //cascade type - if you delete a project, then everything inside the backlog and all its children are destroyed too.
+    private Backlog backlog; //a project has only one backlog
 
     @PrePersist
     protected void onCreate(){
