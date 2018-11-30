@@ -1,6 +1,7 @@
 package com.scrumban.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,6 +46,7 @@ public class Project {
     private Date updatedAt;
 
     @OneToOne(fetch = EAGER, cascade = CascadeType.ALL, mappedBy = "project") //cascade type - if you delete a project, then everything inside the backlog and all its children are destroyed too.
+    @JsonIgnore
     private Backlog backlog; //a project has only one backlog
 
     @PrePersist
