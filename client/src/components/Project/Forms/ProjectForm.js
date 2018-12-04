@@ -17,6 +17,30 @@ export default class ProjectForm extends Component {
       errors: {}
     };
   }
+
+  componentDidMount() {
+    const { projectIdentifier } = this.props;
+    console.log("pojectId: " + JSON.stringify(projectIdentifier));
+    if (projectIdentifier !== undefined) {
+      console.log("fetching project with ID: " + projectIdentifier);
+      axios
+        .get(`http://localhost:8080/api/project/${projectIdentifier}`)
+        .then(json =>
+          this.setState({
+            id: json.data.id,
+            projectName: json.data.projectName,
+            projectIdentifier: json.data.projectIdentifier,
+            description: json.data.description,
+            startDate: json.data.startDate,
+            endDate: json.data.endDate
+          })
+        )
+        .catch(err => {
+          this.props.history.push("/dashboard");
+        });
+    }
+  }
+
   handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value
@@ -26,6 +50,7 @@ export default class ProjectForm extends Component {
   handleSubmit = event => {
     event.preventDefault();
     const newProject = {
+      id: this.state.id,
       projectName: this.state.projectName,
       projectIdentifier: this.state.projectIdentifier,
       description: this.state.description,
@@ -77,6 +102,7 @@ export default class ProjectForm extends Component {
                   value={this.state.projectIdentifier}
                   handleChange={this.handleChange}
                   onError={this.state.errors.projectIdentifier}
+                  disabled={this.props.disabledId}
                 />
                 <TextArea
                   className="form-control form-control-sm"
