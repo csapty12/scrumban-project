@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
 import classnames from "classnames";
-
+import TextInput from "./Forms/TextInput";
+import TextArea from "./Forms/TextArea";
+import SubmitButton from "./Forms/SubmitButton";
 class UpdateProject extends Component {
   constructor(props) {
     super(props);
@@ -41,7 +43,7 @@ class UpdateProject extends Component {
       });
   }
 
-  onChange = event => {
+  handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
@@ -59,7 +61,6 @@ class UpdateProject extends Component {
     axios
       .post("http://localhost:8080/api/project", updatedProjectState)
       .then(() => alert("thank you, your project has been updated"))
-      .then(this.props.history.push("/dashboard"))
       .catch(error => {
         const errorResponse = error.response.data;
         this.setState({
@@ -83,78 +84,50 @@ class UpdateProject extends Component {
               <h5 className="display-4 text-center">Create / Edit Project</h5>
               <hr />
               <form onSubmit={this.onSubmit}>
-                <div className="form-group">
-                  <input
-                    className={classnames("form-control form-control-sm", {
-                      "is-invalid": errors.projectName
-                    })}
-                    type="text"
-                    placeholder="Project Name"
-                    name="projectName"
-                    value={this.state.projectName}
-                    onChange={this.onChange}
-                  />
-                  {errors.projectName && (
-                    <div className="invalid-feedback">{errors.projectName}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <input
-                    className="form-control form-control-sm"
-                    type="text"
-                    name="projectIdentifier"
-                    value={this.state.projectIdentifier}
-                    disabled
-                  />
-                </div>
-                <div className="form-group">
-                  <textarea
-                    className={classnames("form-control form-control-sm", {
-                      "is-invalid": errors.description
-                    })}
-                    placeholder="Project Description"
-                    name="description"
-                    value={this.state.description}
-                    onChange={this.onChange}
-                  />
-                  {errors.description && (
-                    <div className="invalid-feedback">{errors.description}</div>
-                  )}
-                </div>
-                <h6>Start Date</h6>
-                <div className="form-group">
-                  <input
-                    type="date"
-                    className={classnames("form-control form-control-sm", {
-                      "is-invalid": errors.startDate
-                    })}
-                    name="startDate"
-                    value={this.state.startDate}
-                    onChange={this.onChange}
-                  />
-                  {errors.startDate && (
-                    <div className="invalid-feedback">{errors.startDate}</div>
-                  )}
-                </div>
-                <h6>End Date</h6>
-                <div className="form-group">
-                  <input
-                    type="date"
-                    className={classnames("form-control form-control-sm", {
-                      "is-invalid": errors.endDate
-                    })}
-                    name="endDate"
-                    value={this.state.endDate}
-                    onChange={this.onChange}
-                  />
-                  {errors.endDate && (
-                    <div className="invalid-feedback">{errors.endDate}</div>
-                  )}
-                </div>
-                <input
-                  type="submit"
-                  className="btn btn-primary btn-block mt-4"
+                <TextInput
+                  type="text"
+                  id="projectName"
+                  placeholder="Project Name"
+                  name="projectName"
+                  value={this.state.projectName}
+                  handleChange={this.handleChange}
+                  onError={errors.projectName}
                 />
+                <TextInput
+                  type="text"
+                  placeholder="Project Identifier"
+                  name="projectIdentifier"
+                  value={this.state.projectIdentifier}
+                  handleChange={this.handleChange}
+                  onError={errors.projectIdentifier}
+                  disabled
+                />
+                <TextArea
+                  className="form-control form-control-sm"
+                  placeholder="Project Description"
+                  name="description"
+                  description={this.state.description}
+                  handleChange={this.handleChange}
+                  onError={errors.description}
+                />
+                <h6>Start Date</h6>
+                <TextInput
+                  id="startDate"
+                  type="date"
+                  name="startDate"
+                  value={this.state.startDate}
+                  handleChange={this.handleChange}
+                  onError={errors.startDate}
+                />
+                <TextInput
+                  id="endDate"
+                  type="date"
+                  name="endDate"
+                  value={this.state.endDate}
+                  handleChange={this.handleChange}
+                  onError={errors.endDate}
+                />
+                <SubmitButton />
               </form>
             </div>
           </div>
