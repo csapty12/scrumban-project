@@ -7,6 +7,8 @@ import com.scrumban.repository.BacklogRepository;
 import com.scrumban.repository.ProjectTaskRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.scrumban.model.Priority.LOW;
 
 @Service
@@ -23,7 +25,8 @@ public class ProjectTaskService {
 
     public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask) {
 
-        Backlog backlog = backlogRepository.findBacklogByProjectIdentifier(projectIdentifier);
+        Backlog backlog = backlogRepository.findBacklogByProjectIdentifier(projectIdentifier.toUpperCase());
+
         projectTask.setBacklog(backlog);
         int incrementValue = 1;
         Integer backlogSequence = backlog.getPTSequence() + incrementValue;
@@ -38,5 +41,9 @@ public class ProjectTaskService {
         }
         return projectTaskRepository.save(projectTask);
 
+    }
+
+    public List<ProjectTask> getProjectTasksFromBacklog(String projectIdentifier) {
+        return projectTaskRepository.findAllByProjectIdentifier(projectIdentifier.toUpperCase());
     }
 }

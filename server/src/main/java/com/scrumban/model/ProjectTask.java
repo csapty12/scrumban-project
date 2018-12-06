@@ -17,7 +17,6 @@ import static javax.persistence.FetchType.EAGER;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class ProjectTask {
 
     @Id
