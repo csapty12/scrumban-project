@@ -46,7 +46,7 @@ public class Project {
     private Date updatedAt;
 
     @OneToOne(fetch = EAGER, cascade = CascadeType.ALL, mappedBy = "project") //cascade type - if you delete a project, then everything inside the backlog and all its children are destroyed too.
-//    @JsonIgnore
+    @JsonIgnore
     private Backlog backlog; //a project has only one backlog
 
     @PrePersist
