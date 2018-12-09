@@ -1,5 +1,6 @@
 package com.scrumban.service;
 
+import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.Backlog;
 import com.scrumban.model.ProjectTask;
 import com.scrumban.model.Status;
@@ -8,6 +9,7 @@ import com.scrumban.repository.ProjectTaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.scrumban.model.Priority.LOW;
 
@@ -24,26 +26,34 @@ public class ProjectTaskService {
     }
 
     public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask) {
+        try {
+            Backlog backlog = backlogRepository.findBacklogByProjectIdentifier(projectIdentifier.toUpperCase());
 
-        Backlog backlog = backlogRepository.findBacklogByProjectIdentifier(projectIdentifier.toUpperCase());
-
-        projectTask.setBacklog(backlog);
-        int incrementValue = 1;
-        Integer backlogSequence = backlog.getPTSequence() + incrementValue;
-        backlog.setPTSequence(backlogSequence);
-        projectTask.setProjectSequence(projectIdentifier + "-" + backlogSequence);
-        projectTask.setProjectIdentifier(projectIdentifier);
-        if (projectTask.getPriority() == null) {
-            projectTask.setPriority(LOW);
+            projectTask.setBacklog(backlog);
+            int incrementValue = 1;
+            Integer backlogSequence = backlog.getPTSequence() + incrementValue;
+            backlog.setPTSequence(backlogSequence);
+            projectTask.setProjectSequence(projectIdentifier + "-" + backlogSequence);
+            projectTask.setProjectIdentifier(projectIdentifier);
+            if (projectTask.getPriority() == null) {
+                projectTask.setPriority(LOW);
+            }
+            if (projectTask.getStatus() == null) {
+                projectTask.setStatus(Status.TO_DO.getStatus());
+            }
+            return projectTaskRepository.save(projectTask);
         }
-        if (projectTask.getStatus() == null) {
-            projectTask.setStatus(Status.TO_DO.getStatus());
+        catch(Exception e){
+            throw new ProjectNotFoundException("Project ID: " + projectIdentifier  + " not found");
         }
-        return projectTaskRepository.save(projectTask);
 
     }
 
     public List<ProjectTask> getProjectTasksFromBacklog(String projectIdentifier) {
-        return projectTaskRepository.findAllByProjectIdentifier(projectIdentifier.toUpperCase());
+        List<ProjectTask> allProjectTasks  =projectTaskRepository.findAllByProjectIdentifier(projectIdentifier.toUpperCase());
+        if(allProjectTasks.isEmpty()){
+            throw new ProjectNotFoundException("Project ID: " + projectIdentifier  + " not found");
+        }
+        return allProjectTasks;
     }
 }
