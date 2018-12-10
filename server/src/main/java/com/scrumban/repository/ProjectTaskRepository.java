@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ProjectTaskRepository extends CrudRepository<ProjectTask, Long> {
     List<ProjectTask> findAllByProjectIdentifier(String projectIdentifier);
+    ProjectTask findProjectTaskByProjectSequence(String projectSequence);
 }

@@ -3,6 +3,7 @@ package com.scrumban.controller;
 import com.scrumban.model.ProjectTask;
 import com.scrumban.service.ProjectTaskService;
 import com.scrumban.service.ValidationErrorService;
+import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -44,5 +45,11 @@ public class BacklogController {
         System.out.println("backlogID: " + backlogId);
         List<ProjectTask> projectTasks = projectTaskService.getProjectTasksFromBacklog(backlogId);
         return new ResponseEntity<>(projectTasks, HttpStatus.OK);
+    }
+
+    @GetMapping("/{backlogId}/{ticketNumber}")
+    public ResponseEntity<?> getSingleProjectTask(@PathVariable String backlogId, @PathVariable String ticketNumber){
+        ProjectTask projectTask = projectTaskService.getProjectTaskFromProjectSequence(backlogId,ticketNumber);
+        return new ResponseEntity<>(projectTask, HttpStatus.OK);
     }
 }
