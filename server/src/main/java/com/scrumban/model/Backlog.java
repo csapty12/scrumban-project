@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REFRESH;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
@@ -33,7 +34,7 @@ public class Backlog {
     private Project project;
 
     //one to many relationship between backlog and project tasks - one backlog can have many tasks
-    @OneToMany(cascade = ALL, fetch = EAGER, mappedBy = "backlog")
+    @OneToMany(cascade = REFRESH, fetch = EAGER, mappedBy = "backlog", orphanRemoval = true)
     private List<ProjectTask> projectTaskList = new ArrayList<>();
 
 }

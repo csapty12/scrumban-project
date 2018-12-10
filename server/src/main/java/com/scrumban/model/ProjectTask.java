@@ -31,7 +31,7 @@ public class ProjectTask {
     private Priority priority;
     //many to one with backlog- many tasks belong to one backlog
 
-    @ManyToOne(fetch = EAGER, cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "backlog_id", nullable = false, updatable = false)
     @JsonIgnore //prevents infinite recursion
     private Backlog backlog;

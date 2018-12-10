@@ -3,14 +3,16 @@ package com.scrumban.controller;
 import com.scrumban.model.ProjectTask;
 import com.scrumban.service.ProjectTaskService;
 import com.scrumban.service.ValidationErrorService;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static java.lang.String.format;
 
 @RestController
 @RequestMapping("/api/backlog")
@@ -29,12 +31,8 @@ public class BacklogController {
     public ResponseEntity<?> addProjectTaskToBacklog(@Valid @RequestBody ProjectTask newProjectTask,
                                                      BindingResult bindingResult,
                                                      @PathVariable String backlogId) {
-        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
-
-        if (errorMap != null) {
-            System.out.println("error map: " + errorMap);
-            return errorMap;
-        }
+        ResponseEntity<?> errorMap = validateJson(bindingResult);
+        if (errorMap != null) return errorMap;
 
         ProjectTask projectTask = projectTaskService.addProjectTask(backlogId, newProjectTask);
         return new ResponseEntity<>(projectTask, HttpStatus.CREATED);
@@ -51,5 +49,35 @@ public class BacklogController {
     public ResponseEntity<?> getSingleProjectTask(@PathVariable String backlogId, @PathVariable String ticketNumber){
         ProjectTask projectTask = projectTaskService.getProjectTaskFromProjectSequence(backlogId,ticketNumber);
         return new ResponseEntity<>(projectTask, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{backlogId}/{ticketNumber}")
+    public ResponseEntity<?> updateTicketInBacklog(@Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult,
+                                           @PathVariable String backlogId, @PathVariable String ticketNumber){
+
+        ResponseEntity<?> errorMap = validateJson(bindingResult);
+        if (errorMap != null) return errorMap;
+
+        ProjectTask updatedProjectTask = projectTaskService.updateProjectTask(backlogId, ticketNumber, projectTask);
+        return new ResponseEntity<>(updatedProjectTask, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{backlogId}/{ticketNumber}")
+    public ResponseEntity<?> deleteTicketFromBacklog(
+                                                 @PathVariable String backlogId, @PathVariable String ticketNumber){
+        projectTaskService.deleteTicketFromBacklog(backlogId, ticketNumber);
+
+        return new ResponseEntity<>(format("Ticket %s from backlog %s has been deleted", ticketNumber, backlogId), HttpStatus.OK);
+
+    }
+
+    private ResponseEntity<?> validateJson(BindingResult bindingResult) {
+        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
+
+        if (errorMap != null) {
+            System.out.println("error map: " + errorMap);
+            return errorMap;
+        }
+        return null;
     }
 }
