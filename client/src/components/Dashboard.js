@@ -1,8 +1,8 @@
 /*this is where you can access all projects
 this is where you can click the form to create a new project.*/
 import React, { Component } from "react";
-import ProjectItem from "./Project/ProjectItem";
-import CreateProjectButton from "./Project/CreateProjectButton";
+import ProjectItem from "./Project/projectView/ProjectItem";
+import CreateProjectButton from "./Project/projectView/CreateProjectButton";
 import axios from "axios";
 
 class Dashboard extends Component {

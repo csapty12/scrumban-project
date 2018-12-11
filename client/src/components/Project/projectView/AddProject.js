@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import ProjectForm from "./Forms/ProjectForm";
+import ProjectForm from "../Forms/ProjectForm";
 
-class UpdateProject extends Component {
+class AddProject extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       projectName: "",
       projectIdentifier: "",
@@ -13,7 +14,6 @@ class UpdateProject extends Component {
       errors: {}
     };
   }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
       this.setState({ errors: nextProps.errors });
@@ -21,14 +21,8 @@ class UpdateProject extends Component {
   }
 
   render() {
-    return (
-      <ProjectForm
-        type="Edit"
-        projectIdentifier={this.props.match.params.projectIdentifier}
-        disabledId={true}
-      />
-    );
+    const { errors } = this.state;
+    return <ProjectForm type="Create" errors={errors} />;
   }
 }
-
-export default UpdateProject;
+export default AddProject;

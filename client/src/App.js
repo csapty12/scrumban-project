@@ -7,8 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import AddProject from "./components/Project/AddProject";
-import UpdateProject from "./components/Project/UpdateProject";
+import AddProject from "./components/Project/projectView/AddProject";
+import UpdateProject from "./components/Project/projectView/UpdateProject";
 import { Provider } from "react-redux";
 import store from "./Store";
 
