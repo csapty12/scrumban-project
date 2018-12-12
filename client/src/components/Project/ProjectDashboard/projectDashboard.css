@@ -1,0 +1,32 @@
+.title-backlog__border {
+  border-bottom: 2px solid #0297f9;
+}
+.title-todo__border {
+  border-bottom: 2px solid #18aad0;
+}
+.title-inprogress__border {
+  border-bottom: 2px solid #25bcaa;
+}
+.title-testing__border {
+  border-bottom: 2px solid #35d374;
+}
+.title-done__border {
+  border-bottom: 2px solid #41e44a;
+}
+.title-blocked__border {
+  border-bottom: 2px solid #f75a47;
+}
+
+.button__add-ticket {
+  background: #fffaf6;
+  padding: 5px;
+  border-radius: 5px;
+  transition: box-shadow 0.2s;
+  box-shadow: 0;
+}
+
+.button__add-ticket:hover {
+  -webkit-box-shadow: 0px 0px 3px 0.2px rgba(107, 107, 107, 1);
+  -moz-box-shadow: 0px 0px 3px 0.2px rgba(107, 107, 107, 1);
+  box-shadow: 0px 0px 3px 0.2px rgba(107, 107, 107, 1);
+}

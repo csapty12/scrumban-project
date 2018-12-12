@@ -34,10 +34,7 @@ export default class ProjectForm extends Component {
             startDate: json.data.startDate,
             endDate: json.data.endDate
           })
-        )
-        .catch(err => {
-          this.props.history.push("/dashboard");
-        });
+        );
     }
   }
 

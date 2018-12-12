@@ -17,9 +17,12 @@ class ProjectItem extends Component {
             <h6>{project.projectIdentifier}</h6>
           </div>
           <div className="list-group list-of-actions">
-            <a href="#" className="list-group-item list-group-item-action">
+            <Link
+              to={`/projectDashboard/${project.projectIdentifier}`}
+              className="list-group-item list-group-item-action"
+            >
               Project Dashboard
-            </a>
+            </Link>
             <Link
               to={`/updateProject/${project.projectIdentifier}`}
               className="list-group-item list-group-item-action"
