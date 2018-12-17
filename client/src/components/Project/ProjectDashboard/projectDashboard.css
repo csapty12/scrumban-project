@@ -1,3 +1,27 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+body {
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-horizontal-scrollable-container {
+  display: flex;
+  overflow-x: auto;
+}
+.card::-webkit-scrollbar {
+  display: none;
+}
+.card--content {
+  min-width: 200px;
+  margin: 5px;
+  padding: 5px;
+}
+
 .title-backlog__border {
   border-bottom: 2px solid #0297f9;
 }

@@ -3,7 +3,7 @@ import "./projectDashboard.css";
 import "font-awesome/css/font-awesome.min.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import BacklogTicket from "./Tickets/BacklogTicket";
+import BacklogTicket from "./Tickets/Ticket";
 
 class ProjectDashboard extends Component {
   constructor(props) {
@@ -41,6 +41,7 @@ class ProjectDashboard extends Component {
   render() {
     console.log("all todo now: " + JSON.stringify(this.state.todo));
     const backlog = this.state.backlog;
+    const todo = this.state.todo;
     console.log("all backlog now: " + JSON.stringify(backlog));
 
     return (
@@ -54,8 +55,8 @@ class ProjectDashboard extends Component {
           </div>
         </div>
         <div className="container-fluid">
-          <div className="row">
-            <div className="col-md-3">
+          <section class="card-horizontal-scrollable-container">
+            <div class="card--content col-md-3 col-sm-10 col-xs-12">
               <h4 className="display-5 text-center title-backlog__border">
                 Backlog
               </h4>
@@ -67,7 +68,30 @@ class ProjectDashboard extends Component {
               {backlog.map(ticket => (
                 <BacklogTicket key={ticket.id} ticket={ticket} />
               ))}
-              <div className="card">
+            </div>
+            <div class="card--content col-md-3 col-sm-10 col-xs-12">
+              <h4 className="display-5 text-center title-todo__border">
+                To Do
+              </h4>
+              {todo.map(ticket => (
+                <BacklogTicket key={ticket.id} ticket={ticket} />
+              ))}
+            </div>
+            <div class="card--content col-md-3 col-sm-10 col-xs-12">
+              <h4 className="display-5 text-center title-inprogress__border">
+                In Progress
+              </h4>
+            </div>
+            <div class="card--content col-md-3 col-sm-10 col-xs-12">
+              <h4 className="display-5 text-center title-testing__border">
+                Testing
+              </h4>
+            </div>
+            <div class="card--content col-md-3 col-sm-10 col-xs-12">
+              <h4 className="display-5 text-center title-done__border">Done</h4>
+            </div>
+          </section>
+          {/*<div className="card">
                 <div className="card-body">
                   <a href="#">
                     <h6 className="card-title">brr-q23</h6>
@@ -77,35 +101,7 @@ class ProjectDashboard extends Component {
                     additional content.
                   </p>
                 </div>
-              </div>
-            </div>
-
-            <div className="col-md-3">
-              <h4 className="display-5 text-center title-todo__border">
-                To Do
-              </h4>
-            </div>
-            <div className="col-md-3">
-              <h4 className="display-5 text-center title-inprogress__border">
-                In Progress
-              </h4>
-            </div>
-            <div className="col-md-3">
-              <h4 className="display-5 text-center title-testing__border">
-                Testing
-              </h4>
-            </div>
-            {/* 
-          <div className="col-md-2">
-              <h4 className="display-5 text-center title-done__border">Done</h4>
-            </div>
-            <divclassName="col-md-2">
-              <h4 className="display-5 text-center title-blocked__border">
-                 Blocked
-               </h4>
-            </div> 
-           */}
-          </div>
+              </div>*/}
         </div>
       </div>
     );
