@@ -38,11 +38,13 @@ public class ProjectTaskService {
             backlog.setPTSequence(backlogSequence);
             projectTask.setProjectSequence(projectIdentifier + "-" + backlogSequence);
             projectTask.setProjectIdentifier(projectIdentifier);
-            if (projectTask.getPriority() == null) {
-                projectTask.setPriority(LOW);
+            if (projectTask.getPriority().isEmpty()) {
+                System.out.println("priorty set to low");
+                projectTask.setPriority(LOW.valueOf());
             }
-            if (projectTask.getStatus() == null) {
-                projectTask.setStatus(Status.TO_DO.valueOf());
+            if (projectTask.getStatus().isEmpty()) {
+                System.out.println("status set to backlog");
+                projectTask.setStatus(Status.BACKLOG.valueOf());
             }
             return projectTaskRepository.save(projectTask);
         } catch (Exception e) {

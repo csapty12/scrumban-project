@@ -2,11 +2,11 @@ package com.scrumban.model;
 
 public enum Status {
 
-    BACKLOG("Backlog"),
+    BACKLOG("BACKLOG"),
     TO_DO("To Do"),
-    IN_PROGRESS("In Progress"),
-    IN_TEST("Testing"),
-    DONE("Done");
+    IN_PROGRESS("IN PROGRESS"),
+    IN_TEST("TESTING"),
+    DONE("DONE");
 
     private String status;
 

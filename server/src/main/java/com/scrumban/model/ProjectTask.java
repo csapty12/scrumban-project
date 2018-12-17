@@ -26,9 +26,10 @@ public class ProjectTask {
     private String projectSequence;
     @NotBlank(message = "please include project ticket summary")
     private String summary;
+    @NotBlank(message = "please include at least one acceptance criteria")
     private String acceptanceCriteria;
     private String status;
-    private Priority priority;
+    private String priority;
     //many to one with backlog- many tasks belong to one backlog
 
     @ManyToOne(fetch = EAGER)

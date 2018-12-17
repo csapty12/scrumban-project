@@ -23,10 +23,6 @@ export default class TicketForm extends Component {
     });
   };
 
-  componentDidMount() {
-    // axios request to the backend to fetch current data,  for update for ticket.
-  }
-
   handleSubmit = event => {
     const projectIdentifier = this.props.projectIdentifier;
     event.preventDefault();
@@ -42,19 +38,23 @@ export default class TicketForm extends Component {
       .post(`http://localhost:8080/api/backlog/${projectIdentifier}`, newTicket)
       .then(() => alert("thank you, the ticket has been created"))
       .catch(error => {
-        const errorResponse = error.response.data;
+        console.log("in here");
+        const errorResponse = error.response.data; //.response.data;
+        console.log("errorResponse: " + JSON.stringify(errorResponse));
         this.setState({
           errors: {
-            summary: errorResponse.projectName,
-            acceptanceCriteria: errorResponse.projectIdentifier,
-            status: errorResponse.description,
-            priority: errorResponse.startDate
+            summary: errorResponse.summary,
+            acceptanceCriteria: errorResponse.acceptanceCriteria,
+            status: errorResponse.status,
+            priority: errorResponse.priority
           }
         });
       });
   };
 
   render() {
+    const errors = this.state.errors;
+    console.log(errors);
     return (
       <div className="project">
         <div className="container">
@@ -70,6 +70,7 @@ export default class TicketForm extends Component {
                   name="summary"
                   value={this.state.summary}
                   handleChange={this.handleChange}
+                  onError={errors.summary}
                 />
                 <TextArea
                   className="form-control form-control-sm"
@@ -77,7 +78,9 @@ export default class TicketForm extends Component {
                   name="acceptanceCriteria"
                   value={this.state.acceptanceCriteria}
                   handleChange={this.handleChange}
+                  onError={errors.acceptanceCriteria}
                 />
+
                 <div className="form-group">
                   <select
                     className="form-control form-control-sm"
@@ -85,19 +88,20 @@ export default class TicketForm extends Component {
                     onChange={this.handleChange}
                     value={this.state.status}
                   >
-                    <option value="">Select Status</option>
+                    <option>Status</option>
                     <option value="BACKLOG">Backlog</option>
                     <option value="TO_DO">To Do</option>
                   </select>
                 </div>
                 <div className="form-group">
                   <select
+                    id="priorityId"
                     className="form-control form-control-sm"
                     name="priority"
                     value={this.state.priority}
                     onChange={this.handleChange}
                   >
-                    <option>Select Priority</option>
+                    <option>Priority</option>
                     <option value="HIGH">High</option>
                     <option value="MEDIUM">Medium</option>
                     <option value="LOW">Low</option>

@@ -16,12 +16,14 @@ body {
 .card::-webkit-scrollbar {
   display: none;
 }
-.card--content {
-  min-width: 200px;
-  margin: 5px;
-  padding: 5px;
+.card-vertical-scroll-enabled {
+  height: 70vh;
+  overflow-y: scroll;
 }
 
+.fixed-header {
+  position: fixed;
+}
 .title-backlog__border {
   border-bottom: 2px solid #0297f9;
 }

@@ -55,40 +55,52 @@ class ProjectDashboard extends Component {
           </div>
         </div>
         <div className="container-fluid">
-          <section class="card-horizontal-scrollable-container">
-            <div class="card--content col-md-3 col-sm-10 col-xs-12">
-              <h4 className="display-5 text-center title-backlog__border">
-                Backlog
-              </h4>
-              <Link to={`/addProjectTask/${this.state.projectIdentifier}`}>
-                <div className="card text-center">
-                  <div className="card-header">Add Ticket &#x2b;</div>
-                </div>
-              </Link>
-              {backlog.map(ticket => (
-                <BacklogTicket key={ticket.id} ticket={ticket} />
-              ))}
+          <section className="card-horizontal-scrollable-container">
+            <div className="card--content  col-10 col-lg-3">
+              <div className="card-vertical-scroll-enabled">
+                <h4 className="display-5 text-center title-backlog__border">
+                  Backlog
+                </h4>
+                <Link to={`/addProjectTask/${this.state.projectIdentifier}`}>
+                  <div className="card text-center">
+                    <div className="card-header">Add Ticket &#x2b;</div>
+                  </div>
+                </Link>
+                {backlog.map(ticket => (
+                  <BacklogTicket key={ticket.id} ticket={ticket} />
+                ))}
+              </div>
             </div>
-            <div class="card--content col-md-3 col-sm-10 col-xs-12">
-              <h4 className="display-5 text-center title-todo__border">
-                To Do
-              </h4>
-              {todo.map(ticket => (
-                <BacklogTicket key={ticket.id} ticket={ticket} />
-              ))}
+            <div className="card--content col-10 col-lg-3">
+              <div className="card-vertical-scroll-enabled">
+                <h4 className="display-5 text-center title-todo__border">
+                  To Do
+                </h4>
+                {todo.map(ticket => (
+                  <BacklogTicket key={ticket.id} ticket={ticket} />
+                ))}
+              </div>
             </div>
-            <div class="card--content col-md-3 col-sm-10 col-xs-12">
-              <h4 className="display-5 text-center title-inprogress__border">
-                In Progress
-              </h4>
+            <div className="card--content col-10 col-lg-3">
+              <div className="card-vertical-scroll-enabled">
+                <h4 className="display-5 text-center title-inprogress__border">
+                  In Progress
+                </h4>
+              </div>
             </div>
-            <div class="card--content col-md-3 col-sm-10 col-xs-12">
-              <h4 className="display-5 text-center title-testing__border">
-                Testing
-              </h4>
+            <div className="card--content col-10 col-lg-3">
+              <div className="card-vertical-scroll-enabled">
+                <h4 className="display-5 text-center title-testing__border">
+                  Testing
+                </h4>
+              </div>
             </div>
-            <div class="card--content col-md-3 col-sm-10 col-xs-12">
-              <h4 className="display-5 text-center title-done__border">Done</h4>
+            <div className="card--content col-10 col-lg-3">
+              <div className="card-vertical-scroll-enabled">
+                <h4 className="display-5 text-center title-done__border">
+                  Done
+                </h4>
+              </div>
             </div>
           </section>
           {/*<div className="card">

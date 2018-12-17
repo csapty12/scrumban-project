@@ -32,7 +32,10 @@ public class BacklogController {
                                                      BindingResult bindingResult,
                                                      @PathVariable String backlogId) {
         ResponseEntity<?> errorMap = validateJson(bindingResult);
-        if (errorMap != null) return errorMap;
+        if (errorMap != null) {
+            System.out.println("errormap: " + errorMap);
+            return errorMap;
+        }
 
         ProjectTask projectTask = projectTaskService.addProjectTask(backlogId, newProjectTask);
         return new ResponseEntity<>(projectTask, HttpStatus.CREATED);
