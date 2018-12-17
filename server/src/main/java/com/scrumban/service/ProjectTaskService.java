@@ -42,7 +42,7 @@ public class ProjectTaskService {
                 projectTask.setPriority(LOW);
             }
             if (projectTask.getStatus() == null) {
-                projectTask.setStatus(Status.TO_DO.getStatus());
+                projectTask.setStatus(Status.TO_DO.valueOf());
             }
             return projectTaskRepository.save(projectTask);
         } catch (Exception e) {

@@ -2,6 +2,7 @@ package com.scrumban.model;
 
 public enum Status {
 
+    BACKLOG("Backlog"),
     TO_DO("To Do"),
     IN_PROGRESS("In Progress"),
     IN_TEST("Testing"),
@@ -13,7 +14,7 @@ public enum Status {
         this.status = status;
     }
 
-    public String getStatus() {
+    public String valueOf() {
         return this.status;
     }
 }
