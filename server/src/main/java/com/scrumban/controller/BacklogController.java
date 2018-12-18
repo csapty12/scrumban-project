@@ -43,13 +43,15 @@ public class BacklogController {
 
     @GetMapping("/{backlogId}")
     public ResponseEntity<?> getProjectTasksFromBacklog(@PathVariable String backlogId){
-        System.out.println("backlogID: " + backlogId);
+
         List<ProjectTask> projectTasks = projectTaskService.getProjectTasksFromBacklog(backlogId);
         return new ResponseEntity<>(projectTasks, HttpStatus.OK);
     }
 
     @GetMapping("/{backlogId}/{ticketNumber}")
     public ResponseEntity<?> getSingleProjectTask(@PathVariable String backlogId, @PathVariable String ticketNumber){
+        System.out.println("backlogID: " + backlogId);
+        System.out.println("ticketNumber: " + ticketNumber);
         ProjectTask projectTask = projectTaskService.getProjectTaskFromProjectSequence(backlogId,ticketNumber);
         return new ResponseEntity<>(projectTask, HttpStatus.OK);
     }
