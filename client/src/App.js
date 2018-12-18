@@ -13,6 +13,7 @@ import ProjectDashboard from "./components/Project/ProjectDashboard/ProjectDashb
 import { Provider } from "react-redux";
 import store from "./Store";
 import AddTicket from "./components/Project/ProjectDashboard/Tickets/AddTicket";
+import UpdateTicket from "./components/Project/ProjectDashboard/Tickets/UpdateTicket";
 
 class App extends Component {
   render() {
@@ -37,6 +38,11 @@ class App extends Component {
               exact
               path="/addProjectTask/:projectIdentifier"
               component={AddTicket}
+            />
+            <Route
+              exact
+              path="/updateProjectTicket/:projectIdentifier/:ticketIdentifier"
+              component={UpdateTicket}
             />
           </div>
         </Router>

@@ -9,6 +9,7 @@ export default class TicketForm extends Component {
     super(props);
 
     this.state = {
+      projectSequence: "",
       summary: "",
       acceptanceCriteria: "",
       status: "",
@@ -23,6 +24,34 @@ export default class TicketForm extends Component {
     });
   };
 
+  componentDidMount = () => {
+    const { projectIdentifier, ticketIdentifier } = this.props;
+    if (projectIdentifier !== undefined) {
+      if (ticketIdentifier !== undefined) {
+        console.log(
+          "fetching project with ID: " +
+            projectIdentifier +
+            " for ticket: " +
+            ticketIdentifier
+        );
+        axios
+          .get(
+            `http://localhost:8080/api/backlog/${projectIdentifier}/${ticketIdentifier}`
+          )
+          .then(json => {
+            console.log(JSON.stringify(json.data.status));
+            this.setState({
+              id: json.data.id,
+              summary: json.data.summary,
+              acceptanceCriteria: json.data.acceptanceCriteria,
+              status: json.data.status,
+              priority: json.data.priority
+            });
+          });
+      }
+    }
+  };
+
   handleSubmit = event => {
     const projectIdentifier = this.props.projectIdentifier;
     event.preventDefault();
@@ -33,14 +62,11 @@ export default class TicketForm extends Component {
       priority: this.state.priority
     };
 
-    console.log("new ticket: " + JSON.stringify(newTicket));
     axios
       .post(`http://localhost:8080/api/backlog/${projectIdentifier}`, newTicket)
       .then(() => alert("thank you, the ticket has been created"))
       .catch(error => {
-        console.log("in here");
-        const errorResponse = error.response.data; //.response.data;
-        console.log("errorResponse: " + JSON.stringify(errorResponse));
+        const errorResponse = error.response.data;
         this.setState({
           errors: {
             summary: errorResponse.summary,
@@ -54,13 +80,15 @@ export default class TicketForm extends Component {
 
   render() {
     const errors = this.state.errors;
-    console.log(errors);
+
     return (
       <div className="project">
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
-              <h5 className="display-4 text-center">Create Ticket</h5>
+              <h5 className="display-4 text-center">
+                {this.props.type} Ticket
+              </h5>
               <hr />
               <form onSubmit={this.handleSubmit}>
                 <TextInput

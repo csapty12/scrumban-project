@@ -18,7 +18,7 @@ export default class ProjectForm extends Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     const { projectIdentifier } = this.props;
     console.log("pojectId: " + JSON.stringify(projectIdentifier));
     if (projectIdentifier !== undefined) {
@@ -36,7 +36,7 @@ export default class ProjectForm extends Component {
           })
         );
     }
-  }
+  };
 
   handleChange = event => {
     console.log(event.target.value);
