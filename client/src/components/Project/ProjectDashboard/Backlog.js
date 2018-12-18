@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import BacklogTicket from "./Tickets/Ticket";
+import Ticket from "./Tickets/Ticket";
 class Backlog extends Component {
   constructor(props) {
     super(props);
@@ -11,6 +11,8 @@ class Backlog extends Component {
       todo: [],
       inProgress: [],
       testing: [],
+      done: [],
+      blocked: [],
       projectIdentifier: props.projectIdentifier,
       errors: {}
     };
@@ -31,6 +33,26 @@ class Backlog extends Component {
               todo: this.state.todo.concat(item)
             });
           }
+          if (item.status === "IN_PROGRESS") {
+            this.setState({
+              inProgress: this.state.inProgress.concat(item)
+            });
+          }
+          if (item.status === "TESTING") {
+            this.setState({
+              testing: this.state.testing.concat(item)
+            });
+          }
+          if (item.status === "DONE") {
+            this.setState({
+              done: this.state.done.concat(item)
+            });
+          }
+          if (item.status === "BLOCKED") {
+            this.setState({
+              blocked: this.state.blocked.concat(item)
+            });
+          }
         });
       })
       .catch(json => {
@@ -43,8 +65,7 @@ class Backlog extends Component {
   }
 
   render() {
-    const backlog = this.state.backlog;
-    const todo = this.state.todo;
+    const { backlog, todo, inProgress, testing, done, blocked } = this.state;
 
     if (this.state.errors.projectIdentifier) {
       return (
@@ -68,7 +89,7 @@ class Backlog extends Component {
                   </div>
                 </Link>
                 {backlog.map(ticket => (
-                  <BacklogTicket key={ticket.id} ticket={ticket} />
+                  <Ticket key={ticket.id} ticket={ticket} />
                 ))}
               </div>
             </div>
@@ -78,7 +99,7 @@ class Backlog extends Component {
                   To Do
                 </h4>
                 {todo.map(ticket => (
-                  <BacklogTicket key={ticket.id} ticket={ticket} />
+                  <Ticket key={ticket.id} ticket={ticket} />
                 ))}
               </div>
             </div>
@@ -87,6 +108,9 @@ class Backlog extends Component {
                 <h4 className="display-5 text-center title-inprogress__border">
                   In Progress
                 </h4>
+                {inProgress.map(ticket => (
+                  <Ticket key={ticket.id} ticket={ticket} />
+                ))}
               </div>
             </div>
             <div className="card--content col-10 col-lg-3">
@@ -94,6 +118,9 @@ class Backlog extends Component {
                 <h4 className="display-5 text-center title-testing__border">
                   Testing
                 </h4>
+                {testing.map(ticket => (
+                  <Ticket key={ticket.id} ticket={ticket} />
+                ))}
               </div>
             </div>
             <div className="card--content col-10 col-lg-3">
@@ -101,6 +128,19 @@ class Backlog extends Component {
                 <h4 className="display-5 text-center title-done__border">
                   Done
                 </h4>
+                {done.map(ticket => (
+                  <Ticket key={ticket.id} ticket={ticket} />
+                ))}
+              </div>
+            </div>
+            <div className="card--content col-10 col-lg-3">
+              <div className="card-vertical-scroll-enabled">
+                <h4 className="display-5 text-center title-blocked__border">
+                  Blocked
+                </h4>
+                {blocked.map(ticket => (
+                  <Ticket key={ticket.id} ticket={ticket} />
+                ))}
               </div>
             </div>
           </section>

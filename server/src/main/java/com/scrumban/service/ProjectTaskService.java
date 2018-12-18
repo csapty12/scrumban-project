@@ -55,9 +55,9 @@ public class ProjectTaskService {
 
     public List<ProjectTask> getProjectTasksFromBacklog(String projectIdentifier) {
         List<ProjectTask> allProjectTasks = projectTaskRepository.findAllByProjectIdentifier(projectIdentifier.toUpperCase());
-        if (allProjectTasks.isEmpty()) {
-            throw new ProjectNotFoundException("Project ID: " + projectIdentifier + " not found");
-        }
+//        if (allProjectTasks.isEmpty()) {
+//            throw new ProjectNotFoundException("Project ID: " + projectIdentifier + " not found");
+//        }
         return allProjectTasks;
     }
 

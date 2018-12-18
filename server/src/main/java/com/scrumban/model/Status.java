@@ -6,7 +6,8 @@ public enum Status {
     TO_DO("To Do"),
     IN_PROGRESS("IN PROGRESS"),
     IN_TEST("TESTING"),
-    DONE("DONE");
+    DONE("DONE"),
+    BLOCKED("BLOCKED");
 
     private String status;
 

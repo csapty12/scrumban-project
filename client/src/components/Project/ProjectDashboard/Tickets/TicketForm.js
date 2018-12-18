@@ -9,6 +9,7 @@ export default class TicketForm extends Component {
     super(props);
 
     this.state = {
+      id: "",
       projectSequence: "",
       summary: "",
       acceptanceCriteria: "",
@@ -39,7 +40,7 @@ export default class TicketForm extends Component {
             `http://localhost:8080/api/backlog/${projectIdentifier}/${ticketIdentifier}`
           )
           .then(json => {
-            console.log(JSON.stringify(json.data.status));
+            console.log(JSON.stringify(json.data.id));
             this.setState({
               id: json.data.id,
               summary: json.data.summary,
@@ -56,15 +57,24 @@ export default class TicketForm extends Component {
     const projectIdentifier = this.props.projectIdentifier;
     event.preventDefault();
     const newTicket = {
+      id: this.state.id,
       summary: this.state.summary,
       acceptanceCriteria: this.state.acceptanceCriteria,
       status: this.state.status,
       priority: this.state.priority
     };
+    console.log(JSON.stringify(newTicket));
 
     axios
       .post(`http://localhost:8080/api/backlog/${projectIdentifier}`, newTicket)
-      .then(() => alert("thank you, the ticket has been created"))
+      .then(() => {
+        let type = "created";
+        if (newTicket.id !== "") {
+          type = "updated";
+        }
+        alert("thank you, the ticket has been " + type);
+      })
+
       .catch(error => {
         const errorResponse = error.response.data;
         this.setState({
@@ -104,7 +114,7 @@ export default class TicketForm extends Component {
                   className="form-control form-control-sm"
                   placeholder="Acceptance Criteria"
                   name="acceptanceCriteria"
-                  value={this.state.acceptanceCriteria}
+                  description={this.state.acceptanceCriteria}
                   handleChange={this.handleChange}
                   onError={errors.acceptanceCriteria}
                 />
@@ -119,6 +129,14 @@ export default class TicketForm extends Component {
                     <option>Status</option>
                     <option value="BACKLOG">Backlog</option>
                     <option value="TO_DO">To Do</option>
+                    {this.state.id !== "" && (
+                      <React.Fragment>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="TESTING">In Test</option>
+                        <option value="DONE">Done</option>
+                        <option value="BLOCKED">Blocked</option>
+                      </React.Fragment>
+                    )}
                   </select>
                 </div>
                 <div className="form-group">
