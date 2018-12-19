@@ -21,9 +21,6 @@ body {
   overflow-y: scroll;
 }
 
-.fixed-header {
-  position: fixed;
-}
 .title-backlog__border {
   border-bottom: 2px solid #0297f9;
 }
@@ -58,4 +55,26 @@ body {
 }
 .ticket-text {
   font-size: 0.8em;
+}
+
+.priority-low {
+  border-left: 4px solid #5fc745;
+}
+
+.priority-medium {
+  border-left: 4px solid #ffc75e;
+}
+
+.priority-high {
+  border-left: 4px solid #f75a47;
+}
+.card-delete {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.close-button {
+  color: #696969;
+  cursor: pointer;
 }

@@ -29,18 +29,18 @@ export default class TicketForm extends Component {
     const { projectIdentifier, ticketIdentifier } = this.props;
     if (projectIdentifier !== undefined) {
       if (ticketIdentifier !== undefined) {
-        console.log(
-          "fetching project with ID: " +
-            projectIdentifier +
-            " for ticket: " +
-            ticketIdentifier
-        );
+        // console.log(
+        //   "fetching project with ID: " +
+        //     projectIdentifier +
+        //     " for ticket: " +
+        //     ticketIdentifier
+        // );
         axios
           .get(
             `http://localhost:8080/api/backlog/${projectIdentifier}/${ticketIdentifier}`
           )
           .then(json => {
-            console.log(JSON.stringify(json.data.id));
+            // console.log(JSON.stringify(json.data.id));
             this.setState({
               id: json.data.id,
               summary: json.data.summary,
@@ -63,7 +63,7 @@ export default class TicketForm extends Component {
       status: this.state.status,
       priority: this.state.priority
     };
-    console.log(JSON.stringify(newTicket));
+    // console.log(JSON.stringify(newTicket));
 
     axios
       .post(`http://localhost:8080/api/backlog/${projectIdentifier}`, newTicket)

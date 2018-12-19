@@ -20,9 +20,9 @@ export default class ProjectForm extends Component {
 
   componentDidMount = () => {
     const { projectIdentifier } = this.props;
-    console.log("pojectId: " + JSON.stringify(projectIdentifier));
+    // console.log("pojectId: " + JSON.stringify(projectIdentifier));
     if (projectIdentifier !== undefined) {
-      console.log("fetching project with ID: " + projectIdentifier);
+      // console.log("fetching project with ID: " + projectIdentifier);
       axios
         .get(`http://localhost:8080/api/project/${projectIdentifier}`)
         .then(json =>
@@ -39,7 +39,7 @@ export default class ProjectForm extends Component {
   };
 
   handleChange = event => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -47,10 +47,14 @@ export default class ProjectForm extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    console.log("project name" + this.state.projectName);
+    const projectId = this.state.projectName.match(/\b(\w)/g).join("");
+    console.log("projectIdentifier: " + projectId);
+
     const newProject = {
       id: this.state.id,
       projectName: this.state.projectName,
-      projectIdentifier: this.state.projectIdentifier,
+      projectIdentifier: projectId,
       description: this.state.description,
       startDate: this.state.startDate,
       endDate: this.state.endDate

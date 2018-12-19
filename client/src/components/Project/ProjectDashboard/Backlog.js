@@ -64,6 +64,27 @@ class Backlog extends Component {
       });
   }
 
+  handleTicketDelete = project => {
+    const backlogTickets = this.state.backlog;
+    const { projectIdentifier, projectSequence } = project;
+    if (
+      window.confirm(
+        `Are you sure you want to delete ticket: ${projectSequence}`
+      )
+    ) {
+      axios
+        .delete(
+          `http://localhost:8080/api/backlog/${projectIdentifier}/${projectSequence}`
+        )
+        .then(() => {
+          let filteredTickets = backlogTickets.filter(
+            item => item.projectSequence !== projectSequence
+          );
+          this.setState({ backlog: filteredTickets });
+        });
+    }
+  };
+
   render() {
     const { backlog, todo, inProgress, testing, done, blocked } = this.state;
 
@@ -89,7 +110,11 @@ class Backlog extends Component {
                   </div>
                 </Link>
                 {backlog.map(ticket => (
-                  <Ticket key={ticket.id} ticket={ticket} />
+                  <Ticket
+                    key={ticket.id}
+                    ticket={ticket}
+                    deleteTicket={this.handleTicketDelete}
+                  />
                 ))}
               </div>
             </div>

@@ -23,20 +23,26 @@ class Dashboard extends Component {
   handleProjectDelete = project => {
     const currentProjects = this.state.allProjects;
     const { projectIdentifier } = project;
-    axios
-      .delete(`http://localhost:8080/api/project/${projectIdentifier}`)
-      .then(() => alert(`project: ${projectIdentifier} has been deleted`))
-      .then(() => {
-        let filteredProjects = currentProjects.filter(
-          item => item.projectIdentifier !== projectIdentifier
-        );
-        this.setState({ allProjects: filteredProjects });
-      });
+    if (
+      window.confirm(
+        `Are you sure you want to delete project: ${projectIdentifier}`
+      )
+    ) {
+      axios
+        .delete(`http://localhost:8080/api/project/${projectIdentifier}`)
+        .then(() => alert(`project: ${projectIdentifier} has been deleted`))
+        .then(() => {
+          let filteredProjects = currentProjects.filter(
+            item => item.projectIdentifier !== projectIdentifier
+          );
+          this.setState({ allProjects: filteredProjects });
+        });
+    }
   };
 
   render() {
     const allProjects = this.state.allProjects;
-    console.log(allProjects);
+    // console.log(allProjects);
     return (
       <div className="projects">
         <div className="container">
