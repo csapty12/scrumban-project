@@ -14,7 +14,6 @@ import { Provider } from "react-redux";
 import store from "./Store";
 import AddTicket from "./components/Project/ProjectDashboard/Tickets/AddTicket";
 import UpdateTicket from "./components/Project/ProjectDashboard/Tickets/UpdateTicket";
-import Slug from "react-slug";
 
 class App extends Component {
   render() {
