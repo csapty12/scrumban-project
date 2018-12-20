@@ -3,6 +3,7 @@ import TextInput from "./TextInput";
 import TextArea from "./TextArea";
 import axios from "axios";
 import SubmitButton from "./SubmitButton";
+// import Slug from "react-slug";
 
 export default class ProjectForm extends Component {
   constructor(props) {
@@ -47,18 +48,21 @@ export default class ProjectForm extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    console.log("project name" + this.state.projectName);
-    const projectId = this.state.projectName.match(/\b(\w)/g).join("");
-    console.log("projectIdentifier: " + projectId);
+    let slugify = require("slugify");
+    const projectIdentifierSlug = slugify(this.state.projectName);
+    // const projectId = this.state.projectName.match(/\b(\w)/g).join("");
+    // console.log("projectIdentifier: " + projectId);
 
     const newProject = {
       id: this.state.id,
       projectName: this.state.projectName,
-      projectIdentifier: projectId,
+      projectIdentifier: projectIdentifierSlug,
       description: this.state.description,
       startDate: this.state.startDate,
       endDate: this.state.endDate
     };
+
+    console.log("new project: " + JSON.stringify(newProject));
 
     axios
       .post("http://localhost:8080/api/project", newProject)
@@ -96,15 +100,6 @@ export default class ProjectForm extends Component {
                   value={this.state.projectName}
                   handleChange={this.handleChange}
                   onError={this.state.errors.projectName}
-                />
-                <TextInput
-                  type="text"
-                  placeholder="Project Identifier"
-                  name="projectIdentifier"
-                  value={this.state.projectIdentifier}
-                  handleChange={this.handleChange}
-                  onError={this.state.errors.projectIdentifier}
-                  disabled={this.props.disabledId}
                 />
                 <TextArea
                   className="form-control form-control-sm"
