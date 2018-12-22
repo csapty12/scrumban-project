@@ -38,6 +38,7 @@ public class ProjectTask {
     private Backlog backlog;
 
 
+
     @Column(updatable = false)
     private String projectIdentifier; //this is so you can ensure that when you are making changes to a project task, it is that ticket, part of that specific backlog, part of that specific project.
 

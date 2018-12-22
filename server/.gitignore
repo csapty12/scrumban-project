@@ -3,7 +3,7 @@ client/node_modules
 /.pnp
 .pnp.js
 
-# testing
+# com.scrumban.testing
 /coverage
 
 # production

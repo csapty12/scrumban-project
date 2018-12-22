@@ -1,18 +1,17 @@
 package com.scrumban.service;
 
 import com.scrumban.exception.ProjectNotFoundException;
-import com.scrumban.model.Backlog;
-import com.scrumban.model.Project;
-import com.scrumban.model.ProjectTask;
-import com.scrumban.model.Status;
+import com.scrumban.model.*;
 import com.scrumban.repository.BacklogRepository;
 import com.scrumban.repository.ProjectRepository;
 import com.scrumban.repository.ProjectTaskRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static com.scrumban.model.Priority.LOW;
 
@@ -67,12 +66,37 @@ public class ProjectTaskService {
         return abbrev;
     }
 
-    public List<ProjectTask> getProjectTasksFromBacklog(String projectIdentifier) {
+    public Tasks getProjectTasksFromBacklog(String projectIdentifier) {
         List<ProjectTask> allProjectTasks = projectTaskRepository.findAllByProjectIdentifier(projectIdentifier.toUpperCase());
+        Tasks tasks = new Tasks();
+        tasks.setTasks(addAllTasks(allProjectTasks));
+        tasks.setColumns(addColumn(allProjectTasks));
+
 //        if (allProjectTasks.isEmpty()) {
 //            throw new ProjectNotFoundException("Project ID: " + projectIdentifier + " not found");
 //        }
-        return allProjectTasks;
+        return tasks;
+    }
+
+    private List<Map<String, ProjectDashboardColumn>> addColumn(List<ProjectTask> allProjectTasks) {
+        List<String> allColumns = new ArrayList<>();
+        allProjectTasks.forEach(column -> allColumns.add(column.getStatus()));
+        List<String> uniqueColumns = allColumns.stream().distinct().collect(Collectors.toList());
+        System.out.printf("unique columns: " + uniqueColumns);
+//        Set<ProjectTask> columns = allProjectTasks.stream().distinct().collect(Collectors.toSet());
+//        for(ProjectTask p: columns){
+//            System.out.println("column: "  + p.get );
+//        }
+        return null;
+    }
+
+    private List<Map<String,ProjectTask>> addAllTasks(List<ProjectTask> allProjectTasks) {
+        List<Map<String,ProjectTask>> projectTaskList = new ArrayList<>();
+        Map<String, ProjectTask> projectTaskMap = new HashMap<>();
+        allProjectTasks.forEach(projectTask -> projectTaskMap.put(projectTask.getProjectSequence(), projectTask));
+        projectTaskList.add(projectTaskMap);
+        return projectTaskList;
+
     }
 
     public ProjectTask getProjectTaskFromProjectSequence(String backlogId, String projectSequence) {

@@ -6,13 +6,8 @@ class Backlog extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allTickets: [],
-      backlog: [],
-      todo: [],
-      inProgress: [],
-      testing: [],
-      done: [],
-      blocked: [],
+      backlog: {},
+
       projectIdentifier: props.projectIdentifier,
       errors: {}
     };
@@ -22,38 +17,14 @@ class Backlog extends Component {
     axios
       .get(`http://localhost:8080/api/backlog/${this.state.projectIdentifier}`)
       .then(json => {
-        json.data.forEach(item => {
-          if (item.status === "BACKLOG") {
-            this.setState({
-              backlog: this.state.backlog.concat(item)
-            });
-          }
-          if (item.status === "TO_DO") {
-            this.setState({
-              todo: this.state.todo.concat(item)
-            });
-          }
-          if (item.status === "IN_PROGRESS") {
-            this.setState({
-              inProgress: this.state.inProgress.concat(item)
-            });
-          }
-          if (item.status === "TESTING") {
-            this.setState({
-              testing: this.state.testing.concat(item)
-            });
-          }
-          if (item.status === "DONE") {
-            this.setState({
-              done: this.state.done.concat(item)
-            });
-          }
-          if (item.status === "BLOCKED") {
-            this.setState({
-              blocked: this.state.blocked.concat(item)
-            });
-          }
-        });
+        console.log("json for ticket: " + JSON.stringify(json));
+        // json.data.forEach(item => {
+        //   if (item.status === "BACKLOG") {
+        //     this.setState({
+        //       backlog: this.state.backlog.concat(item)
+        //     });
+        //   }
+        // });
       })
       .catch(json => {
         this.setState({
@@ -109,63 +80,13 @@ class Backlog extends Component {
                     <div className="card-header">Add Ticket &#x2b;</div>
                   </div>
                 </Link>
-                {backlog.map(ticket => (
+                {/*backlog.map(ticket => (
                   <Ticket
                     key={ticket.id}
                     ticket={ticket}
                     deleteTicket={this.handleTicketDelete}
                   />
-                ))}
-              </div>
-            </div>
-            <div className="card--content col-10 col-lg-3">
-              <div className="card-vertical-scroll-enabled">
-                <h4 className="display-5 text-center title-todo__border">
-                  To Do
-                </h4>
-                {todo.map(ticket => (
-                  <Ticket key={ticket.id} ticket={ticket} />
-                ))}
-              </div>
-            </div>
-            <div className="card--content col-10 col-lg-3">
-              <div className="card-vertical-scroll-enabled">
-                <h4 className="display-5 text-center title-inprogress__border">
-                  In Progress
-                </h4>
-                {inProgress.map(ticket => (
-                  <Ticket key={ticket.id} ticket={ticket} />
-                ))}
-              </div>
-            </div>
-            <div className="card--content col-10 col-lg-3">
-              <div className="card-vertical-scroll-enabled">
-                <h4 className="display-5 text-center title-testing__border">
-                  Testing
-                </h4>
-                {testing.map(ticket => (
-                  <Ticket key={ticket.id} ticket={ticket} />
-                ))}
-              </div>
-            </div>
-            <div className="card--content col-10 col-lg-3">
-              <div className="card-vertical-scroll-enabled">
-                <h4 className="display-5 text-center title-done__border">
-                  Done
-                </h4>
-                {done.map(ticket => (
-                  <Ticket key={ticket.id} ticket={ticket} />
-                ))}
-              </div>
-            </div>
-            <div className="card--content col-10 col-lg-3">
-              <div className="card-vertical-scroll-enabled">
-                <h4 className="display-5 text-center title-blocked__border">
-                  Blocked
-                </h4>
-                {blocked.map(ticket => (
-                  <Ticket key={ticket.id} ticket={ticket} />
-                ))}
+                )) */}
               </div>
             </div>
           </section>
