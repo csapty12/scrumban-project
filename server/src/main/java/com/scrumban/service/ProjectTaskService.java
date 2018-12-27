@@ -62,7 +62,14 @@ public class ProjectTaskService {
         Tasks tasks = new Tasks();
         tasks.setTasks(addAllTasks(allProjectTasks));
         List<Map<String, ProjectDashboardColumn>> columns = addColumn(allProjectTasks);
+        List<String> columnOrder = new ArrayList<>();
+        columns.forEach(column->{
+            for ( String key : column.keySet() ) {
+                columnOrder.add(key );
+            }
+        });
         tasks.setColumns(columns);
+        tasks.setColumnOrder(columnOrder);
         return tasks;
     }
 
@@ -105,15 +112,17 @@ public class ProjectTaskService {
         List<String> uniqueColumns = allColumns.stream().distinct().collect(Collectors.toList());
         System.out.println("unique columns: " + uniqueColumns);
 
-        Map<String, ProjectDashboardColumn> projectDashboardColumnMap = new HashMap<>();
+
+        List<Map<String, ProjectDashboardColumn>> columnObject = new ArrayList<>();
         int columnNumber = 1;
         for (String columnName : uniqueColumns) {
+            Map<String, ProjectDashboardColumn> projectDashboardColumnMap = new HashMap<>();
             String columnId = "column-" + columnNumber;
             projectDashboardColumnMap.put(columnId, createColumnAndInsertTasks(columnId, columnName, allProjectTasks));
+            columnObject.add(projectDashboardColumnMap);
             columnNumber++;
         }
 
-        List<Map<String, ProjectDashboardColumn>> columnObject = new ArrayList<>(Arrays.asList(projectDashboardColumnMap));
         return columnObject;
     }
 

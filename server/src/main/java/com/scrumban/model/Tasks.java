@@ -16,5 +16,6 @@ import java.util.Map;
 public class Tasks {
     private List<Map<String, ProjectTask>> tasks;
     private List<Map<String, ProjectDashboardColumn>> columns;
+    private List<String> columnOrder;
 
 }
