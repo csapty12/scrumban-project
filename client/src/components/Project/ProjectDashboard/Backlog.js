@@ -59,7 +59,6 @@ class Backlog extends Component {
 
   render() {
     let columnData = {};
-
     if (this.state.columnOrder.length > 0) {
       this.state.columnOrder.forEach(columnId => {
         columnData[columnId] = null;
@@ -75,17 +74,9 @@ class Backlog extends Component {
             {this.state.columnOrder.map(columnId => {
               const column = columnData[columnId];
               const tasks = column.taskIds.map(
-                taskId => this.state.allTickets[taskId]
+                taskId => this.state.allTickets[0][taskId]
               );
-              return (
-                <div className="card--content col-10 col-lg-3" key={column.id}>
-                  <div className="card-vertical-scroll-enabled">
-                    <h4 className="display-5 text-center title-backlog__border">
-                      <Column key={column.id} column={column} tasks={tasks} />
-                    </h4>
-                  </div>
-                </div>
-              );
+              return <Column key={column.id} column={column} tasks={tasks} />;
             })}
           </section>
         </div>
