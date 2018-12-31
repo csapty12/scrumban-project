@@ -2,6 +2,8 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Ticket from "./Tickets/Ticket";
+import Column from "./Column";
+// import "@atlaskit/css-reset";
 class Backlog extends Component {
   constructor(props) {
     super(props);
@@ -67,16 +69,34 @@ class Backlog extends Component {
           column[this.state.columnOrder[index]];
       });
       console.log("column data: " + JSON.stringify(columnData));
-      return this.state.columnOrder.map(columnId => {
-        const column = columnData[columnId];
-        console.log(column.title);
-        return column.title;
-      });
+      return (
+        <div className="container-fluid">
+          <section className="card-horizontal-scrollable-container">
+            {this.state.columnOrder.map(columnId => {
+              const column = columnData[columnId];
+              const tasks = column.taskIds.map(
+                taskId => this.state.allTickets[taskId]
+              );
+              return (
+                <div className="card--content col-10 col-lg-3" key={column.id}>
+                  <div className="card-vertical-scroll-enabled">
+                    <h4 className="display-5 text-center title-backlog__border">
+                      <Column key={column.id} column={column} tasks={tasks} />
+                    </h4>
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+        </div>
+      );
     } else {
       return null;
     }
-    return <Fragment />;
   }
 }
 
 export default Backlog;
+{
+  /*<Column key={column.id} column={column} tasks={tasks} />*/
+}
