@@ -1,10 +1,8 @@
-import React, { Component, Fragment } from "react";
-import { Link } from "react-router-dom";
+import React, { Component } from "react";
+// import { Link } from "react-router-dom";
 import Ticket from "./Tickets/Ticket";
+import { Droppable } from "react-beautiful-dnd";
 export default class Column extends Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     console.log("tasks:  " + this.props.tasks);
     return (
@@ -18,11 +16,20 @@ export default class Column extends Component {
               <div className="card-header">Add Ticket &#x2b;</div>
             </div>
           </a>
-          <div>
-            {this.props.tasks.map(task => (
-              <Ticket ticket={task} key={task.id} />
-            ))}
-          </div>
+          <Droppable droppableId={this.props.column.id}>
+            {provided => (
+              <div
+                innerRef={provided.innerRef}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {this.props.tasks.map((task, index) => (
+                  <Ticket ticket={task} key={task.id} index={index} />
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         </div>
       </div>
     );

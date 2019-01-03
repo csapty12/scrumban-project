@@ -4,10 +4,6 @@ import "font-awesome/css/font-awesome.min.css";
 import Backlog from "./Backlog";
 
 class ProjectDashboard extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { projectIdentifier } = this.props.match.params;
     return (

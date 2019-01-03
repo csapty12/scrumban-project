@@ -1,10 +1,9 @@
-import React, { Component, Fragment } from "react";
-import { Link } from "react-router-dom";
+import React, { Component } from "react";
+// import { Link } from "react-router-dom";
 import axios from "axios";
-import Ticket from "./Tickets/Ticket";
 import Column from "./Column";
-// import "@atlaskit/css-reset";
-class Backlog extends Component {
+import { DragDropContext } from "react-beautiful-dnd";
+export default class Backlog extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,7 +19,6 @@ class Backlog extends Component {
     axios
       .get(`http://localhost:8080/api/backlog/${this.state.projectIdentifier}`)
       .then(json => {
-        console.log("json for ticket: " + JSON.stringify(json));
         this.setState({
           allTickets: json.data.tasks,
           columns: json.data.columns,
@@ -56,6 +54,50 @@ class Backlog extends Component {
         });
     }
   };
+  onDragEnd = result => {
+    let columnData = {};
+    const { destination, source, draggableId } = result;
+    if (!destination) {
+      return;
+    }
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    this.state.columnOrder.forEach(columnId => {
+      columnData[columnId] = null;
+    });
+    this.state.columns.forEach((column, index) => {
+      columnData[this.state.columnOrder[index]] =
+        column[this.state.columnOrder[index]];
+    });
+
+    const column = columnData[source.droppableId];
+    const newTaskIds = Array.from(column.taskIds);
+
+    const splicedValue = newTaskIds.splice(source.index, 1);
+
+    newTaskIds.splice(destination.index, 0, splicedValue);
+
+    const newColumn = {
+      ...column,
+      taskIds: newTaskIds.reduce(function(prev, curr) {
+        return prev.concat(curr);
+      })
+    };
+    const newState = {
+      ...this.state,
+      columns: {
+        ...this.state.columns,
+        [newColumn.id]: newColumn
+      }
+    };
+
+    console.log("new state: " + JSON.stringify(newState));
+  };
 
   render() {
     let columnData = {};
@@ -71,13 +113,15 @@ class Backlog extends Component {
       return (
         <div className="container-fluid">
           <section className="card-horizontal-scrollable-container">
-            {this.state.columnOrder.map(columnId => {
-              const column = columnData[columnId];
-              const tasks = column.taskIds.map(
-                taskId => this.state.allTickets[0][taskId]
-              );
-              return <Column key={column.id} column={column} tasks={tasks} />;
-            })}
+            <DragDropContext onDragEnd={this.onDragEnd}>
+              {this.state.columnOrder.map(columnId => {
+                const column = columnData[columnId];
+                const tasks = column.taskIds.map(
+                  taskId => this.state.allTickets[0][taskId]
+                );
+                return <Column key={column.id} column={column} tasks={tasks} />;
+              })}
+            </DragDropContext>
           </section>
         </div>
       );
@@ -85,9 +129,4 @@ class Backlog extends Component {
       return null;
     }
   }
-}
-
-export default Backlog;
-{
-  /*<Column key={column.id} column={column} tasks={tasks} />*/
 }
