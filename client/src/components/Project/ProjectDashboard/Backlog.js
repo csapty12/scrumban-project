@@ -24,14 +24,14 @@ export default class Backlog extends Component {
           columns: json.data.columns,
           columnOrder: json.data.columnOrder
         });
-      })
-      .catch(json => {
-        this.setState({
-          errors: {
-            projectIdentifier: json.response.data.projectIdentifier
-          }
-        });
       });
+    // .catch(json => {
+    //   this.setState({
+    //     errors: {
+    //       projectIdentifier: json.response.data.projectIdentifier
+    //     }
+    //   });
+    // });
   }
 
   handleTicketDelete = project => {
@@ -54,8 +54,8 @@ export default class Backlog extends Component {
         });
     }
   };
+
   onDragEnd = result => {
-    let columnData = {};
     const { destination, source, draggableId } = result;
     if (!destination) {
       return;
@@ -66,67 +66,67 @@ export default class Backlog extends Component {
     ) {
       return;
     }
-
-    this.state.columnOrder.forEach(columnId => {
-      columnData[columnId] = null;
+    const column = this.state.columns;
+    const selectedColumn = column.find(item => {
+      if (item[source.droppableId] !== undefined) {
+        // console.log("item: " + JSON.stringify(item));
+        return item;
+      }
     });
-    this.state.columns.forEach((column, index) => {
-      columnData[this.state.columnOrder[index]] =
-        column[this.state.columnOrder[index]];
-    });
-
-    const column = columnData[source.droppableId];
-    const newTaskIds = Array.from(column.taskIds);
-
-    const splicedValue = newTaskIds.splice(source.index, 1);
-
-    newTaskIds.splice(destination.index, 0, splicedValue);
+    console.log("selected column: " + JSON.stringify(selectedColumn));
+    const newTaskIds = Array.from(selectedColumn[source.droppableId].taskIds);
+    console.log("new task id: " + newTaskIds);
+    newTaskIds.splice(source.index, 1);
+    newTaskIds.splice(destination.index, 0, draggableId);
 
     const newColumn = {
-      ...column,
-      taskIds: newTaskIds.reduce(function(prev, curr) {
-        return prev.concat(curr);
-      })
+      ...selectedColumn[source.droppableId],
+      taskIds: newTaskIds
     };
+    console.log("NEW COLUMN: " + JSON.stringify(newColumn));
+    const columnNewState = [...column];
+    const selectedNewColumn = column.find((item, index) => {
+      if (item[source.droppableId] !== undefined) {
+        selectedColumn[source.droppableId] = newColumn;
+        console.log(
+          "item with index: " +
+            index +
+            ">>>" +
+            JSON.stringify(item[source.droppableId])
+        );
+        const value = columnNewState.splice(index, 1);
+        columnNewState.splice(index, 0, selectedColumn);
+      }
+    });
+    console.log("columns NEW: " + JSON.stringify(selectedColumn));
     const newState = {
       ...this.state,
-      columns: {
-        ...this.state.columns,
-        [newColumn.id]: newColumn
-      }
+      columns: columnNewState
     };
-
-    console.log("new state: " + JSON.stringify(newState));
+    console.log("NEW STATE: " + JSON.stringify(newState));
+    this.setState(newState);
   };
 
   render() {
-    let columnData = {};
-    if (this.state.columnOrder.length > 0) {
-      this.state.columnOrder.forEach(columnId => {
-        columnData[columnId] = null;
-      });
-      this.state.columns.forEach((column, index) => {
-        columnData[this.state.columnOrder[index]] =
-          column[this.state.columnOrder[index]];
-      });
-      console.log("column data: " + JSON.stringify(columnData));
-      return (
-        <div className="container-fluid">
-          <section className="card-horizontal-scrollable-container">
-            <DragDropContext onDragEnd={this.onDragEnd}>
-              {this.state.columnOrder.map(columnId => {
-                const column = columnData[columnId];
-                const tasks = column.taskIds.map(
-                  taskId => this.state.allTickets[0][taskId]
-                );
-                return <Column key={column.id} column={column} tasks={tasks} />;
-              })}
-            </DragDropContext>
-          </section>
-        </div>
-      );
-    } else {
-      return null;
-    }
+    // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
+    // console.log("this.columns" + JSON.stringify(this.state.columns));
+    // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
+
+    return (
+      <div className="container-fluid">
+        <section className="card-horizontal-scrollable-container">
+          <DragDropContext onDragEnd={this.onDragEnd}>
+            {this.state.columnOrder.map((columnId, index) => {
+              const column = this.state.columns[index][columnId];
+              const tasks = column.taskIds.map(
+                (taskId, index) => this.state.allTickets[0][taskId]
+              );
+              // console.log("tasks: " + JSON.stringify(tasks));
+              return <Column key={column.id} column={column} tasks={tasks} />;
+            })}
+          </DragDropContext>
+        </section>
+      </div>
+    );
   }
 }

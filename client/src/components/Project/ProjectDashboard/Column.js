@@ -2,9 +2,14 @@ import React, { Component } from "react";
 // import { Link } from "react-router-dom";
 import Ticket from "./Tickets/Ticket";
 import { Droppable } from "react-beautiful-dnd";
+import styled from "styled-components";
+
+const TaskList = styled.div``;
+
 export default class Column extends Component {
   render() {
-    console.log("tasks:  " + this.props.tasks);
+    // console.log("column information:  " + JSON.stringify(this.props.column));
+    // console.log("tasks in column:  " + JSON.stringify(this.props.tasks));
     return (
       <div className="card--content col-10 col-lg-3">
         <div className="card-vertical-scroll-enabled">
@@ -18,16 +23,12 @@ export default class Column extends Component {
           </a>
           <Droppable droppableId={this.props.column.id}>
             {provided => (
-              <div
-                innerRef={provided.innerRef}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
+              <TaskList ref={provided.innerRef} {...provided.droppableProps}>
                 {this.props.tasks.map((task, index) => (
-                  <Ticket ticket={task} key={task.id} index={index} />
+                  <Ticket key={task.id} ticket={task} index={index} />
                 ))}
                 {provided.placeholder}
-              </div>
+              </TaskList>
             )}
           </Droppable>
         </div>

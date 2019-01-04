@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "../projectDashboard.css";
 import { Draggable } from "react-beautiful-dnd";
+import styled from "styled-components";
+
+const Task = styled.div``;
 
 class Ticket extends Component {
   constructor(props) {
@@ -38,13 +41,15 @@ class Ticket extends Component {
       priorityClass = "priority-high";
     }
     return (
-      <Draggable draggableId={this.props.ticket.id} index={this.props.index}>
+      <Draggable
+        draggableId={this.props.ticket.projectSequence}
+        index={this.props.index}
+      >
         {provided => (
-          <div
+          <Task
             className={`card ${priorityClass}`}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            innerRef={provided.innerRef}
             ref={provided.innerRef}
           >
             <div
@@ -74,7 +79,7 @@ class Ticket extends Component {
               </div>
               <div className="card-text ticket-text">{ticket.summary}</div>
             </div>
-          </div>
+          </Task>
         )}
       </Draggable>
     );
