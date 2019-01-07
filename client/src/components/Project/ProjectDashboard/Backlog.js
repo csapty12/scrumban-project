@@ -60,51 +60,109 @@ export default class Backlog extends Component {
     if (!destination) {
       return;
     }
+    console.log("result: " + JSON.stringify(result));
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
       return;
     }
-    const column = this.state.columns;
-    const selectedColumn = column.find(item => {
+    const columns = this.state.columns;
+    var movingTicket = this.state.allTickets[0][draggableId];
+    console.log(
+      "moving ticket: " + JSON.stringify(this.state.allTickets[0][draggableId])
+    );
+    const start = columns.find(item => {
       if (item[source.droppableId] !== undefined) {
-        // console.log("item: " + JSON.stringify(item));
         return item;
       }
+      return null;
     });
-    console.log("selected column: " + JSON.stringify(selectedColumn));
-    const newTaskIds = Array.from(selectedColumn[source.droppableId].taskIds);
-    console.log("new task id: " + newTaskIds);
-    newTaskIds.splice(source.index, 1);
-    newTaskIds.splice(destination.index, 0, draggableId);
 
-    const newColumn = {
-      ...selectedColumn[source.droppableId],
-      taskIds: newTaskIds
+    console.log("start: " + JSON.stringify(start));
+    const finish = columns.find(item => {
+      if (item[destination.droppableId] !== undefined) {
+        return item;
+      }
+      return null;
+    });
+
+    var destinationColumnTitle = finish[destination.droppableId].title
+      .toUpperCase()
+      .split(" ")
+      .join("_");
+    // destinationColumnTitle.map(item => item.toUpperCase());
+    console.log("destination column title: " + destinationColumnTitle);
+    var ticketAfterMove = {
+      ...movingTicket,
+      status: destinationColumnTitle
     };
-    console.log("NEW COLUMN: " + JSON.stringify(newColumn));
-    const columnNewState = [...column];
-    const selectedNewColumn = column.find((item, index) => {
-      if (item[source.droppableId] !== undefined) {
-        selectedColumn[source.droppableId] = newColumn;
-        console.log(
-          "item with index: " +
-            index +
-            ">>>" +
-            JSON.stringify(item[source.droppableId])
-        );
-        const value = columnNewState.splice(index, 1);
-        columnNewState.splice(index, 0, selectedColumn);
+    console.log("finish column title: " + destinationColumnTitle);
+    const startTasks = start[source.droppableId];
+
+    if (start === finish) {
+      const startTaskIds = Array.from(startTasks.taskIds);
+      startTaskIds.splice(source.index, 1);
+      startTaskIds.splice(destination.index, 0, draggableId);
+
+      const newColumn = {
+        ...startTasks,
+        taskIds: startTaskIds
+      };
+      const columnNewState = [...columns];
+      const selectedNewColumn = columns.find((item, index) => {
+        if (item[source.droppableId] !== undefined) {
+          start[source.droppableId] = newColumn;
+
+          const value = columnNewState.splice(index, 1);
+          columnNewState.splice(index, 0, start);
+        }
+      });
+      const newState = {
+        ...this.state,
+        columns: columnNewState
+      };
+      this.setState(newState);
+      return;
+    }
+    // logic for moving between columns will go here.
+    const startTaskIds = Array.from(startTasks.taskIds);
+    startTaskIds.splice(source.index, 1);
+
+    const newStart = {
+      ...startTasks,
+      taskIds: startTaskIds
+    };
+    const finishTaskIds = Array.from(finish[destination.droppableId].taskIds);
+    finishTaskIds.splice(destination.index, 0, draggableId);
+
+    const newFinish = {
+      ...finish[destination.droppableId],
+      taskIds: finishTaskIds
+    };
+    const columnNewState = [...columns];
+    const selectedNewColumn = columns.find((item, index) => {
+      if (item[destination.droppableId] !== undefined) {
+        start[source.droppableId] = newStart;
+        finish[destination.droppableId] = newFinish;
       }
     });
-    console.log("columns NEW: " + JSON.stringify(selectedColumn));
     const newState = {
       ...this.state,
       columns: columnNewState
     };
-    console.log("NEW STATE: " + JSON.stringify(newState));
+
     this.setState(newState);
+    this.persistTicketToNewColumn(ticketAfterMove);
+  };
+
+  persistTicketToNewColumn = ticketAfterMove => {
+    console.log("udpated ticket: " + JSON.stringify(ticketAfterMove));
+    console.log("project identifier: " + this.state.projectIdentifier);
+    axios.post(
+      `http://localhost:8080/api/backlog/${this.state.projectIdentifier}`,
+      ticketAfterMove
+    );
   };
 
   render() {

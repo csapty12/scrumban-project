@@ -19,7 +19,6 @@ export default class TicketForm extends Component {
     };
   }
   handleChange = event => {
-    // console.log(event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -29,12 +28,6 @@ export default class TicketForm extends Component {
     const { projectIdentifier, ticketIdentifier } = this.props;
     if (projectIdentifier !== undefined) {
       if (ticketIdentifier !== undefined) {
-        // console.log(
-        //   "fetching project with ID: " +
-        //     projectIdentifier +
-        //     " for ticket: " +
-        //     ticketIdentifier
-        // );
         axios
           .get(
             `http://localhost:8080/api/backlog/${projectIdentifier}/${ticketIdentifier}`
@@ -55,6 +48,7 @@ export default class TicketForm extends Component {
 
   handleSubmit = event => {
     const projectIdentifier = this.props.projectIdentifier;
+    console.log("project identifier: " + projectIdentifier);
     event.preventDefault();
     const newTicket = {
       id: this.state.id,
@@ -63,7 +57,7 @@ export default class TicketForm extends Component {
       status: this.state.status,
       priority: this.state.priority
     };
-    // console.log(JSON.stringify(newTicket));
+    console.log(JSON.stringify(newTicket));
 
     axios
       .post(`http://localhost:8080/api/backlog/${projectIdentifier}`, newTicket)
