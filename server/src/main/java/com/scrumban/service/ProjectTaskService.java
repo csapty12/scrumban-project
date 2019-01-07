@@ -2,6 +2,7 @@ package com.scrumban.service;
 
 import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.*;
+import com.scrumban.model.enums.Status;
 import com.scrumban.repository.BacklogRepository;
 import com.scrumban.repository.ProjectRepository;
 import com.scrumban.repository.ProjectTaskRepository;
@@ -12,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.scrumban.model.Priority.LOW;
+import static com.scrumban.model.enums.Priority.LOW;
 
 @Service
 public class ProjectTaskService {
@@ -47,7 +48,7 @@ public class ProjectTaskService {
             }
             if (projectTask.getStatus().isEmpty()) {
                 System.out.println("status set to backlog");
-                projectTask.setStatus(Status.BACKLOG.valueOf());
+                projectTask.setStatus(Status.BACKLOG.toString());
             }
             return projectTaskRepository.save(projectTask);
         } catch (Exception e) {
@@ -61,11 +62,11 @@ public class ProjectTaskService {
         List<ProjectTask> allProjectTasks = projectTaskRepository.findAllByProjectIdentifier(projectIdentifier.toUpperCase());
         Tasks tasks = new Tasks();
         tasks.setTasks(addAllTasks(allProjectTasks));
-        List<Map<String, ProjectDashboardColumn>> columns = addColumn(allProjectTasks);
+        List<Map<String, ProjectDashboardColumn>> columns =  addColumn(allProjectTasks);
         List<String> columnOrder = new ArrayList<>();
         columns.forEach(column->{
             for ( String key : column.keySet() ) {
-                columnOrder.add(key );
+                columnOrder.add(key);
             }
         });
         tasks.setColumns(columns);
@@ -108,7 +109,13 @@ public class ProjectTaskService {
 
     private List<Map<String, ProjectDashboardColumn>> addColumn(List<ProjectTask> allProjectTasks) {
         List<String> allColumns = new ArrayList<>();
-        allProjectTasks.forEach(column -> allColumns.add(column.getStatus()));
+        System.out.println("all project tasks: " + allProjectTasks);
+        allProjectTasks.forEach(column -> {
+            System.out.println("column: " + column.getProjectSequence() + " >> " +  column.getStatus());
+            allColumns.add(Status.valueOf(column.getStatus()).getStatusValue());
+        });
+
+        System.out.println("All columns: " + allColumns );
         List<String> uniqueColumns = allColumns.stream().distinct().collect(Collectors.toList());
         System.out.println("unique columns: " + uniqueColumns);
 
@@ -136,12 +143,14 @@ public class ProjectTaskService {
 
     private ArrayList<String> getTaskIds(List<ProjectTask> allProjectTasks, String columnName) {
         ArrayList<String> projectTaskIds = new ArrayList<>();
+
         allProjectTasks.forEach(projectTask -> {
-            if (projectTask.getStatus().equals(columnName)) {
+            if (projectTask.getStatus().equals(Status.get(columnName).toString())) {
                 projectTaskIds.add(projectTask.getProjectSequence());
-            }
+           }
         });
-        System.out.println("project task ids for " + columnName + ": " + projectTaskIds);
+        System.out.println("project task ids for " + Status.get(columnName)
+                + ": " + projectTaskIds);
         return projectTaskIds;
     }
 

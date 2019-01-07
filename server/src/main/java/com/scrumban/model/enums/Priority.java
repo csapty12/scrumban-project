@@ -1,4 +1,4 @@
-package com.scrumban.model;
+package com.scrumban.model.enums;
 
 public enum Priority {
     LOW("LOW"),

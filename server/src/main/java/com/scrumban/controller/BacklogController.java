@@ -49,16 +49,17 @@ public class BacklogController {
 
     @GetMapping("/{backlogId}/{ticketNumber}")
     public ResponseEntity<?> getSingleProjectTask(@PathVariable String backlogId, @PathVariable String ticketNumber){
+        System.out.println("getSingleProjectTask");
         System.out.println("backlogID: " + backlogId);
         System.out.println("ticketNumber: " + ticketNumber);
         ProjectTask projectTask = projectTaskService.getProjectTaskFromProjectSequence(backlogId,ticketNumber);
         return new ResponseEntity<>(projectTask, HttpStatus.OK);
     }
 
-    @PatchMapping("/{backlogId}/{ticketNumber}")
+    @PostMapping("/{backlogId}/{ticketNumber}")
     public ResponseEntity<?> updateTicketInBacklog(@Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult,
                                            @PathVariable String backlogId, @PathVariable String ticketNumber){
-
+        System.out.println("updateTicketInBacklog");
         ResponseEntity<?> errorMap = validateJson(bindingResult);
         if (errorMap != null) return errorMap;
 
