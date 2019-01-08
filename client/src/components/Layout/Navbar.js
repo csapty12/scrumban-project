@@ -1,49 +1,41 @@
 //this is what the navbar will look like
 
 import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
 
+const styles = theme => ({
+  navbar: {
+    backgroundColor: "#FC4A1A"
+  },
+  grow: {
+    flexGrow: 1
+  }
+});
 class Navbar extends Component {
   render() {
+    const { classes } = this.props;
     return (
-      <nav className="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
-        <div className="container">
-          <a className="navbar-brand" href="Dashboard.html">
-            Scrumban Tool
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#mobile-nav"
-          >
-            <span className="navbar-toggler-icon" />
-          </button>
-
-          <div className="collapse navbar-collapse" id="mobile-nav">
-            <ul className="navbar-nav mr-auto">
-              <li className="nav-item">
-                <a className="nav-link" href="/dashboard">
-                  Dashboard
-                </a>
-              </li>
-            </ul>
-
-            <ul className="navbar-nav ml-auto">
-              <li className="nav-item">
-                <a className="nav-link " href="register.html">
-                  Sign Up
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="login.html">
-                  Login
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+      <div>
+        <AppBar position="static" className={classes.navbar}>
+          <Toolbar>
+            <Typography variant="h6" color="inherit" className={classes.grow}>
+              TrellBan
+            </Typography>
+            <Button color="inherit" href="/dashboard">
+              Dashboard
+            </Button>
+            <Button color="inherit">Login</Button>
+            <Button color="inherit">Register</Button>
+          </Toolbar>
+        </AppBar>
+      </div>
     );
   }
 }
-export default Navbar;
+export default withStyles(styles)(Navbar);
