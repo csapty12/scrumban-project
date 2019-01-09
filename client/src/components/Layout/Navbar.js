@@ -11,7 +11,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 
 const styles = theme => ({
   navbar: {
-    backgroundColor: "#FC4A1A"
+    backgroundColor: "#007849"
   },
   grow: {
     flexGrow: 1

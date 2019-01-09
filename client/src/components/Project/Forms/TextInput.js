@@ -13,7 +13,6 @@ const TextInput = props => {
         name={props.name}
         value={props.value}
         onChange={props.handleChange}
-        disabled={props.disabled}
       />
       {props.onError && <div className="invalid-feedback">{props.onError}</div>}
     </div>
