@@ -33,28 +33,26 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<?> createProject(@Valid @RequestBody Project project, BindingResult bindingResult) {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
-        System.out.println("hit here");
         if (errorMap != null) {
             System.out.println("error map: " + errorMap);
             return errorMap;
         }
         Project theProject = projectService.saveOrUpdate(project);
-        System.out.println("the project: "+ theProject.getProjectName());
         return new ResponseEntity<>(theProject, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{projectIdentifier}")
-    public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
-
-        projectIdentifier = projectIdentifier.toUpperCase();
-        Project project = projectService.getProject(projectIdentifier);
-
-        if (project != null) {
-
-            return new ResponseEntity<>(project, HttpStatus.OK);
-        }
-        throw new ProjectIdException("no project found with identifier: " + projectIdentifier);
-    }
+//    @GetMapping("/{projectIdentifier}")
+//    public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
+//        System.out.println("project identifer: "  + projectIdentifier);
+//        projectIdentifier = projectIdentifier.toUpperCase();
+//        Project project = projectService.tryToFindProject(projectIdentifier);
+//
+//        if (project != null) {
+//
+//            return new ResponseEntity<>(project, HttpStatus.OK);
+//        }
+//        throw new ProjectIdException("no project found with identifier: " + projectIdentifier);
+//    }
 
     @GetMapping
     public ResponseEntity<?> getAllProjects() {
@@ -66,10 +64,6 @@ public class ProjectController {
     @DeleteMapping("/{projectIdentifier}")
     public ResponseEntity<?> deleteProject(@PathVariable String projectIdentifier) {
         projectIdentifier = projectIdentifier.toUpperCase();
-        Project project = projectService.getProject(projectIdentifier);
-        if(project == null){
-            throw new ProjectIdException("No Project with ID: " + projectIdentifier + " found");
-        }
         projectService.deleteProject(projectIdentifier);
         return new ResponseEntity<>("Project with ID: " + projectIdentifier + " successfully deleted", HttpStatus.OK);
     }
