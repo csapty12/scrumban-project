@@ -2,5 +2,5 @@ body {
   background: #f3f3f3 !important;
 }
 *:focus {
-  outline: none;
+  outline: none !important;
 }

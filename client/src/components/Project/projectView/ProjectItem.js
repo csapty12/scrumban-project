@@ -1,44 +1,35 @@
-//this is what a project object will look like
-
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import IconButton from "@material-ui/core/IconButton";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import Button from "@material-ui/core/Button";
+import CardActions from "@material-ui/core/CardActions";
+const options = ["Update Info", "Delete Project"];
 
+const styles = theme => ({});
 class ProjectItem extends Component {
-  handleDelete = project => {
-    this.props.deleteProject(project);
-  };
   render() {
-    const { project } = this.props;
+    console.log("this.props: " + JSON.stringify(this.props));
     return (
-      <div className="col-md-6 col-lg-4 item">
-        <div className="project-item">
-          <div className="projectTitle text-center">
-            <h1>{project.projectName}</h1>
-            <h6>{project.projectIdentifier}</h6>
-          </div>
-          <div className="list-group list-of-actions">
-            <Link
-              to={`/projectDashboard/${project.projectIdentifier}`}
-              className="list-group-item list-group-item-action"
-            >
-              Project Dashboard
-            </Link>
-            <Link
-              to={`/updateProject/${project.projectIdentifier}`}
-              className="list-group-item list-group-item-action"
-            >
-              Update Project Info
-            </Link>
-            <li
-              className="list-group-item list-group-item-action"
-              onClick={this.handleDelete.bind(this, project)}
-            >
-              Delete Project
-            </li>
-          </div>
-        </div>
-      </div>
+      <Card>
+        <CardHeader
+          action={
+            <IconButton>
+              <MoreVertIcon />
+            </IconButton>
+          }
+          title={this.props.project.projectName}
+          subheader={"created: " + this.props.project.startDate}
+        />
+        <CardActions>
+          <Button size="small" color="primary">
+            Dashboard
+          </Button>
+        </CardActions>
+      </Card>
     );
   }
 }
-export default ProjectItem;
+export default withStyles(styles)(ProjectItem);

@@ -110,11 +110,11 @@ export default class Backlog extends Component {
         taskIds: startTaskIds
       };
       const columnNewState = [...columns];
-      const selectedNewColumn = columns.find((item, index) => {
+      columns.find((item, index) => {
         if (item[source.droppableId] !== undefined) {
           start[source.droppableId] = newColumn;
 
-          const value = columnNewState.splice(index, 1);
+          columnNewState.splice(index, 1);
           columnNewState.splice(index, 0, start);
         }
       });
@@ -141,7 +141,7 @@ export default class Backlog extends Component {
       taskIds: finishTaskIds
     };
     const columnNewState = [...columns];
-    const selectedNewColumn = columns.find((item, index) => {
+    columns.find((item, index) => {
       if (item[destination.droppableId] !== undefined) {
         start[source.droppableId] = newStart;
         finish[destination.droppableId] = newFinish;

@@ -2,7 +2,6 @@
 this is where you can click the form to create a new project.*/
 import React, { Component } from "react";
 import ProjectItem from "./Project/projectView/ProjectItem";
-import CreateProjectButton from "./Project/projectView/CreateProjectButton";
 import axios from "axios";
 
 import Button from "@material-ui/core/Button";

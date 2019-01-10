@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 // import { Link } from "react-router-dom";
-import Ticket from "./Tickets/Ticket";
 import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import InnerList from "./InnerList";
