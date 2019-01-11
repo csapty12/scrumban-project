@@ -15,6 +15,7 @@ public class ProjectDashboardController {
     public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier){
 
         System.out.println("inside get all tickets: " + projectIdentifier);
+        
         return new ResponseEntity<>(HttpStatus.OK);
 
     }

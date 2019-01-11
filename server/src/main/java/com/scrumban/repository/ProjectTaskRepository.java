@@ -1,6 +1,6 @@
 package com.scrumban.repository;
 
-import com.scrumban.model.ProjectTickets;
+import com.scrumban.model.project.ProjectTickets;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

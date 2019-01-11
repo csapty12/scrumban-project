@@ -1,8 +1,9 @@
-package com.scrumban.service;
+package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdException;
-import com.scrumban.model.Project;
-import com.scrumban.model.ProjectTickets;
+import com.scrumban.model.project.Project;
+import com.scrumban.model.project.ProjectTickets;
+import com.scrumban.model.project.SwimLane;
 import com.scrumban.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,9 @@ public class ProjectService {
         Project foundProject = tryToFindProject(project);
         if(foundProject==null) {
             Set<ProjectTickets> projectTicketsSet = new HashSet<>();
+            Set<SwimLane> swimLaneSet = new HashSet<>();
             project.setProjectTickets(projectTicketsSet);
+            project.setSwimLanes(swimLaneSet);
             return projectRepository.save(project);
         }
         throw new ProjectIdException("project ID: " + getProjectIdentifier(project) + " already exists!");

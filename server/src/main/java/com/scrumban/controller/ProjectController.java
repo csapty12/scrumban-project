@@ -1,8 +1,7 @@
 package com.scrumban.controller;
 
-import com.scrumban.exception.ProjectIdException;
-import com.scrumban.model.Project;
-import com.scrumban.service.ProjectService;
+import com.scrumban.model.project.Project;
+import com.scrumban.service.project.ProjectService;
 import com.scrumban.service.ValidationErrorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,8 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.lang.String.format;
 

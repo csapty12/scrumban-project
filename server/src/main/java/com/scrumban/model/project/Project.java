@@ -1,4 +1,4 @@
-package com.scrumban.model;
+package com.scrumban.model.project;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -42,6 +42,10 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<ProjectTickets> projectTickets;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
+    private Set<SwimLane> swimLanes;
 
     @PrePersist
     protected void onCreate(){

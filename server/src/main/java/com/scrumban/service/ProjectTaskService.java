@@ -3,6 +3,8 @@ package com.scrumban.service;
 import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.*;
 import com.scrumban.model.enums.Status;
+import com.scrumban.model.project.Project;
+import com.scrumban.model.project.ProjectTickets;
 import com.scrumban.repository.ProjectRepository;
 import com.scrumban.repository.ProjectTaskRepository;
 import org.springframework.stereotype.Service;

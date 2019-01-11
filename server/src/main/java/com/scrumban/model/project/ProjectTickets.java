@@ -1,6 +1,7 @@
-package com.scrumban.model;
+package com.scrumban.model.project;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.scrumban.model.project.Project;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
