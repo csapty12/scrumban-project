@@ -37,10 +37,20 @@ public class ProjectController {
             System.out.println("error map: " + errorMap);
             return errorMap;
         }
-        Project theProject = projectService.saveOrUpdate(project);
+        Project theProject = projectService.saveProject(project);
         return new ResponseEntity<>(theProject, HttpStatus.CREATED);
     }
 
+    @PatchMapping
+    public ResponseEntity<?> updateProject(@Valid @RequestBody Project project, BindingResult bindingResult) {
+        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
+        if (errorMap != null) {
+            System.out.println("error map: " + errorMap);
+            return errorMap;
+        }
+        Project theProject = projectService.updateProject(project);
+        return new ResponseEntity<>(theProject, HttpStatus.OK);
+    }
 //    @GetMapping("/{projectIdentifier}")
 //    public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
 //        System.out.println("project identifer: "  + projectIdentifier);

@@ -18,7 +18,7 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public Project saveOrUpdate(Project project){
+    public Project saveProject(Project project){
         System.out.println("in here");
         Project foundProject = tryToFindProject(project);
         if(foundProject==null) {
@@ -28,7 +28,11 @@ public class ProjectService {
         }
         throw new ProjectIdException("project ID: " + getProjectIdentifier(project) + " already exists!");
     }
+    public Project updateProject(Project project) {
+        System.out.println("now in here");
+        return projectRepository.save(project);
 
+    }
 
 
     public Iterable<Project> findAllProjects(){
@@ -53,4 +57,6 @@ public class ProjectService {
     private Project tryToFindProject(String projectIdentifier){
         return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
     }
+
+
 }

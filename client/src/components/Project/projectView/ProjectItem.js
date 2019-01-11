@@ -15,16 +15,24 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const styles = theme => ({});
 
 class ProjectItem extends Component {
   constructor(props) {
     super(props);
+
+    const { project } = this.props;
     this.state = {
       anchorEl: null,
       deleteProject: null,
-      updateProject: null
+      updateProject: null,
+      projectName: project.projectName,
+      id: project.id,
+      projectIdentifier: project.projectIdentifier,
+      description: project.description,
+      startDate: project.startDate
     };
   }
 
@@ -54,12 +62,38 @@ class ProjectItem extends Component {
   };
 
   handleUpdateProjectClose = option => {
+    this.handleCloseMenuClick(null);
     this.setState({ updateProject: null });
   };
 
+  handleChange = event => {
+    console.log(event.target.value);
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    console.log("submitting the form ");
+
+    const updatedProject = {
+      id: this.state.id,
+      projectName: this.state.projectName,
+      projectIdentifier: this.state.projectIdentifier,
+      description: this.state.description,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate
+    };
+    console.log("hasdhasd: " + JSON.stringify(updatedProject));
+    axios.patch("http://localhost:8080/api/project", updatedProject);
+  };
+
   render() {
-    const { classes, project } = this.props;
+    const { project } = this.props;
     console.log("project: " + JSON.stringify(project));
+
+    console.log("this project name: " + this.state.projectName);
     const { anchorEl, deleteProject, updateProject } = this.state;
     const menuOpen = Boolean(anchorEl);
     const deleteOpen = Boolean(deleteProject);
@@ -97,57 +131,63 @@ class ProjectItem extends Component {
                       <DialogTitle id="alert-dialog-title">
                         {"Update Project"}
                       </DialogTitle>
-                      <DialogContent>
-                        <TextField
-                          autoFocus
-                          margin="dense"
-                          id="name"
-                          name="projectName"
-                          label="Project Name"
-                          type="text"
-                          value={project.projectName}
-                          fullWidth
-                          onChange={this.handleChange}
-                        />
-                        <TextField
-                          id="standard-multiline-static"
-                          name="description"
-                          label="Project Description"
-                          multiline
-                          rows="4"
-                          margin="normal"
-                          value={project.description}
-                          fullWidth
-                          onChange={this.handleChange}
-                        />
-                        <TextField
-                          margin="dense"
-                          id="name"
-                          name="startDate"
-                          label="Start Date"
-                          type="date"
-                          value={project.startDate}
-                          fullWidth
-                          InputLabelProps={{
-                            shrink: true
-                          }}
-                          onChange={this.handleChange}
-                        />
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={this.handleClose}
-                          color="primary"
-                          type="submit"
-                        >
-                          Create
-                        </Button>
-                      </DialogActions>
+                      <form onSubmit={this.handleSubmit}>
+                        <DialogContent>
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            id="projectName"
+                            name="projectName"
+                            label="Project Name"
+                            type="text"
+                            fullWidth
+                            onChange={this.handleChange}
+                            value={this.state.projectName}
+                          />
+                          <TextField
+                            id="standard-multiline-static"
+                            name="description"
+                            label="Project Description"
+                            multiline
+                            rows="4"
+                            margin="normal"
+                            fullWidth
+                            onChange={this.handleChange}
+                            value={this.state.description}
+                          />
+                          <TextField
+                            margin="dense"
+                            id="name"
+                            name="startDate"
+                            label="Start Date"
+                            type="date"
+                            fullWidth
+                            InputLabelProps={{
+                              shrink: true
+                            }}
+                            onChange={this.handleChange}
+                            value={this.state.startDate}
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={this.handleUpdateProjectClose}
+                            color="primary"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={this.handleUpdateProjectClose}
+                            color="primary"
+                            type="submit"
+                          >
+                            Update
+                          </Button>
+                        </DialogActions>
+                      </form>
                     </Dialog>
                   </MenuItem>
+
                   <MenuItem key="deleteItem">
                     <span onClick={this.handleDeleteProjectClick}>
                       Delete Project
