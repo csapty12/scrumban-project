@@ -11,7 +11,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { withStyles } from "@material-ui/core/styles";
-import ProjectDialog from "./Project/projectView/ProjectDialog";
 const styles = theme => ({
   createButton: {
     background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
@@ -55,21 +54,15 @@ class Dashboard extends Component {
   handleProjectDelete = project => {
     const currentProjects = this.state.allProjects;
     const { projectIdentifier } = project;
-    if (
-      window.confirm(
-        `Are you sure you want to delete project: ${projectIdentifier}`
-      )
-    ) {
-      axios
-        .delete(`http://localhost:8080/api/project/${projectIdentifier}`)
-        .then(() => alert(`project: ${projectIdentifier} has been deleted`))
-        .then(() => {
-          let filteredProjects = currentProjects.filter(
-            item => item.projectIdentifier !== projectIdentifier
-          );
-          this.setState({ allProjects: filteredProjects });
-        });
-    }
+
+    axios
+      .delete(`http://localhost:8080/api/project/${projectIdentifier}`)
+      .then(() => {
+        let filteredProjects = currentProjects.filter(
+          item => item.projectIdentifier !== projectIdentifier
+        );
+        this.setState({ allProjects: filteredProjects });
+      });
   };
 
   handleChange = event => {
@@ -114,12 +107,8 @@ class Dashboard extends Component {
               >
                 Create New project
               </Button>
-              <ProjectDialog
-                open={this.state.open}
-                onClose={this.handleClose}
-              />
 
-              {/* <Dialog
+              <Dialog
                 open={this.state.open}
                 onClose={this.handleClose}
                 aria-labelledby="form-dialog-title"
@@ -175,7 +164,7 @@ class Dashboard extends Component {
                     </Button>
                   </DialogActions>
                 </form>
-              </Dialog> */}
+              </Dialog>
               <br />
               <hr />
               <section className="gallery-block grid-gallery">

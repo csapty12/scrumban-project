@@ -24,63 +24,63 @@ export default class TicketForm extends Component {
     });
   };
 
-  componentDidMount = () => {
-    const { projectIdentifier, ticketIdentifier } = this.props;
-    if (projectIdentifier !== undefined) {
-      if (ticketIdentifier !== undefined) {
-        axios
-          .get(
-            `http://localhost:8080/api/backlog/${projectIdentifier}/${ticketIdentifier}`
-          )
-          .then(json => {
-            // console.log(JSON.stringify(json.data.id));
-            this.setState({
-              id: json.data.id,
-              summary: json.data.summary,
-              acceptanceCriteria: json.data.acceptanceCriteria,
-              status: json.data.status,
-              priority: json.data.priority
-            });
-          });
-      }
-    }
-  };
+  // componentDidMount = () => {
+  //   const { projectIdentifier, ticketIdentifier } = this.props;
+  //   if (projectIdentifier !== undefined) {
+  //     if (ticketIdentifier !== undefined) {
+  //       axios
+  //         .get(
+  //           `http://localhost:8080/api/backlog/${projectIdentifier}/${ticketIdentifier}`
+  //         )
+  //         .then(json => {
+  //           // console.log(JSON.stringify(json.data.id));
+  //           this.setState({
+  //             id: json.data.id,
+  //             summary: json.data.summary,
+  //             acceptanceCriteria: json.data.acceptanceCriteria,
+  //             status: json.data.status,
+  //             priority: json.data.priority
+  //           });
+  //         });
+  //     }
+  //   }
+  // };
 
-  handleSubmit = event => {
-    const projectIdentifier = this.props.projectIdentifier;
-    console.log("project identifier: " + projectIdentifier);
-    event.preventDefault();
-    const newTicket = {
-      id: this.state.id,
-      summary: this.state.summary,
-      acceptanceCriteria: this.state.acceptanceCriteria,
-      status: this.state.status,
-      priority: this.state.priority
-    };
-    console.log(JSON.stringify(newTicket));
+  // handleSubmit = event => {
+  //   const projectIdentifier = this.props.projectIdentifier;
+  //   console.log("project identifier: " + projectIdentifier);
+  //   event.preventDefault();
+  //   const newTicket = {
+  //     id: this.state.id,
+  //     summary: this.state.summary,
+  //     acceptanceCriteria: this.state.acceptanceCriteria,
+  //     status: this.state.status,
+  //     priority: this.state.priority
+  //   };
+  //   console.log(JSON.stringify(newTicket));
 
-    axios
-      .post(`http://localhost:8080/api/backlog/${projectIdentifier}`, newTicket)
-      .then(() => {
-        let type = "created";
-        if (newTicket.id !== "") {
-          type = "updated";
-        }
-        alert("thank you, the ticket has been " + type);
-      })
+  //   axios
+  //     .post(`http://localhost:8080/api/backlog/${projectIdentifier}`, newTicket)
+  //     .then(() => {
+  //       let type = "created";
+  //       if (newTicket.id !== "") {
+  //         type = "updated";
+  //       }
+  //       alert("thank you, the ticket has been " + type);
+  //     })
 
-      .catch(error => {
-        const errorResponse = error.response.data;
-        this.setState({
-          errors: {
-            summary: errorResponse.summary,
-            acceptanceCriteria: errorResponse.acceptanceCriteria,
-            status: errorResponse.status,
-            priority: errorResponse.priority
-          }
-        });
-      });
-  };
+  //     .catch(error => {
+  //       const errorResponse = error.response.data;
+  //       this.setState({
+  //         errors: {
+  //           summary: errorResponse.summary,
+  //           acceptanceCriteria: errorResponse.acceptanceCriteria,
+  //           status: errorResponse.status,
+  //           priority: errorResponse.priority
+  //         }
+  //       });
+  //     });
+  // };
 
   render() {
     const errors = this.state.errors;

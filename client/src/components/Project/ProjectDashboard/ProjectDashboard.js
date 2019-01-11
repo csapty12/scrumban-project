@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./projectDashboard.css";
 import "font-awesome/css/font-awesome.min.css";
-import Backlog from "./Backlog";
+import TicketBoard from "./TicketBoard";
 
 class ProjectDashboard extends Component {
   render() {
@@ -16,7 +16,7 @@ class ProjectDashboard extends Component {
             </div>
           </div>
         </div>
-        <Backlog projectIdentifier={projectIdentifier} />
+        <TicketBoard projectIdentifier={projectIdentifier} />
       </div>
     );
   }

@@ -23,7 +23,6 @@ class App extends Component {
           <div className="App">
             <Navbar />
             <Route exact path="/dashboard" component={Dashboard} />
-            <Route exact path="/addProject" component={AddProject} />
             <Route
               exact
               path="/updateProject/:projectIdentifier"
@@ -31,7 +30,7 @@ class App extends Component {
             />
             <Route
               exact
-              path="/projectDashboard/:projectIdentifier"
+              path="/dashboard/:projectIdentifier"
               component={ProjectDashboard}
             />
             <Route
