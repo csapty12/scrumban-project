@@ -85,15 +85,12 @@ class ProjectItem extends Component {
       startDate: this.state.startDate,
       endDate: this.state.endDate
     };
-    console.log("hasdhasd: " + JSON.stringify(updatedProject));
     axios.patch("http://localhost:8080/api/project", updatedProject);
   };
 
   render() {
     const { project } = this.props;
-    console.log("project: " + JSON.stringify(project));
 
-    console.log("this project name: " + this.state.projectName);
     const { anchorEl, deleteProject, updateProject } = this.state;
     const menuOpen = Boolean(anchorEl);
     const deleteOpen = Boolean(deleteProject);

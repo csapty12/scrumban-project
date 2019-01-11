@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 // import { Link } from "react-router-dom";
 import axios from "axios";
-import Column from "./Column";
 export default class Backlog extends Component {
   constructor(props) {
     super(props);
