@@ -1,5 +1,6 @@
 package com.scrumban.model.project;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name="swimLane")
 public class SwimLane {
 
     @Id
@@ -19,8 +21,11 @@ public class SwimLane {
 
     private String name;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "swimLanes")
     private Set<Project> projects;
 
-
+    @JsonIgnore
+    @OneToMany(mappedBy = "swimLane", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<ProjectTickets> swimLanes;
 }

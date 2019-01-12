@@ -23,9 +23,8 @@ public class ProjectService {
         System.out.println("in here");
         Project foundProject = tryToFindProject(project);
         if(foundProject==null) {
-            Set<ProjectTickets> projectTicketsSet = new HashSet<>();
+
             Set<SwimLane> swimLaneSet = new HashSet<>();
-            project.setProjectTickets(projectTicketsSet);
             project.setSwimLanes(swimLaneSet);
             return projectRepository.save(project);
         }
@@ -54,10 +53,10 @@ public class ProjectService {
         return project.getProjectIdentifier().toUpperCase();
     }
 
-    private Project tryToFindProject(Project project) {
+    public  Project tryToFindProject(Project project) {
         return projectRepository.findProjectByProjectIdentifier(getProjectIdentifier(project));
     }
-    private Project tryToFindProject(String projectIdentifier){
+    public  Project tryToFindProject(String projectIdentifier){
         return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
     }
 

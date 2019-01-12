@@ -16,4 +16,6 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
 
     @Override
     void delete(Project project);
+
+    Project findByProjectIdentifier(String projectIdentifier);
 }
