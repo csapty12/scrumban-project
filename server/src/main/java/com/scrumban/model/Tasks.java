@@ -1,6 +1,6 @@
 package com.scrumban.model;
 
-import com.scrumban.model.project.ProjectTickets;
+import com.scrumban.model.project.ProjectTicket;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import java.util.Map;
 @Data
 @ToString
 public class Tasks {
-    private List<Map<String, ProjectTickets>> tasks;
+    private List<Map<String, ProjectTicket>> tasks;
     private List<Map<String, ProjectDashboardColumn>> columns;
     private List<String> columnOrder;
 

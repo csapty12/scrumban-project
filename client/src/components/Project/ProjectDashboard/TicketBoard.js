@@ -5,10 +5,9 @@ export default class Backlog extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allTickets: [],
+      projectTickets: [],
       columns: [],
       projectIdentifier: props.projectIdentifier,
-      columnOrder: [],
       errors: {}
     };
   }
@@ -17,11 +16,9 @@ export default class Backlog extends Component {
     axios
       .get(`http://localhost:8080/dashboard/${this.state.projectIdentifier}`)
       .then(json => {
-        console.log("json response: " + JSON.stringify(json));
+        // console.log("json response: " + JSON.stringify(json));
         this.setState({
-          allTickets: json.data.tasks,
-          columns: json.data.columns,
-          columnOrder: json.data.columnOrder
+          projectTickets: json.data
         });
       });
     // .catch(json => {

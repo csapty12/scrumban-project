@@ -27,5 +27,5 @@ public class SwimLane {
 
     @JsonIgnore
     @OneToMany(mappedBy = "swimLane", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<ProjectTickets> swimLanes;
+    private Set<ProjectTicket> projectTickets;
 }

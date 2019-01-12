@@ -1,6 +1,7 @@
 package com.scrumban.model.project;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Table(name="projectTickets")
-public class ProjectTickets {
+public class ProjectTicket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,27 +26,29 @@ public class ProjectTickets {
     private String summary;
     @NotBlank(message = "please include at least one acceptance criteria")
     private String acceptanceCriteria;
-    private String status;
     private String priority;
 
-    @Column(updatable = false)
-    private String projectIdentifier; //this is so you can ensure that when you are making changes to a project task, it is that ticket, part of that specific backlog, part of that specific project.
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(updatable = false)
     private Date createdAt;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id")
     private Project project;
 
+//    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "swimLane_id")
     private SwimLane swimLane;
 
+    private String projectIdentifier;
     @PrePersist
     protected void onCreate() {
+
         this.createdAt = new Date();
+
     }
 
 }

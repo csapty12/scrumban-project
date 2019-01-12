@@ -33,7 +33,7 @@ public class Project {
     @NotBlank(message = "project description is needed")
     private String description;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @NotNull(message = "Estimated start date required.")
     private Date startDate; //start date of project
 
@@ -42,9 +42,10 @@ public class Project {
     private Date createdAt; //keeps track of whenever the object has been created or something has been updated.
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<ProjectTickets> projectTickets;
+    @JsonIgnore
+    private Set<ProjectTicket> projectTickets;
 
-
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
     private Set<SwimLane> swimLanes;

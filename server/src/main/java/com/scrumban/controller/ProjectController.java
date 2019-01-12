@@ -1,5 +1,6 @@
 package com.scrumban.controller;
 
+import com.scrumban.exception.ProjectIdException;
 import com.scrumban.model.project.Project;
 import com.scrumban.service.project.ProjectService;
 import com.scrumban.service.ValidationErrorService;
@@ -48,18 +49,20 @@ public class ProjectController {
         Project theProject = projectService.updateProject(project);
         return new ResponseEntity<>(theProject, HttpStatus.OK);
     }
-//    @GetMapping("/{projectIdentifier}")
-//    public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
-//        System.out.println("project identifer: "  + projectIdentifier);
-//        projectIdentifier = projectIdentifier.toUpperCase();
-//        Project project = projectService.tryToFindProject(projectIdentifier);
-//
-//        if (project != null) {
-//
-//            return new ResponseEntity<>(project, HttpStatus.OK);
-//        }
-//        throw new ProjectIdException("no project found with identifier: " + projectIdentifier);
-//    }
+
+
+    @GetMapping("/{projectIdentifier}")
+    public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
+        System.out.println("project identifer: "  + projectIdentifier);
+        projectIdentifier = projectIdentifier.toUpperCase();
+        Project project = projectService.tryToFindProject(projectIdentifier);
+
+        if (project != null) {
+
+            return new ResponseEntity<>(project, HttpStatus.OK);
+        }
+        throw new ProjectIdException("no project found with identifier: " + projectIdentifier);
+    }
 
     @GetMapping
     public ResponseEntity<?> getAllProjects() {

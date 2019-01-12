@@ -2,7 +2,6 @@ package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdException;
 import com.scrumban.model.project.Project;
-import com.scrumban.model.project.ProjectTickets;
 import com.scrumban.model.project.SwimLane;
 import com.scrumban.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
