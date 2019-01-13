@@ -29,7 +29,16 @@ public class ProjectTicketService {
         Tickets tickets = new Tickets();
         tickets.setTickets(insertAllTickets(allProjectTickets));
         List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(allProjectTickets);
-        tickets.setColumns(swimLanesAndTicketReferences);
+        tickets.setSwimLanes(swimLanesAndTicketReferences);
+
+        List<String> swimLaneOrder = new ArrayList<>();
+        swimLanesAndTicketReferences.forEach(column->{
+            for ( String key : column.keySet() ) {
+                swimLaneOrder.add(key);
+            }
+        });
+        tickets.setSwimLaneOrder(swimLaneOrder);
+
         return tickets;
 
     }
@@ -38,13 +47,10 @@ public class ProjectTicketService {
 
         Project project = projectService.tryToFindProject(projectIdentifier);
         SwimLane swimLane = swimLaneService.findSwimLaneByName(swimLaneName);
-
-        System.out.println("project: " + project.getProjectIdentifier());
         projectTicket.setProject(project);
         projectTicket.setSwimLane(swimLane);
         projectTicket.setProjectIdentifier(projectIdentifier);
         projectTicketRepository.save(projectTicket);
-
         return projectTicket;
     }
 
@@ -84,8 +90,6 @@ public class ProjectTicketService {
                 projectTaskIds.add(projectTicket.getProjectSequence());
             }
         });
-        System.out.println("project task ids for " + columnName
-                + ": " + projectTaskIds);
         return projectTaskIds;
     }
 

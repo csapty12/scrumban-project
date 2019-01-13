@@ -43,7 +43,7 @@ public class ProjectTicket {
     @JoinColumn(name = "swimLane_id")
     private SwimLane swimLane;
 
-    @JsonIgnore
+
     private String projectIdentifier;
     @PrePersist
     protected void onCreate() {

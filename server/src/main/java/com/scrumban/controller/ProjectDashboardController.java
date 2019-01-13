@@ -66,7 +66,11 @@ public class ProjectDashboardController {
                                                  @PathVariable String swimLaneId,
                                                  @Valid @RequestBody ProjectTicket projectTicket){
 
+        System.out.println("projectIdentifier: " + projectIdentifier);
+        System.out.println("swimLaneId: " + swimLaneId);
+        System.out.println("projectTicket: " + projectTicket);
+
         ProjectTicket  projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
-        return new ResponseEntity<>(projectTicket1, HttpStatus.OK);
+        return new ResponseEntity<>(projectTicket1,  HttpStatus.OK);
     }
 }

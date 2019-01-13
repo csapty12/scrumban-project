@@ -4,8 +4,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 
-@Getter
-@Setter
+
 @Data
 @Builder
 @ToString

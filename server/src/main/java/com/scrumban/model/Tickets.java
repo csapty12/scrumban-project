@@ -15,7 +15,7 @@ import java.util.Map;
 @ToString
 public class Tickets {
     private List<Map<String, ProjectTicket>> tickets;
-    private List<Map<String, ProjectDashboardColumn>> columns;
-    private List<String> columnOrder;
+    private List<Map<String, ProjectDashboardColumn>> swimLanes;
+    private List<String> swimLaneOrder;
 
 }

@@ -44,7 +44,6 @@ public class SwimLaneService {
     }
 
     public SwimLane findSwimLaneByName(String swimLaneName){
-        System.out.println("swimlane name: " + swimLaneName);
         return swimLaneRepository.findByName(swimLaneName);
     }
 
