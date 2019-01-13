@@ -38,11 +38,12 @@ public class ProjectTicket {
     @JoinColumn(name = "project_id")
     private Project project;
 
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "swimLane_id")
     private SwimLane swimLane;
 
+    @JsonIgnore
     private String projectIdentifier;
     @PrePersist
     protected void onCreate() {

@@ -13,8 +13,8 @@ import java.util.Map;
 @Setter
 @Data
 @ToString
-public class Tasks {
-    private List<Map<String, ProjectTicket>> tasks;
+public class Tickets {
+    private List<Map<String, ProjectTicket>> tickets;
     private List<Map<String, ProjectDashboardColumn>> columns;
     private List<String> columnOrder;
 

@@ -1,18 +1,16 @@
 package com.scrumban.model;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 
 @Getter
 @Setter
 @Data
+@Builder
 @ToString
 public class ProjectDashboardColumn {
     private String id;
     private String title;
-    private ArrayList<String> taskIds;
+    private ArrayList<String> ticketIds;
 }

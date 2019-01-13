@@ -1,5 +1,7 @@
 package com.scrumban.controller;
 
+import com.scrumban.model.ProjectDashboardColumn;
+import com.scrumban.model.Tickets;
 import com.scrumban.model.project.Project;
 import com.scrumban.model.project.ProjectTicket;
 import com.scrumban.model.project.SwimLane;
@@ -14,6 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -38,7 +42,7 @@ public class ProjectDashboardController {
     public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier){
 
         System.out.println("inside get all tickets: " + projectIdentifier);
-        Set<ProjectTicket> allTicketsForProject =  projectTicketService.getAllTicketsForProject(projectIdentifier);
+       Tickets allTicketsForProject =  projectTicketService.getAllTicketsForProject(projectIdentifier);
         return new ResponseEntity<>(allTicketsForProject,HttpStatus.OK);
     }
 

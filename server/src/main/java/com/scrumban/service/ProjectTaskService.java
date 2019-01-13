@@ -1,64 +1,38 @@
-package com.scrumban.service;
-
-import com.scrumban.exception.ProjectNotFoundException;
-import com.scrumban.model.*;
-import com.scrumban.model.enums.Status;
-import com.scrumban.model.project.Project;
-import com.scrumban.model.project.ProjectTicket;
-import com.scrumban.repository.ProjectRepository;
-import com.scrumban.repository.ProjectTaskRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-@Service
-public class ProjectTaskService {
-
-    private ProjectTaskRepository projectTaskRepository;
-    private ProjectRepository projectRepository;
-
-
-    public ProjectTaskService(ProjectTaskRepository projectTaskRepository, ProjectRepository projectRepository) {
-        this.projectTaskRepository = projectTaskRepository;
-        this.projectRepository = projectRepository;
-    }
-
-//    public ProjectTicket addProjectTask(String projectIdentifier, ProjectTicket projectTickets) {
-//        try {
-////            Backlog backlog = backlogRepository.findBacklogByProjectIdentifier(projectIdentifier.toUpperCase());
-//            String projectAbbreviation = getProjectAbreviation(projectIdentifier);
-//            System.out.println("project abbrev: " + projectAbbreviation);
+//package com.scrumban.service;
+//
+//import com.scrumban.exception.ProjectNotFoundException;
+//import com.scrumban.model.*;
+//import com.scrumban.model.enums.Status;
+//import com.scrumban.model.project.Project;
+//import com.scrumban.model.project.ProjectTicket;
+//import com.scrumban.repository.ProjectRepository;
+//import com.scrumban.repository.ProjectTaskRepository;
+//import org.springframework.stereotype.Service;
+//
+//import java.util.*;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
+//import java.util.stream.Collectors;
+//
+//@Service
+//public class ProjectTaskService {
+//
+//    private ProjectTaskRepository projectTaskRepository;
+//    private ProjectRepository projectRepository;
 //
 //
-//            projectTickets.setBacklog(backlog);
-//            int incrementValue = 1;
-//            Integer backlogSequence = backlog.getPTSequence() + incrementValue;
-//            backlog.setPTSequence(backlogSequence);
-//            projectTickets.setProjectSequence(projectAbbreviation + "-" + backlogSequence);
-//            projectTickets.setProjectIdentifier(projectIdentifier);
-//            if (projectTickets.getPriority().isEmpty()) {
-//                System.out.println("priorty set to low");
-//                projectTickets.setPriority(LOW.valueOf());
-//            }
-//            if (projectTickets.getStatus().isEmpty()) {
-//                System.out.println("status set to backlog");
-//                projectTickets.setStatus(Status.BACKLOG.toString());
-//            }
-//            return projectTaskRepository.save(projectTickets);
-//        } catch (Exception e) {
-//            throw new ProjectNotFoundException("Project ID: " + projectIdentifier + " not found");
-//        }
-//
+//    public ProjectTaskService(ProjectTaskRepository projectTaskRepository, ProjectRepository projectRepository) {
+//        this.projectTaskRepository = projectTaskRepository;
+//        this.projectRepository = projectRepository;
 //    }
-
 //
-//    public Tasks getProjectTasksFromBacklog(String projectIdentifier) {
+//
+//
+//
+//    public Tickets getProjectTasksFromBacklog(String projectIdentifier) {
 //        List<ProjectTicket> allProjectTickets = projectTaskRepository.findAllByProjectIdentifier(projectIdentifier.toUpperCase());
-//        Tasks tasks = new Tasks();
-//        tasks.setTasks(addAllTasks(allProjectTickets));
+//        Tickets tickets = new Tickets();
+//        tickets.setTickets(addAllTasks(allProjectTickets));
 //        List<Map<String, ProjectDashboardColumn>> columns =  addColumn(allProjectTickets);
 //        List<String> columnOrder = new ArrayList<>();
 //        columns.forEach(column->{
@@ -66,11 +40,11 @@ public class ProjectTaskService {
 //                columnOrder.add(key);
 //            }
 //        });
-//        tasks.setColumns(columns);
-//        tasks.setColumnOrder(columnOrder);
-//        return tasks;
+//        tickets.setColumns(columns);
+//        tickets.setColumnOrder(columnOrder);
+//        return tickets;
 //    }
-
+//
 //    public ProjectTicket getProjectTaskFromProjectSequence(String backlogId, String projectSequence) {
 //        Project project = projectRepository.findProjectByProjectIdentifier(backlogId);
 //        if (project == null) {
@@ -86,7 +60,7 @@ public class ProjectTaskService {
 //        }
 //        return projectTaskRepository.findProjectTaskByProjectSequence(projectSequence);
 //    }
-
+//
 //    public ProjectTicket updateProjectTask(String backlogId, String projectSequence, ProjectTicket updatedProjectTicket) {
 //        ProjectTicket projectTicket = getProjectTaskFromProjectSequence(backlogId, projectSequence);
 //        if (projectTicket != null) {
@@ -95,7 +69,7 @@ public class ProjectTaskService {
 //        }
 //        return null;
 //    }
-
+//
 //    public void deleteTicketFromBacklog(String backlogId, String projectSequence) {
 //        ProjectTicket projectTicket = getProjectTaskFromProjectSequence(backlogId, projectSequence);
 //        if (projectTicket != null) {
@@ -103,7 +77,7 @@ public class ProjectTaskService {
 //        }
 //
 //    }
-
+//
 //    private List<Map<String, ProjectDashboardColumn>> addColumn(List<ProjectTicket> allProjectTickets) {
 //        List<String> allColumns = new ArrayList<>();
 //        System.out.println("all project tasks: " + allProjectTickets);
@@ -129,7 +103,7 @@ public class ProjectTaskService {
 //
 //        return columnObject;
 //    }
-
+//
 //    private ProjectDashboardColumn createColumnAndInsertTasks(String columnId, String columnName, List<ProjectTicket> allProjectTickets) {
 //        ProjectDashboardColumn projectDashboardColumn = new ProjectDashboardColumn();
 //        projectDashboardColumn.setId(columnId);
@@ -150,8 +124,8 @@ public class ProjectTaskService {
 //                + ": " + projectTaskIds);
 //        return projectTaskIds;
 //    }
-
-
+//
+//
 //    private List<Map<String, ProjectTicket>> addAllTasks(List<ProjectTicket> allProjectTickets) {
 //        List<Map<String, ProjectTicket>> projectTaskList = new ArrayList<>();
 //        Map<String, ProjectTicket> projectTaskMap = new HashMap<>();
@@ -169,4 +143,4 @@ public class ProjectTaskService {
 //            abbrev += matcher.group();
 //        return abbrev;
 //    }
-}
+//}
