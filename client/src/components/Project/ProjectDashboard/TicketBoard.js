@@ -1,9 +1,24 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 // import { Link } from "react-router-dom";
 import axios from "axios";
 import SwimLane from "./SwimLane";
+import Button from "@material-ui/core/Button";
+import { withStyles } from "@material-ui/core/styles";
+import Icon from "@material-ui/core/Icon";
 
-export default class Backlog extends Component {
+const styles = theme => ({
+  createButton: {
+    background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+    border: 0,
+    borderRadius: 3,
+    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+    color: "white",
+    height: 48,
+    padding: "0 30px"
+  }
+});
+
+class TicketBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -69,7 +84,7 @@ export default class Backlog extends Component {
     // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
     // console.log("this.columns" + JSON.stringify(this.state.columns));
     // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
-
+    const { classes } = this.props;
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
@@ -81,15 +96,30 @@ export default class Backlog extends Component {
             );
             console.log("tasks: " + JSON.stringify(tickets));
             return (
-              <SwimLane
-                key={swimLane.id}
-                swimLane={swimLane}
-                tickets={tickets}
-              />
+              <Fragment>
+                <SwimLane
+                  key={swimLane.id}
+                  swimLane={swimLane}
+                  tickets={tickets}
+                />
+              </Fragment>
             );
           })}
+          <div className="card--content col-10 col-lg-3">
+            <Button
+              variant="outlined"
+              color="primary"
+              // onClick={this.handleClickOpen}
+              // className={classes.createButton}
+              disableRipple
+            >
+              New Column &#x2b;
+            </Button>
+          </div>
         </section>
       </div>
     );
   }
 }
+
+export default withStyles(styles)(TicketBoard);
