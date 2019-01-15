@@ -111,6 +111,7 @@ class Dashboard extends Component {
                 open={this.state.open}
                 onClose={this.handleClose}
                 aria-labelledby="form-dialog-title"
+                scroll="paper"
               >
                 <DialogTitle id="form-dialog-title">
                   Create New Project

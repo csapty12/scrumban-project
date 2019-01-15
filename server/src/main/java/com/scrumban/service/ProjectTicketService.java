@@ -48,6 +48,10 @@ public class ProjectTicketService {
     public ProjectTicket addProjectTicketToProject(String projectIdentifier, String swimLaneName, ProjectTicket projectTicket) {
 
         Project project = projectService.tryToFindProject(projectIdentifier);
+        int projectTicketSequence = project.getProjectTickets().size();
+        int incrementValue = 1;
+        int newProjectTicketSequenceValue =projectTicketSequence+incrementValue;
+        projectTicket.setProjectSequence(projectIdentifier+ "-" + newProjectTicketSequenceValue);
         SwimLane swimLane = swimLaneService.findSwimLaneByName(swimLaneName);
         projectTicket.setProject(project);
         projectTicket.setSwimLane(swimLane);

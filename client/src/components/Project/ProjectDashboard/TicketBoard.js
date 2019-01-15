@@ -4,7 +4,6 @@ import axios from "axios";
 import SwimLane from "./SwimLane";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
-import Icon from "@material-ui/core/Icon";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
@@ -124,21 +123,17 @@ class TicketBoard extends Component {
         <section className="card-horizontal-scrollable-container">
           {this.state.swimLaneOrder.map((swimLaneId, index) => {
             const swimLane = this.state.swimLanes[index][swimLaneId];
-            {
-              /* console.log("json of swimlane: " + JSON.stringify(swimLane)); */
-            }
+
             const tickets = swimLane.ticketIds.map(
               (ticketId, index) => this.state.projectTickets[0][ticketId]
             );
-            {
-              /* console.log("tasks: " + JSON.stringify(tickets)); */
-            }
             return (
               <Fragment key={swimLane.id}>
                 <SwimLane
                   key={swimLane.id}
                   swimLane={swimLane}
                   tickets={tickets}
+                  projectIdentifier={this.props.projectIdentifier}
                 />
               </Fragment>
             );
