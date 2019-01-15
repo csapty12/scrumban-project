@@ -6,7 +6,9 @@ import com.scrumban.model.project.SwimLane;
 import com.scrumban.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -23,7 +25,7 @@ public class ProjectService {
         Project foundProject = tryToFindProject(project);
         if(foundProject==null) {
 
-            Set<SwimLane> swimLaneSet = new HashSet<>();
+            List<SwimLane> swimLaneSet = new LinkedList<>();
             project.setSwimLanes(swimLaneSet);
             return projectRepository.save(project);
         }
@@ -34,7 +36,6 @@ public class ProjectService {
         return projectRepository.save(project);
 
     }
-
 
     public Iterable<Project> findAllProjects(){
         return projectRepository.findAll();
@@ -58,6 +59,4 @@ public class ProjectService {
     public  Project tryToFindProject(String projectIdentifier){
         return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
     }
-
-
 }

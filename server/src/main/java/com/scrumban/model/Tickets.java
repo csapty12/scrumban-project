@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 @Data
 @ToString
 public class Tickets {
-    private List<Map<String, ProjectTicket>> tickets;
+    private List<LinkedHashMap<String, ProjectTicket>> tickets;
     private List<Map<String, ProjectDashboardColumn>> swimLanes;
     private List<String> swimLaneOrder;
 

@@ -107,7 +107,6 @@ class Dashboard extends Component {
               >
                 Create New project
               </Button>
-
               <Dialog
                 open={this.state.open}
                 onClose={this.handleClose}

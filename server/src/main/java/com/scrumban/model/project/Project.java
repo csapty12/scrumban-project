@@ -9,8 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -48,7 +47,7 @@ public class Project {
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
-    private Set<SwimLane> swimLanes;
+    private List<SwimLane> swimLanes;
 
     @PrePersist
     protected void onCreate(){

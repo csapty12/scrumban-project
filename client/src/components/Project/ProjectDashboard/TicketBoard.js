@@ -5,6 +5,10 @@ import SwimLane from "./SwimLane";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import Icon from "@material-ui/core/Icon";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
 
 const styles = theme => ({
   createButton: {
@@ -26,7 +30,9 @@ class TicketBoard extends Component {
       swimLanes: [],
       swimLaneOrder: [],
       projectIdentifier: props.projectIdentifier,
-      errors: {}
+      errors: {},
+      open: false,
+      name: ""
     };
   }
 
@@ -34,7 +40,7 @@ class TicketBoard extends Component {
     axios
       .get(`http://localhost:8080/dashboard/${this.state.projectIdentifier}`)
       .then(json => {
-        console.log("json response: " + JSON.stringify(json));
+        // console.log("json response: " + JSON.stringify(json));
         this.setState({
           projectTickets: json.data.tickets,
           swimLanes: json.data.swimLanes,
@@ -80,6 +86,34 @@ class TicketBoard extends Component {
   //   );
   // };
 
+  handleChange = event => {
+    // console.log("value:  " + event.target.value);
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    const newSwimlane = {
+      name: this.state.name
+    };
+    console.log("name: " + JSON.stringify(newSwimlane));
+    axios
+      .post(
+        `http://localhost:8080/dashboard/${this.state.projectIdentifier}`,
+        newSwimlane
+      )
+      .then(json => console.log("json"));
+  };
   render() {
     // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
     // console.log("this.columns" + JSON.stringify(this.state.columns));
@@ -90,13 +124,17 @@ class TicketBoard extends Component {
         <section className="card-horizontal-scrollable-container">
           {this.state.swimLaneOrder.map((swimLaneId, index) => {
             const swimLane = this.state.swimLanes[index][swimLaneId];
-            console.log("json of swimlane: " + JSON.stringify(swimLane));
+            {
+              /* console.log("json of swimlane: " + JSON.stringify(swimLane)); */
+            }
             const tickets = swimLane.ticketIds.map(
               (ticketId, index) => this.state.projectTickets[0][ticketId]
             );
-            console.log("tasks: " + JSON.stringify(tickets));
+            {
+              /* console.log("tasks: " + JSON.stringify(tickets)); */
+            }
             return (
-              <Fragment>
+              <Fragment key={swimLane.id}>
                 <SwimLane
                   key={swimLane.id}
                   swimLane={swimLane}
@@ -109,12 +147,43 @@ class TicketBoard extends Component {
             <Button
               variant="outlined"
               color="primary"
-              // onClick={this.handleClickOpen}
-              // className={classes.createButton}
+              onClick={this.handleClickOpen}
               disableRipple
             >
-              New Column &#x2b;
+              New Swimlane &#x2b;
             </Button>
+            <Dialog
+              open={this.state.open}
+              onClose={this.handleClose}
+              aria-labelledby="form-dialog-title"
+            >
+              <form onSubmit={this.handleSubmit}>
+                <DialogContent>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    name="name"
+                    label="Swimlane Name"
+                    type="text"
+                    fullWidth
+                    onChange={this.handleChange}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.handleClose} color="primary">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={this.handleClose}
+                    color="primary"
+                    type="submit"
+                  >
+                    Create
+                  </Button>
+                </DialogActions>
+              </form>
+            </Dialog>
           </div>
         </section>
       </div>

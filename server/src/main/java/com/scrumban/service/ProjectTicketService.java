@@ -24,11 +24,13 @@ public class ProjectTicketService {
         this.swimLaneService = swimLaneService;
     }
 
-    public Tickets getAllTicketsForProject(String projectIdentifier) {
-        List<ProjectTicket> allProjectTickets = projectTicketRepository.findProjectTicketsByProjectIdentifier(projectIdentifier);
+    public Tickets getProjectDashboard(String projectIdentifier) {
+        Project project = projectService.tryToFindProject(projectIdentifier);
+        Set<ProjectTicket> allProjectTickets= project.getProjectTickets();
         Tickets tickets = new Tickets();
         tickets.setTickets(insertAllTickets(allProjectTickets));
-        List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(allProjectTickets);
+
+        List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(project);
         tickets.setSwimLanes(swimLanesAndTicketReferences);
 
         List<String> swimLaneOrder = new ArrayList<>();
@@ -54,11 +56,16 @@ public class ProjectTicketService {
         return projectTicket;
     }
 
-    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(List<ProjectTicket> allProjectTickets) {
+    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(Project project) {
+
         Set<String> columnNames = new LinkedHashSet<>();
-        allProjectTickets.forEach(column -> {
-            columnNames.add(column.getSwimLane().getName());
-        });
+
+        project.getSwimLanes().forEach(column -> {
+
+            columnNames.add(column.getName());
+        });  //this needs to be changed to get the set in order.
+        System.out.println("column names: " + columnNames);
+        Set<ProjectTicket> allProjectTickets = project.getProjectTickets();
 
         int columnNumber = 1;
         List<Map<String, ProjectDashboardColumn>> listOfColumns = new ArrayList<>();
@@ -69,11 +76,12 @@ public class ProjectTicketService {
             listOfColumns.add(projectDashboardColumn);
             columnNumber++;
         }
+        System.out.println("list of columns: " + listOfColumns);
         return listOfColumns;
 
     }
 
-    private ProjectDashboardColumn createColumnAndInsertTasks(String columnId, String columnName, List<ProjectTicket> allProjectTickets) {
+    private ProjectDashboardColumn createColumnAndInsertTasks(String columnId, String columnName, Set<ProjectTicket> allProjectTickets) {
         return ProjectDashboardColumn
                 .builder()
                 .id(columnId)
@@ -81,7 +89,7 @@ public class ProjectTicketService {
                 .ticketIds(getTicketIds(allProjectTickets, columnName)).build();
     }
 
-    private ArrayList<String> getTicketIds(List<ProjectTicket> allProjectTickets, String columnName) {
+    private ArrayList<String> getTicketIds(Set<ProjectTicket> allProjectTickets, String columnName) {
         ArrayList<String> projectTaskIds = new ArrayList<>();
 
         allProjectTickets.forEach(projectTicket -> {
@@ -94,15 +102,14 @@ public class ProjectTicketService {
     }
 
 
-    private List<Map<String, ProjectTicket>> insertAllTickets(List<ProjectTicket> allProjectTickets) {
-        List<Map<String, ProjectTicket>> projectTicketList = new ArrayList<>();
-        Map<String, ProjectTicket> projectTicketMap = new HashMap<>();
-        allProjectTickets.forEach(projectTask -> projectTicketMap.put(projectTask.getProjectSequence(), projectTask));
+    private List<LinkedHashMap<String, ProjectTicket>> insertAllTickets(Set<ProjectTicket> allProjectTickets) {
+        List<LinkedHashMap<String, ProjectTicket>> projectTicketList = new ArrayList<>();
+        LinkedHashMap<String, ProjectTicket> projectTicketMap = new LinkedHashMap<>();
+        allProjectTickets.forEach(ticket -> projectTicketMap.put(ticket.getProjectSequence(), ticket));
         projectTicketList.add(projectTicketMap);
 
         System.out.println("project ticket list: " + projectTicketList);
         return projectTicketList;
     }
-
 
 }

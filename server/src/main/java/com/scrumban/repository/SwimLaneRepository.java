@@ -5,7 +5,10 @@ import com.scrumban.model.project.SwimLane;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface SwimLaneRepository extends CrudRepository<SwimLane, Long> {
         SwimLane findByName(String swimLaneName);
+
 }

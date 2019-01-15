@@ -1,8 +1,6 @@
 package com.scrumban.controller;
 
-import com.scrumban.model.ProjectDashboardColumn;
 import com.scrumban.model.Tickets;
-import com.scrumban.model.project.Project;
 import com.scrumban.model.project.ProjectTicket;
 import com.scrumban.model.project.SwimLane;
 import com.scrumban.service.ProjectTicketService;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -39,17 +36,17 @@ public class ProjectDashboardController {
     }
 
     @GetMapping("/{projectIdentifier}")
-    public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier){
+    public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier) {
 
         System.out.println("inside get all tickets: " + projectIdentifier);
-       Tickets allTicketsForProject =  projectTicketService.getAllTicketsForProject(projectIdentifier);
-        return new ResponseEntity<>(allTicketsForProject,HttpStatus.OK);
+        Tickets allTicketsForProject = projectTicketService.getProjectDashboard(projectIdentifier);
+        return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
     }
 
     @PostMapping("/{projectIdentifier}")
-    public ResponseEntity<?> AddSwimLaneToProject( @PathVariable String projectIdentifier,
-                                                   @Valid @RequestBody SwimLane swimLane,
-                                                   BindingResult bindingResult) {
+    public ResponseEntity<?> AddSwimLaneToProject(@PathVariable String projectIdentifier,
+                                                  @Valid @RequestBody SwimLane swimLane,
+                                                  BindingResult bindingResult) {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
         if (errorMap != null) {
             System.out.println("error map: " + errorMap);
@@ -57,20 +54,29 @@ public class ProjectDashboardController {
         }
         System.out.println("swimlane: " + swimLane.getName());
         System.out.println("inside add swimlane to project: " + projectIdentifier);
-        Project updatedProject = swimLaneService.addSwimLaneToProject(projectIdentifier, swimLane );
+        List<SwimLane> updatedProject = swimLaneService.addSwimLaneToProject(projectIdentifier, swimLane);
+
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
 
     @PostMapping("/{projectIdentifier}/{swimLaneId}")
     public ResponseEntity<?> addTicketToSwimLane(@PathVariable String projectIdentifier,
                                                  @PathVariable String swimLaneId,
-                                                 @Valid @RequestBody ProjectTicket projectTicket){
+                                                 @Valid @RequestBody ProjectTicket projectTicket) {
 
         System.out.println("projectIdentifier: " + projectIdentifier);
         System.out.println("swimLaneId: " + swimLaneId);
         System.out.println("projectTicket: " + projectTicket);
 
-        ProjectTicket  projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
-        return new ResponseEntity<>(projectTicket1,  HttpStatus.OK);
+        ProjectTicket projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
+        return new ResponseEntity<>(projectTicket1, HttpStatus.OK);
     }
+
+//    @DeleteMapping("/{projectIdentifier}/{id}")
+//    public ResponseEntity<?> removeTicketFromProject(@PathVariable String projectIdentifier, @PathVariable Long id) {
+//
+//        projectTicketService.removeTicket(id);
+//
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 }
