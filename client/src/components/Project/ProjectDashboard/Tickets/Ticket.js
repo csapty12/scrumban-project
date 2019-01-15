@@ -6,20 +6,15 @@ import styled from "styled-components";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import Button from "@material-ui/core/Button";
-import CardActions from "@material-ui/core/CardActions";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import TextField from "@material-ui/core/TextField";
 import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
-
+import DeleteIcon from "@material-ui/icons/Delete";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import Button from "@material-ui/core/Button";
 const TicketContainer = styled.div``;
 
 const styles = theme => ({
@@ -36,6 +31,9 @@ const styles = theme => ({
   },
   low: {
     borderLeft: "3px solid #42CC00"
+  },
+  deletIcon: {
+    fontSize: 15
   }
 });
 
@@ -43,14 +41,24 @@ class Ticket extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      open: false,
       isHovering: false
     };
   }
   handleDelete = ticket => {
-    console.log("ticket: " + JSON.stringify(ticket));
-    console.log("props: " + JSON.stringify(this.props));
-    this.props.deleteTicket(ticket);
+    this.handleClose();
+    console.log("ticket:" + JSON.stringify(ticket));
+    // this.props.deleteTicket(ticket);
   };
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
   handleMouseHover = () => {
     this.setState(this.toggleHoverState);
   };
@@ -59,11 +67,11 @@ class Ticket extends Component {
       isHovering: !state.isHovering
     };
   };
+
   render() {
     const { ticket, classes } = this.props;
-    console.log("json classes: " + JSON.stringify(classes));
     const priority = ticket.priority;
-    console.log("priort:  " + priority);
+
     let priorityClass;
     if (priority === "low") {
       priorityClass = "low";
@@ -83,19 +91,50 @@ class Ticket extends Component {
             { [classes.medium]: priorityClass === "medium" },
             { [classes.low]: priorityClass === "low" }
           )}
+          onMouseEnter={this.handleMouseHover}
+          onMouseLeave={this.handleMouseHover}
         >
           <CardHeader
             action={
               <Fragment>
                 <IconButton
-                  aria-label="More"
-                  // aria-owns={menuOpen ? "long-menu" : undefined}
-                  aria-haspopup="true"
-                  // onClick={this.handleOpenMenuClick}
+                  aria-label="Delete"
+                  size="small"
                   disableRipple
+                  onClick={this.handleClickOpen}
                 >
-                  <MoreVertIcon />
+                  {this.state.isHovering && (
+                    <DeleteIcon size="small" className={classes.deletIcon} />
+                  )}
                 </IconButton>
+                <Dialog
+                  open={this.state.open}
+                  onClose={this.handleClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">
+                    {"Remove Ticket?"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you want to delete:{" "}
+                      <b>{this.props.ticket.projectSequence}</b>?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                      No
+                    </Button>
+                    <Button
+                      onClick={this.handleDelete.bind(this, ticket)}
+                      color="primary"
+                      autoFocus
+                    >
+                      Yes
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </Fragment>
             }
             title={this.props.ticket.projectSequence}
