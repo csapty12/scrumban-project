@@ -36,7 +36,8 @@ public class ProjectController {
             return errorMap;
         }
         Project theProject = projectService.saveProject(project);
-        return new ResponseEntity<>(theProject, HttpStatus.CREATED);
+        Iterable<Project> allProjects = projectService.findAllProjects();
+        return new ResponseEntity<>(allProjects, HttpStatus.OK);
     }
 
     @PatchMapping

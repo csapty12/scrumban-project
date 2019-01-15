@@ -84,8 +84,9 @@ class Dashboard extends Component {
       description: this.state.description,
       startDate: this.state.startDate
     };
-    console.log("new project: " + JSON.stringify(newProject));
-    axios.post("http://localhost:8080/api/project", newProject);
+    axios.post("http://localhost:8080/api/project", newProject).then(json => {
+      this.setState({ allProjects: json.data });
+    });
   };
   render() {
     const { classes } = this.props;
