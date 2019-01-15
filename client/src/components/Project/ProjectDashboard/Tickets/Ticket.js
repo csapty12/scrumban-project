@@ -15,6 +15,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Button from "@material-ui/core/Button";
+import ClearIcon from "@material-ui/icons/Clear";
+
 const TicketContainer = styled.div``;
 
 const styles = theme => ({
@@ -59,15 +61,6 @@ class Ticket extends Component {
     this.setState({ open: false });
   };
 
-  handleMouseHover = () => {
-    this.setState(this.toggleHoverState);
-  };
-  toggleHoverState = state => {
-    return {
-      isHovering: !state.isHovering
-    };
-  };
-
   render() {
     const { ticket, classes } = this.props;
     const priority = ticket.priority;
@@ -91,8 +84,6 @@ class Ticket extends Component {
             { [classes.medium]: priorityClass === "medium" },
             { [classes.low]: priorityClass === "low" }
           )}
-          onMouseEnter={this.handleMouseHover}
-          onMouseLeave={this.handleMouseHover}
         >
           <CardHeader
             action={
@@ -103,9 +94,7 @@ class Ticket extends Component {
                   disableRipple
                   onClick={this.handleClickOpen}
                 >
-                  {this.state.isHovering && (
-                    <DeleteIcon size="small" className={classes.deletIcon} />
-                  )}
+                  <ClearIcon size="small" className={classes.deletIcon} />
                 </IconButton>
                 <Dialog
                   open={this.state.open}
