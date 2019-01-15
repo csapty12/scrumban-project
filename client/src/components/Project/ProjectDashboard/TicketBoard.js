@@ -111,13 +111,20 @@ class TicketBoard extends Component {
         `http://localhost:8080/dashboard/${this.state.projectIdentifier}`,
         newSwimlane
       )
-      .then(json => console.log("json"));
+      .then(json => {
+        console.log("data response: " + JSON.stringify(json.data));
+        this.setState({
+          swimLanes: json.data.swimLanes,
+          swimLaneOrder: json.data.swimLaneOrder
+        });
+      });
   };
   render() {
     // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
     // console.log("this.columns" + JSON.stringify(this.state.columns));
     // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
     const { classes } = this.props;
+    console.log("All tickets: " + JSON.stringify(this.state));
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">

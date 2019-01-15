@@ -1,6 +1,7 @@
 package com.scrumban.controller;
 
 import com.scrumban.model.Tickets;
+import com.scrumban.model.project.Project;
 import com.scrumban.model.project.ProjectTicket;
 import com.scrumban.model.project.SwimLane;
 import com.scrumban.service.ProjectTicketService;
@@ -51,11 +52,12 @@ public class ProjectDashboardController {
             System.out.println("error map: " + errorMap);
             return errorMap;
         }
-        System.out.println("swimlane: " + swimLane.getName());
-        System.out.println("inside add swimlane to project: " + projectIdentifier);
-        List<SwimLane> updatedProject = swimLaneService.addSwimLaneToProject(projectIdentifier, swimLane);
-
-        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+//        System.out.println("swimlane: " + swimLane.getName());
+//        System.out.println("inside add swimlane to project: " + projectIdentifier);
+        Project updatedProject = swimLaneService.addSwimLaneToProject(projectIdentifier, swimLane);
+        Tickets allTicketsForProject = projectTicketService.getProjectDashboard(projectIdentifier);
+        System.out.println("swimalne order: " + allTicketsForProject.getSwimLaneOrder());
+        return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
     }
 
     @PostMapping("/{projectIdentifier}/{swimLaneId}")
@@ -71,11 +73,4 @@ public class ProjectDashboardController {
         return new ResponseEntity<>(projectTicket1, HttpStatus.OK);
     }
 
-//    @DeleteMapping("/{projectIdentifier}/{id}")
-//    public ResponseEntity<?> removeTicketFromProject(@PathVariable String projectIdentifier, @PathVariable Long id) {
-//
-//        projectTicketService.removeTicket(id);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
 }

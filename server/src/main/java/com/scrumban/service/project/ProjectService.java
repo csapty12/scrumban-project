@@ -32,7 +32,6 @@ public class ProjectService {
         throw new ProjectIdException("project ID: " + getProjectIdentifier(project) + " already exists!");
     }
     public Project updateProject(Project project) {
-        System.out.println("now in here");
         return projectRepository.save(project);
 
     }

@@ -20,7 +20,7 @@ public class SwimLaneService {
         this.swimLaneRepository = swimLaneRepository;
     }
 
-    public List<SwimLane> addSwimLaneToProject(String projectIdentifier, SwimLane swimLane) {
+    public Project addSwimLaneToProject(String projectIdentifier, SwimLane swimLane) {
         System.out.println("adding swimlane to table");
 
         Project project = projectService.tryToFindProject(projectIdentifier);
@@ -37,16 +37,11 @@ public class SwimLaneService {
             swimLanes.add(foundSwimLand);
 
         }
-
-        projectService.updateProject(project);
-        return findSwimLanesByProject(projectIdentifier);
+        return projectService.updateProject(project);
     }
 
 
-    public List<SwimLane> findSwimLanesByProject(String projectIdentifier) {
-        Project project = projectService.tryToFindProject(projectIdentifier);
-        return project.getSwimLanes();
-    }
+
 
 
     public SwimLane findSwimLaneByName(String swimLaneName) {

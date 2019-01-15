@@ -22,7 +22,7 @@ const styles = theme => ({});
 class SwimLane extends Component {
   constructor(props) {
     super(props);
-    console.log("project id: " + JSON.stringify(props));
+    // console.log("project id: " + JSON.stringify(props));
     this.state = {
       open: false,
       summary: "",

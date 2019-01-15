@@ -42,7 +42,7 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
-    private Set<ProjectTicket> projectTickets;
+    private List<ProjectTicket> projectTickets;
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
