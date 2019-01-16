@@ -15,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -70,7 +69,18 @@ public class ProjectDashboardController {
         System.out.println("projectTicket: " + projectTicket);
 
         ProjectTicket projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
-        return new ResponseEntity<>(projectTicket1, HttpStatus.OK);
+        Tickets allTicketsForProject = projectTicketService.getProjectDashboard(projectIdentifier);
+
+        return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{projectIdentifier}/{id}")
+    public ResponseEntity<?> removeTicketFromProject(@PathVariable String projectIdentifier, @PathVariable Long id, @Valid @RequestBody ProjectTicket projectTicket){
+        System.out.println("id: " + id);
+        System.out.println("projectID: " + projectIdentifier);
+
+        ProjectTicket projectTicket1 = projectTicketService.prepareTicketToDelete(projectTicket);
+        projectTicketService.removeTicketFromProject(projectTicket1);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

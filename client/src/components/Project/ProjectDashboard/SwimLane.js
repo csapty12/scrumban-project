@@ -49,7 +49,7 @@ class SwimLane extends Component {
   };
 
   handleChange = event => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -64,12 +64,14 @@ class SwimLane extends Component {
       priority: this.state.priority
     };
     console.log("new ticker: " + JSON.stringify(newTicket));
-    axios.post(
-      `http://localhost:8080/dashboard/${this.state.projectIdentifier}/${
-        this.props.swimLane.title
-      }`,
-      newTicket
-    );
+    axios
+      .post(
+        `http://localhost:8080/dashboard/${this.state.projectIdentifier}/${
+          this.props.swimLane.title
+        }`,
+        newTicket
+      )
+      .then(json => console.log("json response: " + JSON.stringify(json)));
   };
   render() {
     const { classes } = this.props;

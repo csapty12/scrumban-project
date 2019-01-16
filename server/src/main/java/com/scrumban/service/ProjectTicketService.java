@@ -27,6 +27,7 @@ public class ProjectTicketService {
     public Tickets getProjectDashboard(String projectIdentifier) {
         Project project = projectService.tryToFindProject(projectIdentifier);
         List<ProjectTicket> allProjectTickets= project.getProjectTickets();
+        allProjectTickets.forEach(ticket-> System.out.println("ticket in getProjectDashboard: " + ticket.getProjectSequence()));
         Tickets tickets = new Tickets();
         tickets.setTickets(insertAllTickets(allProjectTickets));
 
@@ -57,6 +58,7 @@ public class ProjectTicketService {
         projectTicket.setSwimLane(swimLane);
         projectTicket.setProjectIdentifier(projectIdentifier);
         projectTicketRepository.save(projectTicket);
+
         return projectTicket;
     }
 
@@ -67,7 +69,7 @@ public class ProjectTicketService {
         project.getSwimLanes().forEach(column -> {
 
             columnNames.add(column.getName());
-        });  //this needs to be changed to get the set in order.
+        });
         System.out.println("column names: " + columnNames);
         List<ProjectTicket> allProjectTickets = project.getProjectTickets();
 
@@ -94,6 +96,9 @@ public class ProjectTicketService {
     }
 
     private ArrayList<String> getTicketIds(List<ProjectTicket> allProjectTickets, String columnName) {
+        for(ProjectTicket projectTicket: allProjectTickets){
+            System.out.println("ticket: " + projectTicket.getSummary());
+        }
         ArrayList<String> projectTaskIds = new ArrayList<>();
 
         allProjectTickets.forEach(projectTicket -> {
@@ -116,4 +121,17 @@ public class ProjectTicketService {
         return projectTicketList;
     }
 
+    public ProjectTicket prepareTicketToDelete(ProjectTicket projectTicket) {
+        System.out.println("project ticket: " + projectTicket.getId());
+        projectTicket.setProject(null);
+        projectTicket.setSwimLane(null);
+        ProjectTicket projectTicket1 = projectTicketRepository.save(projectTicket);
+        return projectTicket1;
+
+    }
+
+    public void removeTicketFromProject(ProjectTicket projectTicket1) {
+        System.out.println("ticket id " + projectTicket1.getId());
+        projectTicketRepository.deleteById(projectTicket1.getId());
+    }
 }

@@ -14,7 +14,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Button from "@material-ui/core/Button";
 import ClearIcon from "@material-ui/icons/Clear";
-
+import axios from "axios";
 const TicketContainer = styled.div``;
 
 const styles = theme => ({
@@ -48,7 +48,12 @@ class Ticket extends Component {
   handleDelete = ticket => {
     this.handleClose();
     console.log("ticket:" + JSON.stringify(ticket));
-    // this.props.deleteTicket(ticket);
+    axios.delete(
+      `http://localhost:8080/dashboard/${ticket.projectIdentifier}/${
+        ticket.id
+      }`,
+      { data: ticket }
+    );
   };
 
   handleClickOpen = () => {
