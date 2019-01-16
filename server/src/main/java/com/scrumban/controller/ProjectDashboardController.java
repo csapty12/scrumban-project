@@ -79,8 +79,8 @@ public class ProjectDashboardController {
         System.out.println("id: " + id);
         System.out.println("projectID: " + projectIdentifier);
 
-        ProjectTicket projectTicket1 = projectTicketService.prepareTicketToDelete(projectTicket);
-        projectTicketService.removeTicketFromProject(projectTicket1);
+//        ProjectTicket projectTicket1 = projectTicketService.prepareTicketToDelete(projectTicket);
+        projectTicketService.removeTicketFromProject(projectTicket);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

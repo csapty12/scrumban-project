@@ -8,10 +8,12 @@ import com.scrumban.model.project.SwimLane;
 import com.scrumban.repository.ProjectTicketRepository;
 import com.scrumban.service.project.ProjectService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
+
 public class ProjectTicketService {
 
     private ProjectTicketRepository projectTicketRepository;
@@ -121,17 +123,10 @@ public class ProjectTicketService {
         return projectTicketList;
     }
 
-    public ProjectTicket prepareTicketToDelete(ProjectTicket projectTicket) {
-        System.out.println("project ticket: " + projectTicket.getId());
-        projectTicket.setProject(null);
-        projectTicket.setSwimLane(null);
-        ProjectTicket projectTicket1 = projectTicketRepository.save(projectTicket);
-        return projectTicket1;
 
-    }
 
     public void removeTicketFromProject(ProjectTicket projectTicket1) {
         System.out.println("ticket id " + projectTicket1.getId());
-        projectTicketRepository.deleteById(projectTicket1.getId());
+        projectTicketRepository.deleteProjectTicket(projectTicket1.getId());
     }
 }
