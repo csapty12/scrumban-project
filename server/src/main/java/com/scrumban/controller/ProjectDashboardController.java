@@ -80,6 +80,6 @@ public class ProjectDashboardController {
 
         projectTicketService.removeTicketFromProject(projectTicket);
         Tickets allTicketsForProject = projectTicketService.getProjectDashboard(projectIdentifier);
-        return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
+        return new ResponseEntity<>(allTicketsForProject,  HttpStatus.OK);
     }
 }
