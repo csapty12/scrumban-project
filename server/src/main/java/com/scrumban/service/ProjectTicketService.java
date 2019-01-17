@@ -8,7 +8,6 @@ import com.scrumban.model.project.SwimLane;
 import com.scrumban.repository.ProjectTicketRepository;
 import com.scrumban.service.project.ProjectService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 

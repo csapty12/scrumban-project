@@ -47,18 +47,7 @@ class Ticket extends Component {
   }
   handleDelete = ticket => {
     this.handleClose();
-    console.log("ticket:" + JSON.stringify(ticket));
     this.props.removeTicket(ticket);
-    // axios
-    //   .delete(
-    //     `http://localhost:8080/dashboard/${ticket.projectIdentifier}/${
-    //       ticket.id
-    //     }`,
-    //     { data: ticket }
-    //   )
-    //   .then(json => {
-    //     console.log("new json: " + JSON.stringify(json));
-    //   });
   };
 
   handleClickOpen = () => {

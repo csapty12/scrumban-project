@@ -15,6 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -69,8 +71,10 @@ public class ProjectDashboardController {
         System.out.println("projectTicket: " + projectTicket);
 
         ProjectTicket projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
-
-        return new ResponseEntity<>(projectTicket1, HttpStatus.OK);
+        String swimlaneName = projectTicket1.getSwimLane().getName();
+        Map<String, ProjectTicket> projectTicketSwimLane= new HashMap<>();
+        projectTicketSwimLane.put(swimlaneName,projectTicket1 );
+        return new ResponseEntity<>(projectTicketSwimLane, HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectIdentifier}/{id}")

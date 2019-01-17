@@ -109,6 +109,17 @@ class TicketBoard extends Component {
         });
       });
   };
+  handleAddTicket = ticket => {
+    console.log("ticket : " + JSON.stringify(ticket));
+    console.log("all swimlanes: " + JSON.stringify(this.state.swimLanes));
+    let columnNumber = 1;
+
+    this.state.swimLanes.forEach(swimLane => {
+      console.log(swimLane["column-" + columnNumber]);
+      columnNumber++;
+    });
+  };
+
   render() {
     // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
     // console.log("this.columns" + JSON.stringify(this.state.columns));
@@ -132,6 +143,7 @@ class TicketBoard extends Component {
                   tickets={tickets}
                   projectIdentifier={this.props.projectIdentifier}
                   removeTicket={this.handleTicketDelete}
+                  addTicketToSwimLane={this.handleAddTicket}
                 />
               </Fragment>
             );

@@ -71,7 +71,7 @@ class SwimLane extends Component {
         }`,
         newTicket
       )
-      .then(json => console.log("json response: " + JSON.stringify(json)));
+      .then(json => this.props.addTicketToSwimLane(json));
   };
   render() {
     const { classes } = this.props;
