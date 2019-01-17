@@ -6,10 +6,11 @@ import com.scrumban.model.project.SwimLane;
 import com.scrumban.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashSet;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class ProjectService {
@@ -20,17 +21,20 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public Project saveProject(Project project){
+    public Project saveProject(Project project) {
         System.out.println("in here");
         Project foundProject = tryToFindProject(project);
         if(foundProject==null) {
 
             List<SwimLane> swimLaneSet = new LinkedList<>();
             project.setSwimLanes(swimLaneSet);
+
             return projectRepository.save(project);
         }
         throw new ProjectIdException("project ID: " + getProjectIdentifier(project) + " already exists!");
     }
+
+
     public Project updateProject(Project project) {
         return projectRepository.save(project);
 
@@ -45,6 +49,7 @@ public class ProjectService {
         if(project == null){
             throw new ProjectIdException("project ID: " +projectIdentifier.toUpperCase() + " does not exist!");
         }
+        project.getSwimLanes().forEach(swimLane -> System.out.println(swimLane.getName()));
         projectRepository.delete(project);
     }
 

@@ -1,9 +1,6 @@
-/*this is where you can access all projects
-this is where you can click the form to create a new project.*/
 import React, { Component } from "react";
 import ProjectItem from "./Project/projectView/ProjectItem";
 import axios from "axios";
-
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -11,6 +8,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { withStyles } from "@material-ui/core/styles";
+
 const styles = theme => ({
   createButton: {
     background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
@@ -31,7 +29,6 @@ class Dashboard extends Component {
       projectName: "",
       projectIdentifier: "",
       description: "",
-      startDate: "",
       errors: {},
       open: false
     };
@@ -66,7 +63,6 @@ class Dashboard extends Component {
   };
 
   handleChange = event => {
-    // console.log(event.target.name);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -81,17 +77,15 @@ class Dashboard extends Component {
       id: this.state.id,
       projectName: this.state.projectName,
       projectIdentifier: projectIdentifierSlug,
-      description: this.state.description,
-      startDate: this.state.startDate
+      description: this.state.description
     };
     axios.post("http://localhost:8080/api/project", newProject).then(json => {
-      this.setState({ allProjects: json.data });
+      this.setState({ allProjects: [...this.state.allProjects, json.data] });
     });
   };
   render() {
     const { classes } = this.props;
     const allProjects = this.state.allProjects;
-    // console.log(allProjects);
     return (
       <div className="projects">
         <div className="container">
@@ -137,18 +131,6 @@ class Dashboard extends Component {
                       rows="4"
                       margin="normal"
                       fullWidth
-                      onChange={this.handleChange}
-                    />
-                    <TextField
-                      margin="dense"
-                      id="name"
-                      name="startDate"
-                      label="Start Date"
-                      type="date"
-                      fullWidth
-                      InputLabelProps={{
-                        shrink: true
-                      }}
                       onChange={this.handleChange}
                     />
                   </DialogContent>

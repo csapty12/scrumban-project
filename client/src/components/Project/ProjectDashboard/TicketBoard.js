@@ -76,15 +76,6 @@ class TicketBoard extends Component {
   //   }
   // };
 
-  // persistTicketToNewColumn = ticketAfterMove => {
-  //   console.log("udpated ticket: " + JSON.stringify(ticketAfterMove));
-  //   console.log("project identifier: " + this.state.projectIdentifier);
-  //   axios.post(
-  //     `http://localhost:8080/api/backlog/${this.state.projectIdentifier}`,
-  //     ticketAfterMove
-  //   );
-  // };
-
   handleChange = event => {
     // console.log("value:  " + event.target.value);
     this.setState({
@@ -112,7 +103,9 @@ class TicketBoard extends Component {
         newSwimlane
       )
       .then(json => {
-        console.log("data response: " + JSON.stringify(json.data));
+        console.log(
+          "data response in ticket Board: " + JSON.stringify(json.data)
+        );
         this.setState({
           swimLanes: json.data.swimLanes,
           swimLaneOrder: json.data.swimLaneOrder

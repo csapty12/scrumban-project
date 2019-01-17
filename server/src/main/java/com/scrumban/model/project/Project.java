@@ -9,6 +9,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Entity
@@ -33,24 +35,23 @@ public class Project {
     private String description;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
-    @NotNull(message = "Estimated start date required.")
-    private Date startDate; //start date of project
-
-    @JsonFormat(pattern = "yyyy-mm-dd")
     @Column(updatable = false)
     private Date createdAt; //keeps track of whenever the object has been created or something has been updated.
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
-    private List<ProjectTicket> projectTickets;
+    private List<ProjectTicket> projectTickets = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
-    private List<SwimLane> swimLanes;
+    private List<SwimLane> swimLanes = new ArrayList<>();
 
     @PrePersist
-    protected void onCreate(){
-        this.createdAt = new Date();
+    protected void onCreate() throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = new Date();
+        String frmtdDate = dateFormat.format(date);
+        this.createdAt = dateFormat.parse(frmtdDate);
     }
 }

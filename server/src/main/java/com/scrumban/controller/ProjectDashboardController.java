@@ -69,9 +69,8 @@ public class ProjectDashboardController {
         System.out.println("projectTicket: " + projectTicket);
 
         ProjectTicket projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
-        Tickets allTicketsForProject = projectTicketService.getProjectDashboard(projectIdentifier);
 
-        return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
+        return new ResponseEntity<>(projectTicket1, HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectIdentifier}/{id}")
@@ -79,8 +78,8 @@ public class ProjectDashboardController {
         System.out.println("id: " + id);
         System.out.println("projectID: " + projectIdentifier);
 
-//        ProjectTicket projectTicket1 = projectTicketService.prepareTicketToDelete(projectTicket);
         projectTicketService.removeTicketFromProject(projectTicket);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Tickets allTicketsForProject = projectTicketService.getProjectDashboard(projectIdentifier);
+        return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
     }
 }

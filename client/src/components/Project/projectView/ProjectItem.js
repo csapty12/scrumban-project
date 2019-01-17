@@ -32,7 +32,7 @@ class ProjectItem extends Component {
       id: project.id,
       projectIdentifier: project.projectIdentifier,
       description: project.description,
-      startDate: project.startDate
+      createdAt: project.createdAt
     };
   }
 
@@ -67,7 +67,7 @@ class ProjectItem extends Component {
   };
 
   handleChange = event => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -82,8 +82,7 @@ class ProjectItem extends Component {
       projectName: this.state.projectName,
       projectIdentifier: this.state.projectIdentifier,
       description: this.state.description,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate
+      createdAt: this.state.createdAt
     };
     axios.patch("http://localhost:8080/api/project", updatedProject);
   };
@@ -155,7 +154,7 @@ class ProjectItem extends Component {
                           <TextField
                             margin="dense"
                             id="name"
-                            name="startDate"
+                            name="createdAt"
                             label="Start Date"
                             type="date"
                             fullWidth
@@ -163,7 +162,7 @@ class ProjectItem extends Component {
                               shrink: true
                             }}
                             onChange={this.handleChange}
-                            value={this.state.startDate}
+                            value={this.state.createdAt}
                           />
                         </DialogContent>
                         <DialogActions>
@@ -225,7 +224,7 @@ class ProjectItem extends Component {
               </Fragment>
             }
             title={project.projectName}
-            subheader={"created: " + project.startDate}
+            subheader={"created: " + project.createdAt}
           />
           <CardActions>
             <Link to={`/dashboard/${project.projectIdentifier}`}>

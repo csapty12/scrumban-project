@@ -2,8 +2,8 @@ package com.scrumban.controller;
 
 import com.scrumban.exception.ProjectIdException;
 import com.scrumban.model.project.Project;
-import com.scrumban.service.project.ProjectService;
 import com.scrumban.service.ValidationErrorService;
+import com.scrumban.service.project.ProjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import static java.lang.String.format;
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/api/project")
@@ -29,15 +28,14 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProject(@Valid @RequestBody Project project, BindingResult bindingResult) {
+    public ResponseEntity<?> createProject(@Valid @RequestBody Project project, BindingResult bindingResult) throws ParseException {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
         if (errorMap != null) {
             System.out.println("error map: " + errorMap);
             return errorMap;
         }
         Project theProject = projectService.saveProject(project);
-        Iterable<Project> allProjects = projectService.findAllProjects();
-        return new ResponseEntity<>(allProjects, HttpStatus.OK);
+        return new ResponseEntity<>(theProject, HttpStatus.OK);
     }
 
     @PatchMapping
