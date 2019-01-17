@@ -68,6 +68,13 @@ class Dashboard extends Component {
     });
   };
 
+  componentWillReceiveProps(nextProps) {
+    console.log("all errors retuened: " + JSON.stringify(nextProps.errors));
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors });
+    }
+  }
+
   handleSubmit = event => {
     event.preventDefault();
     let slugify = require("slugify");

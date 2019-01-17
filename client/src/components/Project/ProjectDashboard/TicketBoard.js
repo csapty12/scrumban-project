@@ -55,26 +55,23 @@ class TicketBoard extends Component {
     // });
   }
 
-  // handleTicketDelete = project => {
-  //   const backlogTickets = this.state.backlog;
-  //   const { projectIdentifier, projectSequence } = project;
-  //   if (
-  //     window.confirm(
-  //       `Are you sure you want to delete ticket: ${projectSequence}`
-  //     )
-  //   ) {
-  //     axios
-  //       .delete(
-  //         `http://localhost:8080/api/backlog/${projectIdentifier}/${projectSequence}`
-  //       )
-  //       .then(() => {
-  //         let filteredTickets = backlogTickets.filter(
-  //           item => item.projectSequence !== projectSequence
-  //         );
-  //         this.setState({ backlog: filteredTickets });
-  //       });
-  //   }
-  // };
+  handleTicketDelete = ticket => {
+    const { projectTickets } = this.state;
+    const allTickets = projectTickets;
+    const { projectIdentifier, id } = ticket;
+
+    axios
+      .delete(`http://localhost:8080/dashboard/${projectIdentifier}/${id}`, {
+        data: ticket
+      })
+      .then(json => {
+        this.setState({
+          projectTickets: json.data.tickets,
+          swimLanes: json.data.swimLanes,
+          swimLaneOrder: json.data.swimLaneOrder
+        });
+      });
+  };
 
   handleChange = event => {
     // console.log("value:  " + event.target.value);
@@ -134,6 +131,7 @@ class TicketBoard extends Component {
                   swimLane={swimLane}
                   tickets={tickets}
                   projectIdentifier={this.props.projectIdentifier}
+                  removeTicket={this.handleTicketDelete}
                 />
               </Fragment>
             );

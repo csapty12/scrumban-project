@@ -157,7 +157,10 @@ class SwimLane extends Component {
             </div>
           </a>
           <TaskList>
-            <InnerList tickets={this.props.tickets} />
+            <InnerList
+              tickets={this.props.tickets}
+              removeTicket={this.props.removeTicket}
+            />
           </TaskList>
           {/*<Droppable droppableId={this.props.column.id}>
             {provided => (
