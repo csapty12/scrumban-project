@@ -47,6 +47,8 @@ class Ticket extends Component {
   }
   handleDelete = ticket => {
     this.handleClose();
+
+    ticket.swimLane = this.props.swimLaneId;
     this.props.removeTicket(ticket);
   };
 
@@ -61,7 +63,6 @@ class Ticket extends Component {
   render() {
     const { ticket, classes } = this.props;
     const priority = ticket.priority;
-
     let priorityClass;
     if (priority === "low") {
       priorityClass = "low";

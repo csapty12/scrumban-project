@@ -9,7 +9,6 @@ import java.util.ArrayList;
 @Builder
 @ToString
 public class ProjectDashboardColumn {
-    private String id;
     private String title;
     private ArrayList<String> ticketIds;
 }

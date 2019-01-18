@@ -67,7 +67,6 @@ class ProjectItem extends Component {
   };
 
   handleChange = event => {
-    // console.log(event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -75,8 +74,6 @@ class ProjectItem extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    console.log("submitting the form ");
-
     const updatedProject = {
       id: this.state.id,
       projectName: this.state.projectName,

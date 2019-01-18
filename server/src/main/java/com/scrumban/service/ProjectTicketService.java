@@ -72,34 +72,29 @@ public class ProjectTicketService {
             columnNames.add(column.getName());
         });
         System.out.println("column names: " + columnNames);
+
         List<ProjectTicket> allProjectTickets = project.getProjectTickets();
 
-        int columnNumber = 1;
+
         List<Map<String, ProjectDashboardColumn>> listOfColumns = new ArrayList<>();
         for (String columnName : columnNames) {
             Map<String, ProjectDashboardColumn> projectDashboardColumn = new HashMap<>();
-            String columnId = "column-" + columnNumber;
-            projectDashboardColumn.put(columnId, createColumnAndInsertTasks(columnId, columnName, allProjectTickets));
+            projectDashboardColumn.put(columnName, createColumnAndInsertTasks(columnName, allProjectTickets));
             listOfColumns.add(projectDashboardColumn);
-            columnNumber++;
         }
         System.out.println("list of columns: " + listOfColumns);
         return listOfColumns;
 
     }
 
-    private ProjectDashboardColumn createColumnAndInsertTasks(String columnId, String columnName, List<ProjectTicket> allProjectTickets) {
+    private ProjectDashboardColumn createColumnAndInsertTasks(String columnName, List<ProjectTicket> allProjectTickets) {
         return ProjectDashboardColumn
                 .builder()
-                .id(columnId)
                 .title(columnName)
                 .ticketIds(getTicketIds(allProjectTickets, columnName)).build();
     }
 
     private ArrayList<String> getTicketIds(List<ProjectTicket> allProjectTickets, String columnName) {
-        for(ProjectTicket projectTicket: allProjectTickets){
-            System.out.println("ticket: " + projectTicket.getSummary());
-        }
         ArrayList<String> projectTaskIds = new ArrayList<>();
 
         allProjectTickets.forEach(projectTicket -> {

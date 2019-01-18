@@ -39,7 +39,6 @@ class TicketBoard extends Component {
     axios
       .get(`http://localhost:8080/dashboard/${this.state.projectIdentifier}`)
       .then(json => {
-        // console.log("json response: " + JSON.stringify(json));
         this.setState({
           projectTickets: json.data.tickets,
           swimLanes: json.data.swimLanes,
@@ -56,19 +55,33 @@ class TicketBoard extends Component {
   }
 
   handleTicketDelete = ticket => {
-    const { projectTickets } = this.state;
+    const { projectTickets, swimLanes } = this.state;
     const allTickets = projectTickets;
     const { projectIdentifier, id } = ticket;
-
     axios
       .delete(`http://localhost:8080/dashboard/${projectIdentifier}/${id}`, {
         data: ticket
       })
-      .then(json => {
+      .then(() => {
+        if (projectTickets[0][ticket.projectSequence] === ticket) {
+          delete projectTickets[0][ticket.projectSequence];
+        }
+        // console.log("new project tickets: " + JSON.stringify(projectTickets));
+        swimLanes.forEach(swimLane => {
+          const objectKey = Object.keys(swimLane);
+          if (swimLane[objectKey]["title"] === ticket.swimLane) {
+            console.log("true!");
+            const index = swimLane[objectKey]["ticketIds"].indexOf(
+              ticket.projectSequence
+            );
+            swimLane[objectKey]["ticketIds"].splice(index, 1);
+          }
+        });
+        // console.log("filtered swimlane: " + swimLanes);
+
         this.setState({
-          projectTickets: json.data.tickets,
-          swimLanes: json.data.swimLanes,
-          swimLaneOrder: json.data.swimLaneOrder
+          projectTickets: projectTickets,
+          swimLanes: swimLanes
         });
       });
   };
@@ -93,52 +106,37 @@ class TicketBoard extends Component {
     const newSwimlane = {
       name: this.state.name
     };
-    console.log("name: " + JSON.stringify(newSwimlane));
     axios
       .post(
         `http://localhost:8080/dashboard/${this.state.projectIdentifier}`,
         newSwimlane
       )
       .then(json => {
-        console.log(
-          "data response in ticket Board: " + JSON.stringify(json.data)
-        );
         this.setState({
           swimLanes: json.data.swimLanes,
           swimLaneOrder: json.data.swimLaneOrder
         });
       });
   };
-  handleAddTicket = ticket => {
-    console.log("ticket : " + JSON.stringify(ticket));
-    console.log("all swimlanes: " + JSON.stringify(this.state.swimLanes));
-    let columnNumber = 1;
-
-    this.state.swimLanes.forEach(swimLane => {
-      console.log(swimLane["column-" + columnNumber]);
-      columnNumber++;
-    });
-  };
+  handleAddTicket = ticket => {};
 
   render() {
     // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
     // console.log("this.columns" + JSON.stringify(this.state.columns));
     // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
     const { classes } = this.props;
-    console.log("All tickets: " + JSON.stringify(this.state));
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
           {this.state.swimLaneOrder.map((swimLaneId, index) => {
             const swimLane = this.state.swimLanes[index][swimLaneId];
-
             const tickets = swimLane.ticketIds.map(
               (ticketId, index) => this.state.projectTickets[0][ticketId]
             );
             return (
-              <Fragment key={swimLane.id}>
+              <Fragment key={swimLane.title}>
                 <SwimLane
-                  key={swimLane.id}
+                  key={swimLane.title}
                   swimLane={swimLane}
                   tickets={tickets}
                   projectIdentifier={this.props.projectIdentifier}

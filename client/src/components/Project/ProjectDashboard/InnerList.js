@@ -9,6 +9,7 @@ export default class InnerList extends Component {
         ticket={ticket}
         index={index}
         removeTicket={this.props.removeTicket}
+        swimLaneId={this.props.swimLaneId}
       />
     ));
   }
