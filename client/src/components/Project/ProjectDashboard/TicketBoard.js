@@ -67,7 +67,11 @@ class TicketBoard extends Component {
           delete projectTickets[0][ticket.projectSequence];
         }
         // console.log("new project tickets: " + JSON.stringify(projectTickets));
-        swimLanes.forEach(swimLane => {
+
+        const allSwimLanes = [...swimLanes];
+
+        console.log("all swimlanes: " + JSON.stringify(allSwimLanes));
+        allSwimLanes.forEach(swimLane => {
           const objectKey = Object.keys(swimLane);
           if (swimLane[objectKey]["title"] === ticket.swimLane) {
             console.log("true!");
@@ -77,11 +81,10 @@ class TicketBoard extends Component {
             swimLane[objectKey]["ticketIds"].splice(index, 1);
           }
         });
-        // console.log("filtered swimlane: " + swimLanes);
 
         this.setState({
           projectTickets: projectTickets,
-          swimLanes: swimLanes
+          swimLanes: allSwimLanes
         });
       });
   };
