@@ -14,7 +14,7 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import axios from "axios";
+// import axios from "axios";
 
 const TaskList = styled.div``;
 const styles = theme => ({});
@@ -59,19 +59,13 @@ class SwimLane extends Component {
       summary: this.state.summary,
       acceptanceCriteria: this.state.acceptanceCriteria,
       projectIdentifier: this.state.projectIdentifier,
-      priority: this.state.priority
+      priority: this.state.priority,
+      swimLane: this.props.swimLane.title
     };
-    axios
-      .post(
-        `http://localhost:8080/dashboard/${this.state.projectIdentifier}/${
-          this.props.swimLane.title
-        }`,
-        newTicket
-      )
-      .then(json => this.props.addTicketToSwimLane(json));
+    this.props.addTicketToSwimLane(newTicket);
   };
   render() {
-    const { classes } = this.props;
+    // const { classes } = this.props;
     return (
       <div className="card--content col-10 col-lg-3">
         <h4 className="display-5 text-center title-backlog__border">
@@ -79,80 +73,79 @@ class SwimLane extends Component {
           <span style={{ fontSize: 11 }}>({this.props.tickets.length})</span>
         </h4>
         <div className="card-vertical-scroll-enabled">
-          <a href="#">
-            <div className="card text-center">
-              <Button
-                className="card-header"
-                onClick={this.handleClickOpen}
-                aria-labelledby="form-dialog-title"
-                disableRipple
-              >
-                Add Ticket &#x2b;
-              </Button>
-              <Dialog open={this.state.open} onClose={this.handleClose}>
-                <DialogTitle id="form-dialog-title">
-                  Create New Ticket
-                </DialogTitle>
+          <div className="card text-center">
+            <Button
+              className="card-header"
+              onClick={this.handleClickOpen}
+              aria-labelledby="form-dialog-title"
+              disableRipple
+            >
+              Add Ticket &#x2b;
+            </Button>
+            <Dialog open={this.state.open} onClose={this.handleClose}>
+              <DialogTitle id="form-dialog-title">
+                Create New Ticket
+              </DialogTitle>
 
-                <form onSubmit={this.handleSubmit}>
-                  <DialogContent>
-                    <TextField
-                      autoFocus
-                      margin="dense"
-                      id="name"
-                      name="summary"
-                      label="Summary"
-                      type="text"
-                      fullWidth
+              <form onSubmit={this.handleSubmit}>
+                <DialogContent>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    name="summary"
+                    label="Summary"
+                    type="text"
+                    fullWidth
+                    onChange={this.handleChange}
+                  />
+                  <TextField
+                    id="standard-multiline-static"
+                    name="acceptanceCriteria"
+                    label="Acceptance Criteria"
+                    multiline
+                    rows="4"
+                    margin="normal"
+                    fullWidth
+                    onChange={this.handleChange}
+                  />
+                  <FormControl fullWidth>
+                    <InputLabel htmlFor="demo-controlled-open-select">
+                      Priority
+                    </InputLabel>
+                    <Select
+                      open={this.state.openDropDown}
+                      onClose={this.handleDropDownClose}
+                      onOpen={this.handleDropDownOpen}
+                      value={this.state.priority}
                       onChange={this.handleChange}
-                    />
-                    <TextField
-                      id="standard-multiline-static"
-                      name="acceptanceCriteria"
-                      label="Acceptance Criteria"
-                      multiline
-                      rows="4"
-                      margin="normal"
-                      fullWidth
-                      onChange={this.handleChange}
-                    />
-                    <FormControl fullWidth>
-                      <InputLabel htmlFor="demo-controlled-open-select">
-                        Priority
-                      </InputLabel>
-                      <Select
-                        open={this.state.openDropDown}
-                        onClose={this.handleDropDownClose}
-                        onOpen={this.handleDropDownOpen}
-                        value={this.state.priority}
-                        onChange={this.handleChange}
-                        inputProps={{
-                          name: "priority",
-                          id: "demo-controlled-open-select"
-                        }}
-                      >
-                        <MenuItem value={"low"}>Low</MenuItem>
-                        <MenuItem value={"medium"}>Medium</MenuItem>
-                        <MenuItem value={"high"}>High</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={this.handleClose}
-                      color="primary"
-                      type="submit"
+                      inputProps={{
+                        name: "priority",
+                        id: "demo-controlled-open-select"
+                      }}
                     >
-                      Create
-                    </Button>
-                  </DialogActions>
-                </form>
-              </Dialog>
-            </div>
-          </a>
+                      <MenuItem value={"low"}>Low</MenuItem>
+                      <MenuItem value={"medium"}>Medium</MenuItem>
+                      <MenuItem value={"high"}>High</MenuItem>
+                    </Select>
+                  </FormControl>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.handleClose} color="primary">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={this.handleClose}
+                    color="primary"
+                    type="submit"
+                  >
+                    Create
+                  </Button>
+                </DialogActions>
+              </form>
+            </Dialog>
+          </div>
+
           <TaskList>
             <InnerList
               tickets={this.props.tickets}

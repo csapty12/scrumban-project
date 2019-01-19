@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import "../projectDashboard.css";
-import { Draggable } from "react-beautiful-dnd";
+// import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -14,7 +14,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Button from "@material-ui/core/Button";
 import ClearIcon from "@material-ui/icons/Clear";
-import axios from "axios";
+// import axios from "axios";
 const TicketContainer = styled.div``;
 
 const styles = theme => ({
@@ -62,6 +62,7 @@ class Ticket extends Component {
 
   render() {
     const { ticket, classes } = this.props;
+    // console.log("this props of ticket: " + JSON.stringify(this.props));
     const priority = ticket.priority;
     let priorityClass;
     if (priority === "low") {
