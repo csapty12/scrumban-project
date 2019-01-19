@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 // import { Link } from "react-router-dom";
 import axios from "axios";
 import SwimLane from "./SwimLane";
@@ -8,6 +8,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
+import { DragDropContext } from "react-beautiful-dnd";
 
 const styles = theme => ({
   createButton: {
@@ -157,32 +158,85 @@ class TicketBoard extends Component {
       });
   };
 
+  onDragEnd = result => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    const column = this.state.swimLanes.filter(swimLane => {
+      return Object.keys(swimLane)[0] === source.droppableId ? swimLane : null;
+    });
+
+    const newTaskIds = Array.from(column[0][source.droppableId].ticketIds);
+
+    newTaskIds.splice(source.index, 1);
+    newTaskIds.splice(destination.index, 0, draggableId);
+
+    const reorderedTicketIds = {
+      ...column[0][source.droppableId],
+      ticketIds: newTaskIds
+    };
+
+    const modifiedSwimLane = {
+      [source.droppableId]: reorderedTicketIds
+    };
+
+    console.log(
+      "modified swimlane infomration: " + JSON.stringify(modifiedSwimLane)
+    );
+    console.log(
+      "all current swimlanes: " + JSON.stringify(this.state.swimLanes)
+    );
+
+    const tempAllSwimlanes = [...this.state.swimLanes];
+    const indexOfSwimLane = tempAllSwimlanes.indexOf(column[0]);
+    tempAllSwimlanes.splice(indexOfSwimLane, 1);
+    tempAllSwimlanes.splice(indexOfSwimLane, 0, modifiedSwimLane);
+    const newState = {
+      ...this.state,
+      swimLanes: tempAllSwimlanes
+    };
+
+    console.log("new state of columns : " + JSON.stringify(newState));
+    this.setState(newState);
+  };
+
   render() {
     // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
     // console.log("this.columns" + JSON.stringify(this.state.columns));
     // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
     // const { classes } = this.props;
 
-    console.log("this current state: " + JSON.stringify(this.state));
+    // console.log("this current state: " + JSON.stringify(this.state));
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
-          {this.state.swimLaneOrder.map((swimLaneId, index) => {
-            const swimLane = this.state.swimLanes[index][swimLaneId];
-            const tickets = swimLane.ticketIds.map(
-              (ticketId, index) => this.state.projectTickets[0][ticketId]
-            );
-            return (
-              <SwimLane
-                key={swimLane.title}
-                swimLane={swimLane}
-                tickets={tickets}
-                projectIdentifier={this.props.projectIdentifier}
-                removeTicket={this.handleTicketDelete}
-                addTicketToSwimLane={this.handleAddTicket}
-              />
-            );
-          })}
+          <DragDropContext onDragEnd={this.onDragEnd}>
+            {this.state.swimLaneOrder.map((swimLaneId, index) => {
+              const swimLane = this.state.swimLanes[index][swimLaneId];
+              const tickets = swimLane.ticketIds.map(
+                ticketId => this.state.projectTickets[0][ticketId]
+              );
+              return (
+                <SwimLane
+                  key={swimLane.title}
+                  swimLane={swimLane}
+                  tickets={tickets}
+                  projectIdentifier={this.props.projectIdentifier}
+                  removeTicket={this.handleTicketDelete}
+                  addTicketToSwimLane={this.handleAddTicket}
+                />
+              );
+            })}
+          </DragDropContext>
           <div className="card--content col-10 col-lg-3">
             <Button
               variant="outlined"

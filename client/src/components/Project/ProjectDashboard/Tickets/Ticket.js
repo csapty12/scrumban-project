@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import "../projectDashboard.css";
-// import { Draggable } from "react-beautiful-dnd";
+import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -72,7 +72,6 @@ class Ticket extends Component {
 
   render() {
     const { ticket, classes } = this.props;
-    // console.log("this props of ticket: " + JSON.stringify(this.props));
     const priority = ticket.priority;
     let priorityClass;
     if (priority === "low") {
@@ -85,61 +84,73 @@ class Ticket extends Component {
       priorityClass = "high";
     }
     return (
-      <TicketContainer>
-        <Card
-          className={classNames(
-            classes.cards,
-            { [classes.high]: priorityClass === "high" },
-            { [classes.medium]: priorityClass === "medium" },
-            { [classes.low]: priorityClass === "low" }
-          )}
-        >
-          <CardHeader
-            title={this.props.ticket.projectSequence}
-            subheader={this.props.ticket.summary}
-            action={
-              <Fragment>
-                <IconButton
-                  aria-label="Delete"
-                  size="small"
-                  disableRipple
-                  onClick={this.handleClickOpen}
-                >
-                  <ClearIcon size="small" className={classes.deletIcon} />
-                </IconButton>
-                <Dialog
-                  open={this.state.open}
-                  onClose={this.handleClose}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                >
-                  <DialogTitle id="alert-dialog-title">
-                    {"Remove Ticket?"}
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                      Are you sure you want to delete:{" "}
-                      <b>{this.props.ticket.projectSequence}</b>?
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                      No
-                    </Button>
-                    <Button
-                      onClick={this.handleDelete.bind(this, ticket)}
-                      color="primary"
-                      autoFocus
+      <Draggable
+        index={this.props.index}
+        draggableId={this.props.ticket.projectSequence}
+      >
+        {provided => (
+          <TicketContainer
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <Card
+              className={classNames(
+                classes.cards,
+                { [classes.high]: priorityClass === "high" },
+                { [classes.medium]: priorityClass === "medium" },
+                { [classes.low]: priorityClass === "low" }
+              )}
+            >
+              <CardHeader
+                title={this.props.ticket.projectSequence}
+                subheader={this.props.ticket.summary}
+                action={
+                  <Fragment>
+                    <IconButton
+                      aria-label="Delete"
+                      size="small"
+                      disableRipple
+                      onClick={this.handleClickOpen}
                     >
-                      Yes
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </Fragment>
-            }
-          />
-        </Card>
-      </TicketContainer>
+                      <ClearIcon size="small" className={classes.deletIcon} />
+                    </IconButton>
+                    <Dialog
+                      open={this.state.open}
+                      onClose={this.handleClose}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                    >
+                      <DialogTitle id="alert-dialog-title">
+                        {"Remove Ticket?"}
+                      </DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                          Are you sure you want to delete:{" "}
+                          <b>{this.props.ticket.projectSequence}</b>?
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                          No
+                        </Button>
+                        <Button
+                          onClick={this.handleDelete.bind(this, ticket)}
+                          color="primary"
+                          autoFocus
+                        >
+                          Yes
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                  </Fragment>
+                }
+              />
+            </Card>
+          </TicketContainer>
+        )}
+      </Draggable>
     );
   }
 }

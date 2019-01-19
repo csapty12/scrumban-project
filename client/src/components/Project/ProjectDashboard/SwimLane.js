@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 // import { Link } from "react-router-dom";
-// import { Droppable } from "react-beautiful-dnd";
+import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import InnerList from "./InnerList";
 import Button from "@material-ui/core/Button";
@@ -145,22 +145,22 @@ class SwimLane extends Component {
               </form>
             </Dialog>
           </div>
-
-          <TaskList>
-            <InnerList
-              tickets={this.props.tickets}
-              removeTicket={this.props.removeTicket}
-              swimLaneId={this.props.swimLane.title}
-            />
-          </TaskList>
-          {/*<Droppable droppableId={this.props.column.id}>
+          <Droppable droppableId={this.props.swimLane.title}>
             {provided => (
-              <TaskList ref={provided.innerRef} {...provided.droppableProps}>
-                <InnerList tasks={this.props.tasks} />
+              <TaskList
+                // innerRef={provided.innerRef}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                <InnerList
+                  tickets={this.props.tickets}
+                  removeTicket={this.props.removeTicket}
+                  swimLaneId={this.props.swimLane.title}
+                />
                 {provided.placeholder}
               </TaskList>
             )}
-            </Droppable>*/}
+          </Droppable>
         </div>
       </div>
     );
