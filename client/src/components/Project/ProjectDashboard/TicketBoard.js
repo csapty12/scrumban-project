@@ -162,6 +162,8 @@ class TicketBoard extends Component {
     // console.log("this.columns" + JSON.stringify(this.state.columns));
     // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
     // const { classes } = this.props;
+
+    console.log("this current state: " + JSON.stringify(this.state));
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
@@ -171,16 +173,14 @@ class TicketBoard extends Component {
               (ticketId, index) => this.state.projectTickets[0][ticketId]
             );
             return (
-              <Fragment key={swimLane.title}>
-                <SwimLane
-                  key={swimLane.title}
-                  swimLane={swimLane}
-                  tickets={tickets}
-                  projectIdentifier={this.props.projectIdentifier}
-                  removeTicket={this.handleTicketDelete}
-                  addTicketToSwimLane={this.handleAddTicket}
-                />
-              </Fragment>
+              <SwimLane
+                key={swimLane.title}
+                swimLane={swimLane}
+                tickets={tickets}
+                projectIdentifier={this.props.projectIdentifier}
+                removeTicket={this.handleTicketDelete}
+                addTicketToSwimLane={this.handleAddTicket}
+              />
             );
           })}
           <div className="card--content col-10 col-lg-3">

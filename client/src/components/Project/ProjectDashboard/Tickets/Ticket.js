@@ -42,7 +42,8 @@ class Ticket extends Component {
     super(props);
     this.state = {
       open: false,
-      isHovering: false
+      isHovering: false,
+      openTicketDetails: false
     };
   }
   handleDelete = ticket => {
@@ -52,12 +53,21 @@ class Ticket extends Component {
     this.props.removeTicket(ticket);
   };
 
-  handleClickOpen = () => {
+  handleClickOpen = event => {
+    event.stopPropagation();
     this.setState({ open: true });
   };
 
   handleClose = () => {
     this.setState({ open: false });
+  };
+
+  handleOpenTicketDetails = () => {
+    this.setState({ openTicketDetails: true });
+  };
+
+  handleCloseTicketDetails = () => {
+    this.setState({ openTicketDetails: false });
   };
 
   render() {
@@ -85,6 +95,8 @@ class Ticket extends Component {
           )}
         >
           <CardHeader
+            title={this.props.ticket.projectSequence}
+            subheader={this.props.ticket.summary}
             action={
               <Fragment>
                 <IconButton
@@ -125,8 +137,6 @@ class Ticket extends Component {
                 </Dialog>
               </Fragment>
             }
-            title={this.props.ticket.projectSequence}
-            subheader={this.props.ticket.summary}
           />
         </Card>
       </TicketContainer>
