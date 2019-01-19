@@ -47,8 +47,9 @@ public class ProjectTicket {
     private String projectIdentifier;
     @PrePersist
     protected void onCreate() {
-
         this.createdAt = new Date();
+        int totalNumberOfTickets = this.project.getCurrentTicketNumber();
+        this.project.setCurrentTicketNumber(totalNumberOfTickets+1);
 
     }
 

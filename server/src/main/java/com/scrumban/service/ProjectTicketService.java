@@ -10,6 +10,7 @@ import com.scrumban.service.project.ProjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -51,10 +52,12 @@ public class ProjectTicketService {
     public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(String projectIdentifier, String swimLaneName, ProjectTicket projectTicket) {
 
         Project project = projectService.tryToFindProject(projectIdentifier);
-        int projectTicketSequence = project.getProjectTickets().size();
+        int currentTicketNumber = project.getCurrentTicketNumber();
+        System.out.println("current ticket number= " + currentTicketNumber);
         int incrementValue = 1;
-        int newProjectTicketSequenceValue =projectTicketSequence+incrementValue;
-        String projectSequence = projectIdentifier + "-" + newProjectTicketSequenceValue;
+        String acronym = getAcronymFromProjectIdentifier(projectIdentifier);
+        int newProjectTicketSequenceValue =currentTicketNumber+incrementValue;
+        String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
         projectTicket.setProjectSequence(projectSequence);
         SwimLane swimLane = swimLaneService.findSwimLaneByName(swimLaneName);
         projectTicket.setProject(project);
@@ -66,6 +69,14 @@ public class ProjectTicketService {
         singleProjectTicket.put(projectSequence, projectTicket );
 
         return singleProjectTicket;
+    }
+
+    private String getAcronymFromProjectIdentifier(String projectIdentifier) {
+        String initials = Arrays.stream(projectIdentifier.split("-"))
+                .map(s -> s.substring(0, 1))
+                .collect(Collectors.joining());
+        System.out.println(initials);
+        return initials.toUpperCase();
     }
 
     private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(Project project) {

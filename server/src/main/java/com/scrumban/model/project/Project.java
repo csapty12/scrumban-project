@@ -42,6 +42,9 @@ public class Project {
     @JsonIgnore
     private List<ProjectTicket> projectTickets = new ArrayList<>();
 
+    @Column
+    private int currentTicketNumber;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
@@ -53,5 +56,6 @@ public class Project {
         Date date = new Date();
         String frmtdDate = dateFormat.format(date);
         this.createdAt = dateFormat.parse(frmtdDate);
+        this.currentTicketNumber = 0;
     }
 }

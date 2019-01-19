@@ -162,7 +162,6 @@ class TicketBoard extends Component {
     // console.log("this.columns" + JSON.stringify(this.state.columns));
     // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
     // const { classes } = this.props;
-    console.log("new state: " + JSON.stringify(this.state));
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
