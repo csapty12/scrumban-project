@@ -5,7 +5,7 @@ export default class InnerList extends Component {
   render() {
     return this.props.tickets.map((ticket, index) => (
       <Ticket
-        key={ticket.id}
+        key={index}
         ticket={ticket}
         index={index}
         removeTicket={this.props.removeTicket}

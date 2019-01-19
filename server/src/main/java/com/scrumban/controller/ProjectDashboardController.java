@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -53,8 +54,7 @@ public class ProjectDashboardController {
             System.out.println("error map: " + errorMap);
             return errorMap;
         }
-//        System.out.println("swimlane: " + swimLane.getName());
-//        System.out.println("inside add swimlane to project: " + projectIdentifier);
+
         Project updatedProject = swimLaneService.addSwimLaneToProject(projectIdentifier, swimLane);
         Tickets allTicketsForProject = projectTicketService.getProjectDashboard(projectIdentifier);
         System.out.println("swimalne order: " + allTicketsForProject.getSwimLaneOrder());
@@ -66,22 +66,12 @@ public class ProjectDashboardController {
                                                  @PathVariable String swimLaneId,
                                                  @Valid @RequestBody ProjectTicket projectTicket) {
 
-        System.out.println("projectIdentifier: " + projectIdentifier);
-        System.out.println("swimLaneId: " + swimLaneId);
-        System.out.println("projectTicket: " + projectTicket);
-
-        ProjectTicket projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
-        String swimlaneName = projectTicket1.getSwimLane().getName();
-        Map<String, ProjectTicket> projectTicketSwimLane= new HashMap<>();
-        projectTicketSwimLane.put(swimlaneName,projectTicket1 );
-        return new ResponseEntity<>(projectTicketSwimLane, HttpStatus.OK);
+        LinkedHashMap<String, ProjectTicket> projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
+        return new ResponseEntity<>( projectTicket1,HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectIdentifier}/{id}")
     public ResponseEntity<?> removeTicketFromProject(@PathVariable String projectIdentifier, @PathVariable Long id, @Valid @RequestBody ProjectTicket projectTicket){
-        System.out.println("id: " + id);
-        System.out.println("projectID: " + projectIdentifier);
-
         projectTicketService.removeTicketFromProject(projectTicket);
         return new ResponseEntity<>(HttpStatus.OK);
     }

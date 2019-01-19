@@ -56,7 +56,7 @@ class TicketBoard extends Component {
 
   handleTicketDelete = ticket => {
     const { projectTickets, swimLanes } = this.state;
-    const allTickets = projectTickets;
+    // const allTickets = projectTickets;
     const { projectIdentifier, id } = ticket;
     axios
       .delete(`http://localhost:8080/dashboard/${projectIdentifier}/${id}`, {
@@ -66,15 +66,12 @@ class TicketBoard extends Component {
         if (projectTickets[0][ticket.projectSequence] === ticket) {
           delete projectTickets[0][ticket.projectSequence];
         }
-        // console.log("new project tickets: " + JSON.stringify(projectTickets));
 
         const allSwimLanes = [...swimLanes];
 
-        console.log("all swimlanes: " + JSON.stringify(allSwimLanes));
         allSwimLanes.forEach(swimLane => {
           const objectKey = Object.keys(swimLane);
           if (swimLane[objectKey]["title"] === ticket.swimLane) {
-            console.log("true!");
             const index = swimLane[objectKey]["ticketIds"].indexOf(
               ticket.projectSequence
             );
@@ -121,13 +118,52 @@ class TicketBoard extends Component {
         });
       });
   };
-  handleAddTicket = ticket => {};
+
+  handleAddTicket = ticket => {
+    axios
+      .post(
+        `http://localhost:8080/dashboard/${ticket.projectIdentifier}/${
+          ticket.swimLane
+        }`,
+        ticket
+      )
+      .then(json => {
+        let newProjectTickets = [...this.state.projectTickets];
+        if (newProjectTickets.length === 0) {
+          newProjectTickets.push({
+            [Object.keys(json.data)[0].toString()]: json.data[
+              Object.keys(json.data)[0].toString()
+            ]
+          });
+        } else {
+          newProjectTickets[0][Object.keys(json.data)[0].toString()] =
+            json.data[Object.keys(json.data)[0].toString()];
+        }
+
+        let newSwimlane = [...this.state.swimLanes];
+        let modifiedSwimLanes = [...this.state.swimLanes];
+        const singleSwimLane = newSwimlane.filter(swimLane => {
+          return Object.keys(swimLane).toString() === ticket.swimLane;
+        });
+        let swimLaneTicketIds = singleSwimLane[0][ticket.swimLane]["ticketIds"];
+        swimLaneTicketIds.push(Object.keys(json.data)[0].toString());
+        const index = modifiedSwimLanes.indexOf(singleSwimLane[0]);
+        modifiedSwimLanes.splice(index, 1);
+        modifiedSwimLanes.splice(index, 0, singleSwimLane[0]);
+
+        this.setState({
+          projectTickets: newProjectTickets,
+          swimLanes: modifiedSwimLanes
+        });
+      });
+  };
 
   render() {
     // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
     // console.log("this.columns" + JSON.stringify(this.state.columns));
     // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
-    const { classes } = this.props;
+    // const { classes } = this.props;
+    console.log("new state: " + JSON.stringify(this.state));
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
