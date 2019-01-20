@@ -15,13 +15,13 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import Button from "@material-ui/core/Button";
 import ClearIcon from "@material-ui/icons/Clear";
 // import axios from "axios";
-const TicketContainer = styled.div``;
 
 const styles = theme => ({
   cards: {
     marginTop: 5,
     marginBottom: 5,
-    borderRadius: 1
+    borderRadius: 1,
+    backgroundColor: ` ${props => (props.isDragging ? "lightgreen" : "white")}`
   },
   high: {
     borderLeft: "3px solid red"
@@ -83,13 +83,14 @@ class Ticket extends Component {
     if (priority === "high") {
       priorityClass = "high";
     }
+
     return (
       <Draggable
         index={this.props.index}
         draggableId={this.props.ticket.projectSequence}
       >
         {provided => (
-          <TicketContainer
+          <div
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
@@ -148,7 +149,7 @@ class Ticket extends Component {
                 }
               />
             </Card>
-          </TicketContainer>
+          </div>
         )}
       </Draggable>
     );

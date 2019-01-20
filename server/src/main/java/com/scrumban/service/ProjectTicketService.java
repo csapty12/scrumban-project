@@ -2,9 +2,9 @@ package com.scrumban.service;
 
 import com.scrumban.model.ProjectDashboardColumn;
 import com.scrumban.model.Tickets;
-import com.scrumban.model.project.Project;
-import com.scrumban.model.project.ProjectTicket;
-import com.scrumban.model.project.SwimLane;
+import com.scrumban.model.project.entity.ProjectEntity;
+import com.scrumban.model.project.entity.ProjectTicket;
+import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
 import com.scrumban.service.project.ProjectService;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,14 @@ public class ProjectTicketService {
     }
 
     public Tickets getProjectDashboard(String projectIdentifier) {
-        Project project = projectService.tryToFindProject(projectIdentifier);
-        List<ProjectTicket> allProjectTickets= project.getProjectTickets();
+        ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
+        List<ProjectTicket> allProjectTickets= projectEntity.getProjectTickets();
         allProjectTickets.forEach(ticket-> System.out.println("ticket in getProjectDashboard: " + ticket.getProjectSequence()));
         Tickets tickets = new Tickets();
         List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
         tickets.setTickets(allTickets);
 
-        List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(project);
+        List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(projectEntity);
         tickets.setSwimLanes(swimLanesAndTicketReferences);
 
         List<String> swimLaneOrder = new ArrayList<>();
@@ -51,17 +51,17 @@ public class ProjectTicketService {
 
     public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(String projectIdentifier, String swimLaneName, ProjectTicket projectTicket) {
 
-        Project project = projectService.tryToFindProject(projectIdentifier);
-        int currentTicketNumber = project.getCurrentTicketNumber();
+        ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
+        int currentTicketNumber = projectEntity.getCurrentTicketNumber();
         System.out.println("current ticket number= " + currentTicketNumber);
         int incrementValue = 1;
         String acronym = getAcronymFromProjectIdentifier(projectIdentifier);
         int newProjectTicketSequenceValue =currentTicketNumber+incrementValue;
         String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
         projectTicket.setProjectSequence(projectSequence);
-        SwimLane swimLane = swimLaneService.findSwimLaneByName(swimLaneName);
-        projectTicket.setProject(project);
-        projectTicket.setSwimLane(swimLane);
+        SwimLaneEntity swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
+        projectTicket.setProject(projectEntity);
+        projectTicket.setSwimLaneEntity(swimLaneEntity);
         projectTicket.setProjectIdentifier(projectIdentifier);
         projectTicketRepository.save(projectTicket);
 
@@ -79,17 +79,17 @@ public class ProjectTicketService {
         return initials.toUpperCase();
     }
 
-    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(Project project) {
+    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(ProjectEntity projectEntity) {
 
         List<String> columnNames = new ArrayList<>();
 
-        project.getSwimLanes().forEach(column -> {
+        projectEntity.getSwimLaneEntities().forEach(column -> {
 
             columnNames.add(column.getName());
         });
         System.out.println("column names: " + columnNames);
 
-        List<ProjectTicket> allProjectTickets = project.getProjectTickets();
+        List<ProjectTicket> allProjectTickets = projectEntity.getProjectTickets();
 
 
         List<Map<String, ProjectDashboardColumn>> listOfColumns = new ArrayList<>();
@@ -114,7 +114,7 @@ public class ProjectTicketService {
         ArrayList<String> projectTaskIds = new ArrayList<>();
 
         allProjectTickets.forEach(projectTicket -> {
-            if (projectTicket.getSwimLane().getName().equals(columnName)) {
+            if (projectTicket.getSwimLaneEntity().getName().equals(columnName)) {
 
                 projectTaskIds.add(projectTicket.getProjectSequence());
             }
@@ -133,7 +133,7 @@ public class ProjectTicketService {
         allProjectTickets.forEach(ticket -> projectTicketMap.put(ticket.getProjectSequence(), ticket));
         projectTicketList.add(projectTicketMap);
 
-        System.out.println("project ticket list: " + projectTicketList);
+        System.out.println("projectEntity ticket list: " + projectTicketList);
         System.out.println("projectTicketList size: " + allProjectTickets.size());
         return projectTicketList;
     }

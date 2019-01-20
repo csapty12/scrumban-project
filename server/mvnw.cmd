@@ -82,7 +82,7 @@ goto error
 
 :init
 
-@REM Find the project base dir, i.e. the directory that contains the folder ".mvn".
+@REM Find the projectEntity base dir, i.e. the directory that contains the folder ".mvn".
 @REM Fallback to current working directory if not found.
 
 set MAVEN_PROJECTBASEDIR=%MAVEN_BASEDIR%
@@ -126,7 +126,7 @@ FOR /F "tokens=1,2 delims==" %%A IN (%MAVEN_PROJECTBASEDIR%\.mvn\wrapper\maven-w
 )
 
 @REM Extension to allow automatically downloading the maven-wrapper.jar from Maven-central
-@REM This allows using the maven wrapper in projects that prohibit checking in binary data.
+@REM This allows using the maven wrapper in projectEntities that prohibit checking in binary data.
 if exist %WRAPPER_JAR% (
     echo Found %WRAPPER_JAR%
 ) else (

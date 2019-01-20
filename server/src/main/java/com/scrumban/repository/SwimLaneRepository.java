@@ -1,14 +1,11 @@
 package com.scrumban.repository;
 
-import com.scrumban.model.project.Project;
-import com.scrumban.model.project.SwimLane;
+import com.scrumban.model.project.entity.SwimLaneEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface SwimLaneRepository extends CrudRepository<SwimLane, Long> {
-        SwimLane findByName(String swimLaneName);
+public interface SwimLaneRepository extends CrudRepository<SwimLaneEntity, Long> {
+        SwimLaneEntity findByName(String swimLaneName);
 
 }

@@ -1,8 +1,8 @@
 package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdException;
-import com.scrumban.model.project.Project;
-import com.scrumban.model.project.SwimLane;
+import com.scrumban.model.project.entity.ProjectEntity;
+import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,45 +18,45 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public Project saveProject(Project project) {
+    public ProjectEntity saveProject(ProjectEntity projectEntity) {
         System.out.println("in here");
-        Project foundProject = tryToFindProject(project);
-        if(foundProject==null) {
+        ProjectEntity foundProjectEntity = tryToFindProject(projectEntity);
+        if(foundProjectEntity ==null) {
 
-            List<SwimLane> swimLaneSet = new LinkedList<>();
-            project.setSwimLanes(swimLaneSet);
-            return projectRepository.save(project);
+            List<SwimLaneEntity> swimLaneEntitySet = new LinkedList<>();
+            projectEntity.setSwimLaneEntities(swimLaneEntitySet);
+            return projectRepository.save(projectEntity);
         }
-        throw new ProjectIdException("project ID: " + getProjectIdentifier(project) + " already exists!");
+        throw new ProjectIdException("projectEntity ID: " + getProjectIdentifier(projectEntity) + " already exists!");
     }
 
 
-    public Project updateProject(Project project) {
-        return projectRepository.save(project);
+    public ProjectEntity updateProject(ProjectEntity projectEntity) {
+        return projectRepository.save(projectEntity);
 
     }
 
-    public Iterable<Project> findAllProjects(){
+    public Iterable<ProjectEntity> findAllProjects(){
         return projectRepository.findAll();
     }
 
     public void deleteProject(String projectIdentifier){
-        Project project = tryToFindProject(projectIdentifier);
-        if(project == null){
-            throw new ProjectIdException("project ID: " +projectIdentifier.toUpperCase() + " does not exist!");
+        ProjectEntity projectEntity = tryToFindProject(projectIdentifier);
+        if(projectEntity == null){
+            throw new ProjectIdException("projectEntity ID: " +projectIdentifier.toUpperCase() + " does not exist!");
         }
-        project.getSwimLanes().forEach(swimLane -> System.out.println(swimLane.getName()));
-        projectRepository.delete(project);
+        projectEntity.getSwimLaneEntities().forEach(swimLane -> System.out.println(swimLane.getName()));
+        projectRepository.delete(projectEntity);
     }
 
-    private String getProjectIdentifier(Project project) {
-        return project.getProjectIdentifier().toUpperCase();
+    private String getProjectIdentifier(ProjectEntity projectEntity) {
+        return projectEntity.getProjectIdentifier().toUpperCase();
     }
 
-    public  Project tryToFindProject(Project project) {
-        return projectRepository.findProjectByProjectIdentifier(getProjectIdentifier(project));
+    public ProjectEntity tryToFindProject(ProjectEntity projectEntity) {
+        return projectRepository.findProjectByProjectIdentifier(getProjectIdentifier(projectEntity));
     }
-    public  Project tryToFindProject(String projectIdentifier){
+    public ProjectEntity tryToFindProject(String projectIdentifier){
         return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
     }
 }

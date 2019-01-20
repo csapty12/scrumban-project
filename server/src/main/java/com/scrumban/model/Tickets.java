@@ -1,6 +1,6 @@
 package com.scrumban.model;
 
-import com.scrumban.model.project.ProjectTicket;
+import com.scrumban.model.project.entity.ProjectTicket;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

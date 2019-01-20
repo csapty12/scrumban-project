@@ -1,6 +1,6 @@
 package com.scrumban.repository;
 
-import com.scrumban.model.project.ProjectTicket;
+import com.scrumban.model.project.entity.ProjectTicket;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

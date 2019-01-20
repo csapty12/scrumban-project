@@ -140,9 +140,8 @@ class TicketBoard extends Component {
             json.data[Object.keys(json.data)[0].toString()];
         }
 
-        let newSwimlane = [...this.state.swimLanes];
         let modifiedSwimLanes = [...this.state.swimLanes];
-        const singleSwimLane = newSwimlane.filter(swimLane => {
+        const singleSwimLane = this.state.swimLanes.filter(swimLane => {
           return Object.keys(swimLane).toString() === ticket.swimLane;
         });
         let swimLaneTicketIds = singleSwimLane[0][ticket.swimLane]["ticketIds"];
@@ -189,13 +188,6 @@ class TicketBoard extends Component {
       [source.droppableId]: reorderedTicketIds
     };
 
-    console.log(
-      "modified swimlane infomration: " + JSON.stringify(modifiedSwimLane)
-    );
-    console.log(
-      "all current swimlanes: " + JSON.stringify(this.state.swimLanes)
-    );
-
     const tempAllSwimlanes = [...this.state.swimLanes];
     const indexOfSwimLane = tempAllSwimlanes.indexOf(column[0]);
     tempAllSwimlanes.splice(indexOfSwimLane, 1);
@@ -205,8 +197,20 @@ class TicketBoard extends Component {
       swimLanes: tempAllSwimlanes
     };
 
-    console.log("new state of columns : " + JSON.stringify(newState));
     this.setState(newState);
+    this.updateSwimLaneIdOrder(reorderedTicketIds);
+  };
+
+  updateSwimLaneIdOrder = reorderedTicketIds => {
+    console.log(
+      "updating order of swimlane: " + JSON.stringify(reorderedTicketIds)
+    );
+    axios.patch(
+      `http://localhost:8080/dashboard/${this.state.projectIdentifier}/${
+        reorderedTicketIds.title
+      }`,
+      reorderedTicketIds
+    );
   };
 
   render() {

@@ -1,4 +1,4 @@
-package com.scrumban.model.project;
+package com.scrumban.model.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,7 +22,7 @@ public class ProjectTicket {
     private Long id;
     @Column(updatable = false)
     private String projectSequence;
-    @NotBlank(message = "please include project ticket summary")
+    @NotBlank(message = "please include projectEntity ticket summary")
     private String summary;
     @NotBlank(message = "please include at least one acceptance criteria")
     private String acceptanceCriteria;
@@ -36,12 +36,12 @@ public class ProjectTicket {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id")
-    private Project project;
+    private ProjectEntity project;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "swimLane_id")
-    private SwimLane swimLane;
+    private SwimLaneEntity swimLaneEntity;
 
 
     private String projectIdentifier;

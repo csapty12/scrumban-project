@@ -1,4 +1,4 @@
-package com.scrumban.model.project;
+package com.scrumban.model.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,20 +17,20 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @Table(name="project")
-public class Project {
+public class ProjectEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Project name required.")
+    @NotBlank(message = "ProjectEntity name required.")
     private String projectName;
 
-    @NotBlank(message = "Project identifier required.")
+    @NotBlank(message = "ProjectEntity identifier required.")
     @Column(updatable = false, unique = true)
     private String projectIdentifier;
 
-    @NotBlank(message = "project description is needed")
+    @NotBlank(message = "projectEntity description is needed")
     private String description;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
@@ -40,7 +39,7 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
-    private List<ProjectTicket> projectTickets = new ArrayList<>();
+    private List<ProjectTicket> projectTickets;
 
     @Column
     private int currentTicketNumber;
@@ -48,7 +47,7 @@ public class Project {
     @JsonIgnore
     @ManyToMany
     @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
-    private List<SwimLane> swimLanes = new ArrayList<>();
+    private List<SwimLaneEntity> swimLaneEntities;
 
     @PrePersist
     protected void onCreate() throws ParseException {

@@ -1,13 +1,12 @@
 package com.scrumban.service;
 
-import com.scrumban.model.project.Project;
-import com.scrumban.model.project.SwimLane;
+import com.scrumban.model.project.entity.ProjectEntity;
+import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.SwimLaneRepository;
 import com.scrumban.service.project.ProjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class SwimLaneService {
@@ -20,31 +19,31 @@ public class SwimLaneService {
         this.swimLaneRepository = swimLaneRepository;
     }
 
-    public Project addSwimLaneToProject(String projectIdentifier, SwimLane swimLane) {
+    public ProjectEntity addSwimLaneToProject(String projectIdentifier, SwimLaneEntity swimLaneEntity) {
         System.out.println("adding swimlane to table");
 
-        Project project = projectService.tryToFindProject(projectIdentifier);
+        ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
 
-        SwimLane foundSwimLand = swimLaneRepository.findByName(swimLane.getName());
+        SwimLaneEntity foundSwimLand = swimLaneRepository.findByName(swimLaneEntity.getName());
         if (foundSwimLand == null) {
             System.out.println("saving new swimlane");
-            SwimLane newSwimLane = swimLaneRepository.save(swimLane);
-            List<SwimLane> swimLanes = project.getSwimLanes();
-            swimLanes.add(newSwimLane);
+            SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
+            List<SwimLaneEntity> swimLaneEntities = projectEntity.getSwimLaneEntities();
+            swimLaneEntities.add(newSwimLaneEntity);
         } else {
             System.out.println("swimlane already found");
-            List<SwimLane> swimLanes = project.getSwimLanes();
-            swimLanes.add(foundSwimLand);
+            List<SwimLaneEntity> swimLaneEntities = projectEntity.getSwimLaneEntities();
+            swimLaneEntities.add(foundSwimLand);
 
         }
-        return projectService.updateProject(project);
+        return projectService.updateProject(projectEntity);
     }
 
 
 
 
 
-    public SwimLane findSwimLaneByName(String swimLaneName) {
+    public SwimLaneEntity findSwimLaneByName(String swimLaneName) {
         return swimLaneRepository.findByName(swimLaneName);
     }
 

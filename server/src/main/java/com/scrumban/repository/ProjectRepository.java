@@ -1,25 +1,22 @@
 package com.scrumban.repository;
 
-import com.scrumban.model.project.Project;
-import com.scrumban.model.project.SwimLane;
+import com.scrumban.model.project.entity.ProjectEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface ProjectRepository extends CrudRepository<Project, Long> {
+public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     @Override
-    Iterable<Project> findAllById(Iterable<Long> iterable);
+    Iterable<ProjectEntity> findAllById(Iterable<Long> iterable);
 
-    Project findProjectByProjectIdentifier(String projectIdentifier);
-
-    @Override
-    Iterable<Project> findAll();
+    ProjectEntity findProjectByProjectIdentifier(String projectIdentifier);
 
     @Override
-    void delete(Project project);
+    Iterable<ProjectEntity> findAll();
 
-    Project findByProjectIdentifier(String projectIdentifier);
+    @Override
+    void delete(ProjectEntity projectEntity);
+
+    ProjectEntity findByProjectIdentifier(String projectIdentifier);
 
 }

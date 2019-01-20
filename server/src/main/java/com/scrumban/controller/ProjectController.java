@@ -1,7 +1,7 @@
 package com.scrumban.controller;
 
 import com.scrumban.exception.ProjectIdException;
-import com.scrumban.model.project.Project;
+import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.service.ValidationErrorService;
 import com.scrumban.service.project.ProjectService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,44 +28,44 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProject(@Valid @RequestBody Project project, BindingResult bindingResult) throws ParseException {
+    public ResponseEntity<?> createProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) throws ParseException {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
         if (errorMap != null) {
             System.out.println("error map: " + errorMap);
             return errorMap;
         }
-        Project theProject = projectService.saveProject(project);
-        return new ResponseEntity<>(theProject, HttpStatus.OK);
+        ProjectEntity theProjectEntity = projectService.saveProject(projectEntity);
+        return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateProject(@Valid @RequestBody Project project, BindingResult bindingResult) {
+    public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
         if (errorMap != null) {
             System.out.println("error map: " + errorMap);
             return errorMap;
         }
-        Project theProject = projectService.updateProject(project);
-        return new ResponseEntity<>(theProject, HttpStatus.OK);
+        ProjectEntity theProjectEntity = projectService.updateProject(projectEntity);
+        return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
     }
 
 
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
-        System.out.println("project identifer: "  + projectIdentifier);
+        System.out.println("projectEntity identifer: "  + projectIdentifier);
         projectIdentifier = projectIdentifier.toUpperCase();
-        Project project = projectService.tryToFindProject(projectIdentifier);
+        ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
 
-        if (project != null) {
+        if (projectEntity != null) {
 
-            return new ResponseEntity<>(project, HttpStatus.OK);
+            return new ResponseEntity<>(projectEntity, HttpStatus.OK);
         }
-        throw new ProjectIdException("no project found with identifier: " + projectIdentifier);
+        throw new ProjectIdException("no projectEntity found with identifier: " + projectIdentifier);
     }
 
     @GetMapping
     public ResponseEntity<?> getAllProjects() {
-        Iterable<Project> allProjects = projectService.findAllProjects();
+        Iterable<ProjectEntity> allProjects = projectService.findAllProjects();
         return new ResponseEntity<>(allProjects, HttpStatus.OK);
 
     }
@@ -74,6 +74,6 @@ public class ProjectController {
     public ResponseEntity<?> deleteProject(@PathVariable String projectIdentifier) {
         projectIdentifier = projectIdentifier.toUpperCase();
         projectService.deleteProject(projectIdentifier);
-        return new ResponseEntity<>("Project with ID: " + projectIdentifier + " successfully deleted", HttpStatus.OK);
+        return new ResponseEntity<>("ProjectEntity with ID: " + projectIdentifier + " successfully deleted", HttpStatus.OK);
     }
 }

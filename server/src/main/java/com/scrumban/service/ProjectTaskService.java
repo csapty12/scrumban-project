@@ -3,8 +3,8 @@
 //import com.scrumban.exception.ProjectNotFoundException;
 //import com.scrumban.model.*;
 //import com.scrumban.model.enums.Status;
-//import com.scrumban.model.project.Project;
-//import com.scrumban.model.project.ProjectTicket;
+//import com.scrumban.model.projectEntity.ProjectEntity;
+//import com.scrumban.model.projectEntity.ProjectTicket;
 //import com.scrumban.repository.ProjectRepository;
 //import com.scrumban.repository.ProjectTaskRepository;
 //import org.springframework.stereotype.Service;
@@ -46,17 +46,17 @@
 //    }
 //
 //    public ProjectTicket getProjectTaskFromProjectSequence(String backlogId, String projectSequence) {
-//        Project project = projectRepository.findProjectByProjectIdentifier(backlogId);
-//        if (project == null) {
-//            throw new ProjectNotFoundException("Project ID: " + backlogId + " not found");
+//        ProjectEntity projectEntity = projectRepository.findProjectByProjectIdentifier(backlogId);
+//        if (projectEntity == null) {
+//            throw new ProjectNotFoundException("ProjectEntity ID: " + backlogId + " not found");
 //        }
 //        ProjectTicket projectTicket = projectTaskRepository.findProjectTaskByProjectSequence(projectSequence);
 //        if (projectTicket == null) {
-//            throw new ProjectNotFoundException("Project task ID: " + projectSequence + " not found");
+//            throw new ProjectNotFoundException("ProjectEntity task ID: " + projectSequence + " not found");
 //        }
 //
 //        if (!projectTicket.getProjectIdentifier().equals(backlogId)) {
-//            throw new ProjectNotFoundException("Project task ID: " + projectSequence + " not found in this backlog");
+//            throw new ProjectNotFoundException("ProjectEntity task ID: " + projectSequence + " not found in this backlog");
 //        }
 //        return projectTaskRepository.findProjectTaskByProjectSequence(projectSequence);
 //    }
@@ -80,7 +80,7 @@
 //
 //    private List<Map<String, ProjectDashboardColumn>> addColumn(List<ProjectTicket> allProjectTickets) {
 //        List<String> allColumns = new ArrayList<>();
-//        System.out.println("all project tasks: " + allProjectTickets);
+//        System.out.println("all projectEntity tasks: " + allProjectTickets);
 //        allProjectTickets.forEach(column -> {
 //            System.out.println("column: " + column.getProjectSequence() + " >> " +  column.getStatus());
 //            allColumns.add(Status.valueOf(column.getStatus()).getStatusValue());
@@ -120,7 +120,7 @@
 //                projectTaskIds.add(projectTask.getProjectSequence());
 //            }
 //        });
-//        System.out.println("project task ids for " + Status.get(columnName)
+//        System.out.println("projectEntity task ids for " + Status.get(columnName)
 //                + ": " + projectTaskIds);
 //        return projectTaskIds;
 //    }
