@@ -45,6 +45,7 @@ public class ProjectController {
             System.out.println("error map: " + errorMap);
             return errorMap;
         }
+
         ProjectEntity theProjectEntity = projectService.updateProject(projectEntity);
         return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
     }

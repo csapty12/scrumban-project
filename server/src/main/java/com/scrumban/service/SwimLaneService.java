@@ -42,7 +42,6 @@ public class SwimLaneService {
 
 
 
-
     public SwimLaneEntity findSwimLaneByName(String swimLaneName) {
         return swimLaneRepository.findByName(swimLaneName);
     }
