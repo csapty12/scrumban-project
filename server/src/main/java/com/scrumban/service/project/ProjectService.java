@@ -32,7 +32,12 @@ public class ProjectService {
 
 
     public ProjectEntity updateProject(ProjectEntity projectEntity) {
-        return projectRepository.save(projectEntity);
+        System.out.println("in here");
+        ProjectEntity foundProjectEntity = tryToFindProject(projectEntity);
+        if(foundProjectEntity!=null){
+            return projectRepository.save(projectEntity);
+        }
+        throw new ProjectIdException("projectEntity ID: " + getProjectIdentifier(projectEntity) + " not found!");
 
     }
 

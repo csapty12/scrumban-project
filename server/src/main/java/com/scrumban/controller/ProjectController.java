@@ -28,7 +28,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) throws ParseException {
+    public ResponseEntity<?> createProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
         if (errorMap != null) {
             System.out.println("error map: " + errorMap);
@@ -38,22 +38,9 @@ public class ProjectController {
         return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
     }
 
-    @PatchMapping
-    public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) {
-        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
-        if (errorMap != null) {
-            System.out.println("error map: " + errorMap);
-            return errorMap;
-        }
-
-        ProjectEntity theProjectEntity = projectService.updateProject(projectEntity);
-        return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
-    }
-
-
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
-        System.out.println("projectEntity identifer: "  + projectIdentifier);
+        System.out.println("projectEntity identifer: " + projectIdentifier);
         projectIdentifier = projectIdentifier.toUpperCase();
         ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
 
@@ -69,6 +56,18 @@ public class ProjectController {
         Iterable<ProjectEntity> allProjects = projectService.findAllProjects();
         return new ResponseEntity<>(allProjects, HttpStatus.OK);
 
+    }
+
+    @PatchMapping
+    public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) {
+        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
+        if (errorMap != null) {
+            System.out.println("error map: " + errorMap);
+            return errorMap;
+        }
+
+        ProjectEntity theProjectEntity = projectService.updateProject(projectEntity);
+        return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectIdentifier}")

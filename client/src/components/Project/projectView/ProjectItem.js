@@ -78,8 +78,7 @@ class ProjectItem extends Component {
       id: this.state.id,
       projectName: this.state.projectName,
       projectIdentifier: this.state.projectIdentifier,
-      description: this.state.description,
-      createdAt: this.state.createdAt
+      description: this.state.description
     };
     axios.patch("http://localhost:8080/api/project", updatedProject);
   };
@@ -147,19 +146,6 @@ class ProjectItem extends Component {
                             fullWidth
                             onChange={this.handleChange}
                             value={this.state.description}
-                          />
-                          <TextField
-                            margin="dense"
-                            id="name"
-                            name="createdAt"
-                            label="Start Date"
-                            type="date"
-                            fullWidth
-                            InputLabelProps={{
-                              shrink: true
-                            }}
-                            onChange={this.handleChange}
-                            value={this.state.createdAt}
                           />
                         </DialogContent>
                         <DialogActions>
