@@ -17,6 +17,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
+import java.util.Optional;
+
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -66,7 +68,7 @@ class ProjectControllerTest {
     @Test
     @DisplayName("POST failure to save new project - /api/project")
     void cannotSaveProject() throws Exception {
-        ProjectEntity projectEntity=new ProjectEntity();
+        ProjectEntity projectEntity = new ProjectEntity();
         projectEntity.setProjectName("failure");
 
         when(mockBindingResult.hasErrors()).thenReturn(true);
@@ -86,7 +88,7 @@ class ProjectControllerTest {
         ProjectEntity projectEntity = createProjectEntityObject();
         projectEntity.setId(1L);
 
-        when(projectService.tryToFindProject("TEST")).thenReturn(projectEntity);
+        when(projectService.tryToFindProject("TEST")).thenReturn(Optional.of(projectEntity));
         mockMvc.perform(get("/api/project/{projectIdentifier}", "test"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -101,7 +103,7 @@ class ProjectControllerTest {
     @Test
     @DisplayName("GET request to load one specific project - /api/project/failure - Bad Request")
     void cannotFindProject() throws Exception {
-        when(mockBindingResult.hasErrors()).thenReturn(true);
+        when(projectService.tryToFindProject("FAILURE")).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/project/{projectIdentifier}", "failure"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -120,7 +122,7 @@ class ProjectControllerTest {
         newEntity.setDescription("test description");
         newEntity.setProjectIdentifier("TEST");
 
-        when(projectService.tryToFindProject(anyString())).thenReturn(projectEntity);
+        when(projectService.tryToFindProject(anyString())).thenReturn(Optional.of(projectEntity));
         when(projectService.updateProject(any())).thenReturn(newEntity);
         mockMvc.perform(patch("/api/project")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -133,8 +135,17 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$.description", is("test description")));
 
 
-
     }
+
+    @Test
+    @DisplayName("DELETE request to delete a project - /api/project/test")
+    void deleteProject() throws Exception {
+        ProjectEntity projectEntity = createProjectEntityObject();
+        when(projectService.tryToFindProject("TEST")).thenReturn(Optional.of(projectEntity));
+        mockMvc.perform(delete("/api/project/{projectIdentifier}", "test"))
+                .andExpect(status().isOk());
+    }
+
 
     private static String asJsonString(final Object obj) {
         try {

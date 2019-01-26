@@ -11,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.text.ParseException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/project")
@@ -40,11 +40,10 @@ public class ProjectController {
 
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
-        System.out.println("projectEntity identifer: " + projectIdentifier);
         projectIdentifier = projectIdentifier.toUpperCase();
-        ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
+        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
 
-        if (projectEntity != null) {
+        if (projectEntity.isPresent()) {
 
             return new ResponseEntity<>(projectEntity, HttpStatus.OK);
         }
@@ -71,9 +70,9 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{projectIdentifier}")
-    public ResponseEntity<?> deleteProject(@PathVariable String projectIdentifier) {
+    public void deleteProject(@PathVariable String projectIdentifier) {
         projectIdentifier = projectIdentifier.toUpperCase();
         projectService.deleteProject(projectIdentifier);
-        return new ResponseEntity<>("ProjectEntity with ID: " + projectIdentifier + " successfully deleted", HttpStatus.OK);
+
     }
 }

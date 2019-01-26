@@ -4,12 +4,15 @@ import com.scrumban.exception.ProjectIdException;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class ProjectService {
 
     private ProjectRepository projectRepository;
@@ -19,25 +22,24 @@ public class ProjectService {
     }
 
     public ProjectEntity saveProject(ProjectEntity projectEntity) {
-        System.out.println("in here");
-        ProjectEntity foundProjectEntity = tryToFindProject(projectEntity);
-        if(foundProjectEntity ==null) {
-
+        Optional<ProjectEntity> foundProjectEntity = tryToFindProject(projectEntity.getProjectIdentifier().toUpperCase());
+        log.info("attempting to save project: {}", projectEntity.getProjectName());
+        if(!foundProjectEntity.isPresent()) {
             List<SwimLaneEntity> swimLaneEntitySet = new LinkedList<>();
             projectEntity.setSwimLaneEntities(swimLaneEntitySet);
-            return projectRepository.save(projectEntity);
+            ProjectEntity savedNewProject = projectRepository.save(projectEntity);
+            log.info("new project: {} has been saved", savedNewProject.getProjectName());
+            return savedNewProject;
         }
-        throw new ProjectIdException("projectEntity ID: " + getProjectIdentifier(projectEntity) + " already exists!");
+        throw new ProjectIdException("project ID: " + projectEntity.getProjectIdentifier() + " already exists!");
     }
 
-
     public ProjectEntity updateProject(ProjectEntity projectEntity) {
-        System.out.println("in here");
-        ProjectEntity foundProjectEntity = tryToFindProject(projectEntity);
-        if(foundProjectEntity!=null){
+        Optional<ProjectEntity> foundProjectEntity = tryToFindProject(projectEntity.getProjectIdentifier());
+        if(foundProjectEntity.isPresent()){
             return projectRepository.save(projectEntity);
         }
-        throw new ProjectIdException("projectEntity ID: " + getProjectIdentifier(projectEntity) + " not found!");
+        throw new ProjectIdException("projectEntity ID: " + projectEntity.getProjectIdentifier() + " not found!");
 
     }
 
@@ -46,22 +48,17 @@ public class ProjectService {
     }
 
     public void deleteProject(String projectIdentifier){
-        ProjectEntity projectEntity = tryToFindProject(projectIdentifier);
-        if(projectEntity == null){
-            throw new ProjectIdException("projectEntity ID: " +projectIdentifier.toUpperCase() + " does not exist!");
+        Optional<ProjectEntity> projectEntity = tryToFindProject(projectIdentifier);
+        if(!projectEntity.isPresent()){
+
+            throw new ProjectIdException("projectEntity ID: " + projectIdentifier.toUpperCase() + " does not exist!");
         }
-        projectEntity.getSwimLaneEntities().forEach(swimLane -> System.out.println(swimLane.getName()));
-        projectRepository.delete(projectEntity);
+        projectRepository.delete(projectEntity.get());
+
     }
 
-    private String getProjectIdentifier(ProjectEntity projectEntity) {
-        return projectEntity.getProjectIdentifier().toUpperCase();
-    }
 
-    public ProjectEntity tryToFindProject(ProjectEntity projectEntity) {
-        return projectRepository.findProjectByProjectIdentifier(getProjectIdentifier(projectEntity));
-    }
-    public ProjectEntity tryToFindProject(String projectIdentifier){
+    public Optional<ProjectEntity> tryToFindProject(String projectIdentifier){
         return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
     }
 }

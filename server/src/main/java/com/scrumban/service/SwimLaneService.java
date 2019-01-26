@@ -7,6 +7,7 @@ import com.scrumban.service.project.ProjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SwimLaneService {
@@ -22,21 +23,21 @@ public class SwimLaneService {
     public ProjectEntity addSwimLaneToProject(String projectIdentifier, SwimLaneEntity swimLaneEntity) {
         System.out.println("adding swimlane to table");
 
-        ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
+        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
 
         SwimLaneEntity foundSwimLand = swimLaneRepository.findByName(swimLaneEntity.getName());
         if (foundSwimLand == null) {
             System.out.println("saving new swimlane");
             SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
-            List<SwimLaneEntity> swimLaneEntities = projectEntity.getSwimLaneEntities();
+            List<SwimLaneEntity> swimLaneEntities = projectEntity.get().getSwimLaneEntities();
             swimLaneEntities.add(newSwimLaneEntity);
         } else {
             System.out.println("swimlane already found");
-            List<SwimLaneEntity> swimLaneEntities = projectEntity.getSwimLaneEntities();
+            List<SwimLaneEntity> swimLaneEntities = projectEntity.get().getSwimLaneEntities();
             swimLaneEntities.add(foundSwimLand);
 
         }
-        return projectService.updateProject(projectEntity);
+        return projectService.updateProject(projectEntity.get());
     }
 
 

@@ -27,8 +27,8 @@ public class ProjectTicketService {
     }
 
     public Tickets getProjectDashboard(String projectIdentifier) {
-        ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
-        List<ProjectTicket> allProjectTickets= projectEntity.getProjectTickets();
+        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
+        List<ProjectTicket> allProjectTickets= projectEntity.get().getProjectTickets();
         allProjectTickets.forEach(ticket-> System.out.println("ticket in getProjectDashboard: " + ticket.getProjectSequence()));
         Tickets tickets = new Tickets();
         List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
@@ -51,8 +51,8 @@ public class ProjectTicketService {
 
     public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(String projectIdentifier, String swimLaneName, ProjectTicket projectTicket) {
 
-        ProjectEntity projectEntity = projectService.tryToFindProject(projectIdentifier);
-        int currentTicketNumber = projectEntity.getCurrentTicketNumber();
+        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
+        int currentTicketNumber = projectEntity.get().getCurrentTicketNumber();
         System.out.println("current ticket number= " + currentTicketNumber);
         int incrementValue = 1;
         String acronym = getAcronymFromProjectIdentifier(projectIdentifier);
@@ -60,7 +60,7 @@ public class ProjectTicketService {
         String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
         projectTicket.setProjectSequence(projectSequence);
         SwimLaneEntity swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
-        projectTicket.setProject(projectEntity);
+        projectTicket.setProject(projectEntity.get());
         projectTicket.setSwimLaneEntity(swimLaneEntity);
         projectTicket.setProjectIdentifier(projectIdentifier);
         projectTicketRepository.save(projectTicket);
@@ -79,17 +79,17 @@ public class ProjectTicketService {
         return initials.toUpperCase();
     }
 
-    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(ProjectEntity projectEntity) {
+    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(Optional<ProjectEntity> projectEntity) {
 
         List<String> columnNames = new ArrayList<>();
 
-        projectEntity.getSwimLaneEntities().forEach(column -> {
+        projectEntity.get().getSwimLaneEntities().forEach(column -> {
 
             columnNames.add(column.getName());
         });
         System.out.println("column names: " + columnNames);
 
-        List<ProjectTicket> allProjectTickets = projectEntity.getProjectTickets();
+        List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
 
 
         List<Map<String, ProjectDashboardColumn>> listOfColumns = new ArrayList<>();
