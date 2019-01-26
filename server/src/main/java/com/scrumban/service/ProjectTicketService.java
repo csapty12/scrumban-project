@@ -28,8 +28,9 @@ public class ProjectTicketService {
 
     public Tickets getProjectDashboard(String projectIdentifier) {
         Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
-        List<ProjectTicket> allProjectTickets= projectEntity.get().getProjectTickets();
-        allProjectTickets.forEach(ticket-> System.out.println("ticket in getProjectDashboard: " + ticket.getProjectSequence()));
+        List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
+        allProjectTickets.forEach(ticket ->
+                System.out.println("ticket in getProjectDashboard: " + ticket.getProjectSequence()));
         Tickets tickets = new Tickets();
         List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
         tickets.setTickets(allTickets);
@@ -38,8 +39,8 @@ public class ProjectTicketService {
         tickets.setSwimLanes(swimLanesAndTicketReferences);
 
         List<String> swimLaneOrder = new ArrayList<>();
-        swimLanesAndTicketReferences.forEach(column->{
-            for ( String key : column.keySet() ) {
+        swimLanesAndTicketReferences.forEach(column -> {
+            for (String key : column.keySet()) {
                 swimLaneOrder.add(key);
             }
         });
@@ -56,7 +57,7 @@ public class ProjectTicketService {
         System.out.println("current ticket number= " + currentTicketNumber);
         int incrementValue = 1;
         String acronym = getAcronymFromProjectIdentifier(projectIdentifier);
-        int newProjectTicketSequenceValue =currentTicketNumber+incrementValue;
+        int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
         String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
         projectTicket.setProjectSequence(projectSequence);
         SwimLaneEntity swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
@@ -65,8 +66,8 @@ public class ProjectTicketService {
         projectTicket.setProjectIdentifier(projectIdentifier);
         projectTicketRepository.save(projectTicket);
 
-        LinkedHashMap<String, ProjectTicket> singleProjectTicket= new LinkedHashMap<>();
-        singleProjectTicket.put(projectSequence, projectTicket );
+        LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
+        singleProjectTicket.put(projectSequence, projectTicket);
 
         return singleProjectTicket;
     }
@@ -124,11 +125,13 @@ public class ProjectTicketService {
 
 
     private List<LinkedHashMap<String, ProjectTicket>> insertAllTickets(List<ProjectTicket> allProjectTickets) {
-        if(allProjectTickets.size()==0){
+        if (allProjectTickets.size() == 0) {
             return new ArrayList<>();
         }
         List<LinkedHashMap<String, ProjectTicket>> projectTicketList = new ArrayList<>();
         LinkedHashMap<String, ProjectTicket> projectTicketMap = new LinkedHashMap<>();
+        allProjectTickets.sort(Comparator.comparingInt(ProjectTicket::getTicketNumberPosition));
+
 
         allProjectTickets.forEach(ticket -> projectTicketMap.put(ticket.getProjectSequence(), ticket));
         projectTicketList.add(projectTicketMap);
@@ -137,7 +140,6 @@ public class ProjectTicketService {
         System.out.println("projectTicketList size: " + allProjectTickets.size());
         return projectTicketList;
     }
-
 
 
     public void removeTicketFromProject(ProjectTicket projectTicket1) {

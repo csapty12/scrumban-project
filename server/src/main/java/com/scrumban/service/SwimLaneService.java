@@ -21,18 +21,15 @@ public class SwimLaneService {
     }
 
     public ProjectEntity addSwimLaneToProject(String projectIdentifier, SwimLaneEntity swimLaneEntity) {
-        System.out.println("adding swimlane to table");
 
         Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
 
         SwimLaneEntity foundSwimLand = swimLaneRepository.findByName(swimLaneEntity.getName());
         if (foundSwimLand == null) {
-            System.out.println("saving new swimlane");
             SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
             List<SwimLaneEntity> swimLaneEntities = projectEntity.get().getSwimLaneEntities();
             swimLaneEntities.add(newSwimLaneEntity);
         } else {
-            System.out.println("swimlane already found");
             List<SwimLaneEntity> swimLaneEntities = projectEntity.get().getSwimLaneEntities();
             swimLaneEntities.add(foundSwimLand);
 

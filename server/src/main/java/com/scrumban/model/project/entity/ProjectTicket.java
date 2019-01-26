@@ -43,13 +43,16 @@ public class ProjectTicket {
     @JoinColumn(name = "swimLane_id")
     private SwimLaneEntity swimLaneEntity;
 
+    private int ticketNumberPosition;
 
     private String projectIdentifier;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = new Date();
         int totalNumberOfTickets = this.project.getCurrentTicketNumber();
         this.project.setCurrentTicketNumber(totalNumberOfTickets+1);
+        this.ticketNumberPosition = this.getSwimLaneEntity().getProjectTickets().size()+1;
 
     }
 
