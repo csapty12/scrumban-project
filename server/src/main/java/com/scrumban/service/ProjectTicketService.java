@@ -1,6 +1,8 @@
 package com.scrumban.service;
 
+import com.scrumban.exception.ProjectIdException;
 import com.scrumban.model.ProjectDashboardColumn;
+import com.scrumban.model.SwimLane;
 import com.scrumban.model.Tickets;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
@@ -8,9 +10,13 @@ import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
 import com.scrumban.service.project.ProjectService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.lang.String.format;
 
 @Service
 
@@ -29,8 +35,8 @@ public class ProjectTicketService {
     public Tickets getProjectDashboard(String projectIdentifier) {
         Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
         List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
-        allProjectTickets.forEach(ticket ->
-                System.out.println("ticket in getProjectDashboard: " + ticket.getProjectSequence()));
+//        allProjectTickets.forEach(ticket ->
+//                System.out.println("ticket in getProjectDashboard: " + ticket.getProjectSequence()));
         Tickets tickets = new Tickets();
         List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
         tickets.setTickets(allTickets);
@@ -54,7 +60,7 @@ public class ProjectTicketService {
 
         Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
         int currentTicketNumber = projectEntity.get().getCurrentTicketNumber();
-        System.out.println("current ticket number= " + currentTicketNumber);
+//        System.out.println("current ticket number= " + currentTicketNumber);
         int incrementValue = 1;
         String acronym = getAcronymFromProjectIdentifier(projectIdentifier);
         int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
@@ -136,8 +142,8 @@ public class ProjectTicketService {
         allProjectTickets.forEach(ticket -> projectTicketMap.put(ticket.getProjectSequence(), ticket));
         projectTicketList.add(projectTicketMap);
 
-        System.out.println("projectEntity ticket list: " + projectTicketList);
-        System.out.println("projectTicketList size: " + allProjectTickets.size());
+//        System.out.println("projectEntity ticket list: " + projectTicketList);
+//        System.out.println("projectTicketList size: " + allProjectTickets.size());
         return projectTicketList;
     }
 
@@ -146,4 +152,26 @@ public class ProjectTicketService {
         System.out.println("ticket id " + projectTicket1.getId());
         projectTicketRepository.deleteProjectTicket(projectTicket1.getId());
     }
+
+    public void updateTicketOrderForSwimLane(String projectIdentifier, SwimLane swimLane) {
+
+        Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier);
+        if(!project.isPresent()){
+            throw new ProjectIdException(format("Project with Id: %s not found.", projectIdentifier));
+        }
+        List<SwimLaneEntity> singleSwimLane = project.get().getSwimLaneEntities()
+                .stream()
+                .filter(swimLaneEntity -> swimLaneEntity.getName().equals(swimLane.getTitle())).collect(Collectors.toList());
+        singleSwimLane.get(0).getProjectTickets().forEach(ticket ->
+                updateTicketPositionInSwimLane(swimLane, ticket));
+
+
+    }
+
+    private void updateTicketPositionInSwimLane(SwimLane swimLane, ProjectTicket ticket) {
+        int indexOfTicket = swimLane.getTicketIds().indexOf(ticket.getProjectSequence());
+        ticket.setTicketNumberPosition(++indexOfTicket);
+        projectTicketRepository.save(ticket);
+    }
+
 }

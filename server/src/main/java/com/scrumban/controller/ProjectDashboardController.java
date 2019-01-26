@@ -1,5 +1,6 @@
 package com.scrumban.controller;
 
+import com.scrumban.model.SwimLane;
 import com.scrumban.model.Tickets;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
@@ -38,7 +39,6 @@ public class ProjectDashboardController {
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier) {
 
-        System.out.println("inside get all tickets: " + projectIdentifier);
         Tickets allTicketsForProject = projectTicketService.getProjectDashboard(projectIdentifier);
         return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
     }
@@ -77,10 +77,9 @@ public class ProjectDashboardController {
     @PatchMapping("/{projectIdentifier}/{swimLaneId}")
     public ResponseEntity<?> updateSwimLaneTicketOrder(@PathVariable String projectIdentifier,
                                                  @PathVariable String swimLaneId,
-                                                 @Valid @RequestBody SwimLaneEntity swimLaneEntity) {
-        System.out.println("project identifier: "  + projectIdentifier);
-        System.out.println("swimLaneId: "  + swimLaneId);
-        System.out.println("swimLaneEntity: "  + swimLaneEntity);
+                                                 @Valid @RequestBody SwimLane swimLane) {
+
+        projectTicketService.updateTicketOrderForSwimLane(projectIdentifier, swimLane);
     return new ResponseEntity<>(HttpStatus.OK);
     }
 }
