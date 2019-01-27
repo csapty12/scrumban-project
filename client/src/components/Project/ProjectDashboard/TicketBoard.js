@@ -19,6 +19,9 @@ const styles = theme => ({
     color: "white",
     height: 48,
     padding: "0 30px"
+  },
+  customColor: {
+    color: "blue"
   }
 });
 
@@ -158,6 +161,7 @@ class TicketBoard extends Component {
   };
 
   onDragEnd = result => {
+    document.body.style.color = "inherit";
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -170,35 +174,45 @@ class TicketBoard extends Component {
       return;
     }
 
-    const column = this.state.swimLanes.filter(swimLane => {
+    const start = this.state.swimLanes.filter(swimLane => {
       return Object.keys(swimLane)[0] === source.droppableId ? swimLane : null;
     });
 
-    const newTaskIds = Array.from(column[0][source.droppableId].ticketIds);
+    const finish = this.state.swimLanes.filter(swimLane => {
+      return Object.keys(swimLane)[0] === destination.droppableId
+        ? swimLane
+        : null;
+    });
 
-    newTaskIds.splice(source.index, 1);
-    newTaskIds.splice(destination.index, 0, draggableId);
+    if (start[0] === finish[0]) {
+      const swimLaneData = start[0][source.droppableId];
+      const newTaskIds = Array.from(swimLaneData.ticketIds);
 
-    const reorderedTicketIds = {
-      ...column[0][source.droppableId],
-      ticketIds: newTaskIds
-    };
+      newTaskIds.splice(source.index, 1);
+      newTaskIds.splice(destination.index, 0, draggableId);
 
-    const modifiedSwimLane = {
-      [source.droppableId]: reorderedTicketIds
-    };
+      const reorderedTicketIds = {
+        ...swimLaneData,
+        ticketIds: newTaskIds
+      };
 
-    const tempAllSwimlanes = [...this.state.swimLanes];
-    const indexOfSwimLane = tempAllSwimlanes.indexOf(column[0]);
-    tempAllSwimlanes.splice(indexOfSwimLane, 1);
-    tempAllSwimlanes.splice(indexOfSwimLane, 0, modifiedSwimLane);
-    const newState = {
-      ...this.state,
-      swimLanes: tempAllSwimlanes
-    };
+      const modifiedSwimLane = {
+        [source.droppableId]: reorderedTicketIds
+      };
 
-    this.setState(newState);
-    this.updateSwimLaneIdOrder(reorderedTicketIds);
+      const tempAllSwimlanes = [...this.state.swimLanes];
+      const indexOfSwimLane = tempAllSwimlanes.indexOf(start[0]);
+      tempAllSwimlanes.splice(indexOfSwimLane, 1);
+      tempAllSwimlanes.splice(indexOfSwimLane, 0, modifiedSwimLane);
+      const newState = {
+        ...this.state,
+        swimLanes: tempAllSwimlanes
+      };
+
+      this.setState(newState);
+      this.updateSwimLaneIdOrder(reorderedTicketIds);
+      return;
+    }
   };
 
   updateSwimLaneIdOrder = reorderedTicketIds => {
@@ -217,13 +231,16 @@ class TicketBoard extends Component {
     // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
     // console.log("this.columns" + JSON.stringify(this.state.columns));
     // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
-    // const { classes } = this.props;
+    const { classes } = this.props;
 
     // console.log("this current state: " + JSON.stringify(this.state));
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
-          <DragDropContext onDragEnd={this.onDragEnd}>
+          <DragDropContext
+            onDragEnd={this.onDragEnd}
+            onDragStart={this.onDragStart}
+          >
             {this.state.swimLaneOrder.map((swimLaneId, index) => {
               const swimLane = this.state.swimLanes[index][swimLaneId];
               const tickets = swimLane.ticketIds.map(

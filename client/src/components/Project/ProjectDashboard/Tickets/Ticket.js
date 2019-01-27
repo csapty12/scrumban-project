@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 import "../projectDashboard.css";
 import { Draggable } from "react-beautiful-dnd";
-import styled from "styled-components";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
@@ -14,14 +13,15 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Button from "@material-ui/core/Button";
 import ClearIcon from "@material-ui/icons/Clear";
-// import axios from "axios";
 
 const styles = theme => ({
   cards: {
     marginTop: 5,
     marginBottom: 5,
-    borderRadius: 1,
-    backgroundColor: ` ${props => (props.isDragging ? "lightgreen" : "white")}`
+    borderRadius: 1
+  },
+  ticket: {
+    backgroundColor: "#F0F2EA"
   },
   high: {
     borderLeft: "3px solid red"
@@ -89,7 +89,7 @@ class Ticket extends Component {
         index={this.props.index}
         draggableId={this.props.ticket.projectSequence}
       >
-        {provided => (
+        {(provided, snapshot) => (
           <div
             {...provided.draggableProps}
             {...provided.dragHandleProps}
@@ -103,6 +103,9 @@ class Ticket extends Component {
                 { [classes.medium]: priorityClass === "medium" },
                 { [classes.low]: priorityClass === "low" }
               )}
+              style={{
+                backgroundColor: snapshot.isDragging ? "#F0F2EA" : null
+              }}
             >
               <CardHeader
                 title={this.props.ticket.projectSequence}

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-// import { Link } from "react-router-dom";
 import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import InnerList from "./InnerList";
@@ -14,7 +13,6 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-// import axios from "axios";
 
 const TaskList = styled.div``;
 const styles = theme => ({});
