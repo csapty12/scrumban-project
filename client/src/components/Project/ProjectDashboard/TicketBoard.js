@@ -20,8 +20,10 @@ const styles = theme => ({
     height: 48,
     padding: "0 30px"
   },
-  customColor: {
-    color: "blue"
+  swimLane: {
+    display: "flex",
+    width: "100%"
+    // border: "2px solid green"
   }
 });
 
@@ -213,6 +215,55 @@ class TicketBoard extends Component {
       this.updateSwimLaneIdOrder(reorderedTicketIds);
       return;
     }
+
+    //moving from one list to another
+    const startTaskIds = Array.from(start[0][source.droppableId].ticketIds);
+    startTaskIds.splice(source.index, 1);
+
+    const updatedStartSwimLane = {
+      ...start[0][source.droppableId],
+      ticketIds: startTaskIds
+    };
+
+    const finishTaskIds = Array.from(
+      finish[0][destination.droppableId].ticketIds
+    );
+    finishTaskIds.splice(destination.index, 0, draggableId);
+
+    const updatedFinishSwimLane = {
+      ...finish[0][destination.droppableId],
+      ticketIds: finishTaskIds
+    };
+
+    const modifiedStartSwimLane = {
+      [source.droppableId]: updatedStartSwimLane
+    };
+    const modifiedFinishSwimLane = {
+      [destination.droppableId]: updatedFinishSwimLane
+    };
+
+    const tempAllSwimlanes = [...this.state.swimLanes];
+    const indexOfStartSwimLane = tempAllSwimlanes.indexOf(start[0]);
+    const indexOfFinishSwimLane = tempAllSwimlanes.indexOf(finish[0]);
+
+    console.log(
+      "idnex of indexOfStartSwimLane: " + JSON.stringify(indexOfStartSwimLane)
+    );
+    console.log(
+      "idnex of indexOfFinishSwimLane: " + JSON.stringify(indexOfFinishSwimLane)
+    );
+    tempAllSwimlanes.splice(indexOfStartSwimLane, 1);
+    tempAllSwimlanes.splice(indexOfStartSwimLane, 0, modifiedStartSwimLane);
+    tempAllSwimlanes.splice(indexOfFinishSwimLane, 1);
+    tempAllSwimlanes.splice(indexOfFinishSwimLane, 0, modifiedFinishSwimLane);
+
+    console.log("temp all swimlaneS: " + JSON.stringify(tempAllSwimlanes));
+    const newState = {
+      ...this.state,
+      swimLanes: tempAllSwimlanes
+    };
+    console.log("new state: " + JSON.stringify(newState));
+    this.setState(newState);
   };
 
   updateSwimLaneIdOrder = reorderedTicketIds => {
@@ -241,22 +292,24 @@ class TicketBoard extends Component {
             onDragEnd={this.onDragEnd}
             onDragStart={this.onDragStart}
           >
-            {this.state.swimLaneOrder.map((swimLaneId, index) => {
-              const swimLane = this.state.swimLanes[index][swimLaneId];
-              const tickets = swimLane.ticketIds.map(
-                ticketId => this.state.projectTickets[0][ticketId]
-              );
-              return (
-                <SwimLane
-                  key={swimLane.title}
-                  swimLane={swimLane}
-                  tickets={tickets}
-                  projectIdentifier={this.props.projectIdentifier}
-                  removeTicket={this.handleTicketDelete}
-                  addTicketToSwimLane={this.handleAddTicket}
-                />
-              );
-            })}
+            <div className={classes.swimLane}>
+              {this.state.swimLaneOrder.map((swimLaneId, index) => {
+                const swimLane = this.state.swimLanes[index][swimLaneId];
+                const tickets = swimLane.ticketIds.map(
+                  ticketId => this.state.projectTickets[0][ticketId]
+                );
+                return (
+                  <SwimLane
+                    key={swimLane.title}
+                    swimLane={swimLane}
+                    tickets={tickets}
+                    projectIdentifier={this.props.projectIdentifier}
+                    removeTicket={this.handleTicketDelete}
+                    addTicketToSwimLane={this.handleAddTicket}
+                  />
+                );
+              })}
+            </div>
           </DragDropContext>
           <div className="card--content col-10 col-lg-3">
             <Button

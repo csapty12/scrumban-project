@@ -8,7 +8,6 @@ body {
   justify-content: center;
   align-items: center;
 }
-
 .card-horizontal-scrollable-container {
   display: flex;
   overflow-x: auto;
@@ -19,6 +18,8 @@ body {
 .card-vertical-scroll-enabled {
   height: 70vh;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
 }
 
 .title-backlog__border {
@@ -77,4 +78,8 @@ body {
 .close-button {
   color: #696969;
   cursor: pointer;
+}
+.card--content {
+  display: flex;
+  flex-direction: column;
 }

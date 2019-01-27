@@ -14,8 +14,14 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 
-const TaskList = styled.div``;
-const styles = theme => ({});
+const TaskList = styled.div`
+  flex-grow: 1;
+`;
+const styles = theme => ({
+  ticket: {
+    backgroundColor: "#BFFAFF"
+  }
+});
 
 class SwimLane extends Component {
   constructor(props) {
@@ -63,7 +69,7 @@ class SwimLane extends Component {
     this.props.addTicketToSwimLane(newTicket);
   };
   render() {
-    // const { classes } = this.props;
+    const { classes } = this.props;
     return (
       <div className="card--content col-10 col-lg-3">
         <h4 className="display-5 text-center title-backlog__border">
@@ -144,11 +150,14 @@ class SwimLane extends Component {
             </Dialog>
           </div>
           <Droppable droppableId={this.props.swimLane.title}>
-            {provided => (
+            {(provided, snapshot) => (
               <TaskList
                 // innerRef={provided.innerRef}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
+                style={{
+                  backgroundColor: snapshot.isDraggingOver ? "#18aad0" : null
+                }}
               >
                 <InnerList
                   tickets={this.props.tickets}
