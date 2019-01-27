@@ -246,24 +246,20 @@ class TicketBoard extends Component {
     const indexOfStartSwimLane = tempAllSwimlanes.indexOf(start[0]);
     const indexOfFinishSwimLane = tempAllSwimlanes.indexOf(finish[0]);
 
-    console.log(
-      "idnex of indexOfStartSwimLane: " + JSON.stringify(indexOfStartSwimLane)
-    );
-    console.log(
-      "idnex of indexOfFinishSwimLane: " + JSON.stringify(indexOfFinishSwimLane)
-    );
     tempAllSwimlanes.splice(indexOfStartSwimLane, 1);
     tempAllSwimlanes.splice(indexOfStartSwimLane, 0, modifiedStartSwimLane);
     tempAllSwimlanes.splice(indexOfFinishSwimLane, 1);
     tempAllSwimlanes.splice(indexOfFinishSwimLane, 0, modifiedFinishSwimLane);
 
-    console.log("temp all swimlaneS: " + JSON.stringify(tempAllSwimlanes));
     const newState = {
       ...this.state,
       swimLanes: tempAllSwimlanes
     };
-    console.log("new state: " + JSON.stringify(newState));
     this.setState(newState);
+    this.udpateSwimLanesWithNewTickets(
+      updatedStartSwimLane,
+      updatedFinishSwimLane
+    );
   };
 
   updateSwimLaneIdOrder = reorderedTicketIds => {
@@ -278,21 +274,34 @@ class TicketBoard extends Component {
     );
   };
 
+  udpateSwimLanesWithNewTickets = (
+    updatedStartSwimLane,
+    updatedFinishSwimLane
+  ) => {
+    console.log("start swim lane:  " + JSON.stringify(updatedStartSwimLane));
+    console.log("finish swim lane:  " + JSON.stringify(updatedFinishSwimLane));
+    const udpatedSwimLanes = Array.of(
+      updatedStartSwimLane,
+      updatedFinishSwimLane
+    );
+    console.log("updated swimlanes: " + JSON.stringify(udpatedSwimLanes));
+    axios.patch(
+      `http://localhost:8080/dashboard/${this.state.projectIdentifier}`,
+      udpatedSwimLanes
+    );
+  };
+
   render() {
-    // console.log("this.allTickets: " + JSON.stringify(this.state.allTickets));
-    // console.log("this.columns" + JSON.stringify(this.state.columns));
-    // console.log("this.columnOrder" + JSON.stringify(this.state.columnOrder));
     const { classes } = this.props;
 
-    // console.log("this current state: " + JSON.stringify(this.state));
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
-          <DragDropContext
-            onDragEnd={this.onDragEnd}
-            onDragStart={this.onDragStart}
-          >
-            <div className={classes.swimLane}>
+          <div className={classes.swimLane}>
+            <DragDropContext
+              onDragEnd={this.onDragEnd}
+              onDragStart={this.onDragStart}
+            >
               {this.state.swimLaneOrder.map((swimLaneId, index) => {
                 const swimLane = this.state.swimLanes[index][swimLaneId];
                 const tickets = swimLane.ticketIds.map(
@@ -309,49 +318,49 @@ class TicketBoard extends Component {
                   />
                 );
               })}
+            </DragDropContext>
+            <div className="col-10 col-lg-3">
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={this.handleClickOpen}
+                disableRipple
+              >
+                New Swimlane &#x2b;
+              </Button>
+              <Dialog
+                open={this.state.open}
+                onClose={this.handleClose}
+                aria-labelledby="form-dialog-title"
+              >
+                <form onSubmit={this.handleSubmit}>
+                  <DialogContent>
+                    <TextField
+                      autoFocus
+                      margin="dense"
+                      id="name"
+                      name="name"
+                      label="Swimlane Name"
+                      type="text"
+                      fullWidth
+                      onChange={this.handleChange}
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={this.handleClose}
+                      color="primary"
+                      type="submit"
+                    >
+                      Create
+                    </Button>
+                  </DialogActions>
+                </form>
+              </Dialog>
             </div>
-          </DragDropContext>
-          <div className="card--content col-10 col-lg-3">
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={this.handleClickOpen}
-              disableRipple
-            >
-              New Swimlane &#x2b;
-            </Button>
-            <Dialog
-              open={this.state.open}
-              onClose={this.handleClose}
-              aria-labelledby="form-dialog-title"
-            >
-              <form onSubmit={this.handleSubmit}>
-                <DialogContent>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    name="name"
-                    label="Swimlane Name"
-                    type="text"
-                    fullWidth
-                    onChange={this.handleChange}
-                  />
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={this.handleClose} color="primary">
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={this.handleClose}
-                    color="primary"
-                    type="submit"
-                  >
-                    Create
-                  </Button>
-                </DialogActions>
-              </form>
-            </Dialog>
           </div>
         </section>
       </div>

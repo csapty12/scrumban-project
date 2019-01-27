@@ -12,11 +12,13 @@ import com.scrumban.service.project.ProjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -76,10 +78,16 @@ public class ProjectDashboardController {
 
     @PatchMapping("/{projectIdentifier}/{swimLaneId}")
     public ResponseEntity<?> updateSwimLaneTicketOrder(@PathVariable String projectIdentifier,
-                                                 @PathVariable String swimLaneId,
-                                                 @Valid @RequestBody SwimLane swimLane) {
+                                                 @Valid @RequestBody SwimLane swimLane, BindingResult bindingResult) {
 
         projectTicketService.updateTicketOrderForSwimLane(projectIdentifier, swimLane);
     return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/{projectIdentifier}")
+    public ResponseEntity<?> updateSwimLanes(@PathVariable String projectIdentifier, @Valid @RequestBody List<SwimLane> swimLanes, BindingResult bindingResult){
+        System.out.println("project id: " + projectIdentifier);
+        System.out.println("swimalens: " + swimLanes);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
