@@ -9,17 +9,16 @@ import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
 import com.scrumban.service.project.ProjectService;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
 @Service
-
 public class ProjectTicketService {
 
     private ProjectTicketRepository projectTicketRepository;
@@ -138,12 +137,8 @@ public class ProjectTicketService {
         LinkedHashMap<String, ProjectTicket> projectTicketMap = new LinkedHashMap<>();
         allProjectTickets.sort(Comparator.comparingInt(ProjectTicket::getTicketNumberPosition));
 
-
         allProjectTickets.forEach(ticket -> projectTicketMap.put(ticket.getProjectSequence(), ticket));
         projectTicketList.add(projectTicketMap);
-
-//        System.out.println("projectEntity ticket list: " + projectTicketList);
-//        System.out.println("projectTicketList size: " + allProjectTickets.size());
         return projectTicketList;
     }
 
@@ -156,22 +151,64 @@ public class ProjectTicketService {
     public void updateTicketOrderForSwimLane(String projectIdentifier, SwimLane swimLane) {
 
         Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier);
-        if(!project.isPresent()){
+        if (!project.isPresent()) {
             throw new ProjectIdException(format("Project with Id: %s not found.", projectIdentifier));
         }
         List<SwimLaneEntity> singleSwimLane = project.get().getSwimLaneEntities()
                 .stream()
                 .filter(swimLaneEntity -> swimLaneEntity.getName().equals(swimLane.getTitle())).collect(Collectors.toList());
-        singleSwimLane.get(0).getProjectTickets().forEach(ticket ->
+
+
+        List<ProjectTicket> projectSwimLaneTickets = singleSwimLane.get(0)
+                .getProjectTickets()
+                .stream()
+                .filter(ticket -> ticket.getProject().getProjectIdentifier()
+                        .equals(projectIdentifier)).collect(Collectors.toList()
+                );
+
+        projectSwimLaneTickets.forEach(ticket ->
                 updateTicketPositionInSwimLane(swimLane, ticket));
 
 
     }
 
+    @Transactional
+    public void updateTicketSwimLane(String projectIdentifier, List<SwimLane> swimLanes) {
+        Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier);
+        if (!project.isPresent()) {
+            throw new ProjectIdException(format("Project with Id: %s not found.", projectIdentifier));
+        }
+
+        swimLanes.forEach(swimLane -> {
+            List<String> ticketIds = swimLane.getTicketIds();
+            SwimLaneEntity swimLaneEntity = swimLaneService.findSwimLaneByName(swimLane.getTitle());
+            ticketIds.forEach(ticketId -> {
+                ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticketId);
+                projectTicket.setSwimLaneEntity(swimLaneEntity);
+                projectTicketRepository.save(projectTicket);
+            });
+        });
+    }
+
+
     private void updateTicketPositionInSwimLane(SwimLane swimLane, ProjectTicket ticket) {
+
         int indexOfTicket = swimLane.getTicketIds().indexOf(ticket.getProjectSequence());
         ticket.setTicketNumberPosition(++indexOfTicket);
         projectTicketRepository.save(ticket);
     }
 
+    public void updateTicketPositionInNewSwimLane(List<SwimLane> swimLanes) {
+
+        swimLanes.get(0).getTicketIds().forEach(ticket -> {
+            ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticket);
+            updateTicketPositionInSwimLane(swimLanes.get(0), projectTicket);
+        });
+
+        swimLanes.get(1).getTicketIds().forEach(ticket -> {
+            ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticket);
+            updateTicketPositionInSwimLane(swimLanes.get(1), projectTicket);
+        });
+
+    }
 }

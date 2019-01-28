@@ -87,7 +87,10 @@ public class ProjectDashboardController {
     @PatchMapping("/{projectIdentifier}")
     public ResponseEntity<?> updateSwimLanes(@PathVariable String projectIdentifier, @Valid @RequestBody List<SwimLane> swimLanes, BindingResult bindingResult){
         System.out.println("project id: " + projectIdentifier);
-        System.out.println("swimalens: " + swimLanes);
+
+        projectTicketService.updateTicketSwimLane(projectIdentifier, swimLanes);
+
+        projectTicketService.updateTicketPositionInNewSwimLane(swimLanes);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

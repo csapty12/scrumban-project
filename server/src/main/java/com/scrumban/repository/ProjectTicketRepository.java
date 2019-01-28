@@ -17,4 +17,6 @@ public interface ProjectTicketRepository  extends CrudRepository<ProjectTicket, 
     @Transactional
     @Query("delete from ProjectTicket p where id = ?1")
     void deleteProjectTicket(long id);
+
+    ProjectTicket findByProjectSequence(String projectSequence);
 }
