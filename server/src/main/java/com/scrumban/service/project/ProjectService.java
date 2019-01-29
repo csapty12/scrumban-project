@@ -4,6 +4,7 @@ import com.scrumban.exception.ProjectIdException;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectRepository;
+import com.scrumban.repository.ProjectTicketRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,11 @@ import java.util.Optional;
 public class ProjectService {
 
     private ProjectRepository projectRepository;
+    private ProjectTicketRepository projectTicketRepository;
 
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository, ProjectTicketRepository projectTicketRepository) {
         this.projectRepository = projectRepository;
+        this.projectTicketRepository = projectTicketRepository;
     }
 
     public ProjectEntity saveProject(ProjectEntity projectEntity) {
@@ -53,6 +56,8 @@ public class ProjectService {
 
             throw new ProjectIdException("projectEntity ID: " + projectIdentifier.toUpperCase() + " does not exist!");
         }
+
+        projectEntity.get().getProjectTickets().forEach(projectTicket -> projectTicketRepository.deleteProjectTicket(projectTicket.getId()));
         projectRepository.delete(projectEntity.get());
 
     }

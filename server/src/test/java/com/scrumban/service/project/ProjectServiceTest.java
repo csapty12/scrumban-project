@@ -114,15 +114,6 @@ class ProjectServiceTest {
     }
 
     @Test
-    @DisplayName("when deleting a fresh project with no swimlanes or tickets, delete project")
-    void deleteProject(){
-        ProjectEntity existingProject = createProjectEntityWithId();
-        when(projectRepository.findProjectByProjectIdentifier(existingProject.getProjectIdentifier())).thenReturn(Optional.of(existingProject));
-        projectService.deleteProject(existingProject.getProjectIdentifier());
-        verify(projectRepository, times(1)).delete(any());
-    }
-
-    @Test
     @DisplayName("when deleting project that does not exist, throw exception")
     void cannotDeleteProject(){
         ProjectEntity existingProject = createProjectEntityWithId();

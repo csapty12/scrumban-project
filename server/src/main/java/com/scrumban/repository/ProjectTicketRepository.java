@@ -19,4 +19,6 @@ public interface ProjectTicketRepository  extends CrudRepository<ProjectTicket, 
     void deleteProjectTicket(long id);
 
     ProjectTicket findByProjectSequence(String projectSequence);
+
+
 }
