@@ -18,8 +18,17 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
+import TextField from "@material-ui/core/TextField";
 
 const styles = theme => ({
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  },
   cards: {
     marginTop: 5,
     marginBottom: 5,
@@ -130,7 +139,8 @@ class Ticket extends Component {
   };
 
   openProjectDetailsDialog = () => {
-    const { classes, ticket } = this.props;
+    const { classes, ticket, swimLaneId } = this.props;
+    console.log("ticket: " + JSON.stringify(swimLaneId));
     return (
       <Fragment>
         <span onClick={this.handleOpenTicketDetails}>
@@ -156,12 +166,41 @@ class Ticket extends Component {
               </Typography>
             </Toolbar>
           </AppBar>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Let Google help apps determine location. This means sending
-              anonymous location data to Google, even when no apps are running.
-            </DialogContentText>
-          </DialogContent>
+          <DialogTitle id="form-dialog-title">Ticket Details</DialogTitle>
+          <TextField
+            id="outlined-name"
+            label="Ticket Summary"
+            className={classes.textField}
+            value={ticket.summary}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
+            id="outlined-name"
+            label="Priority"
+            className={classes.textField}
+            value={ticket.priority}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
+            id="outlined-name"
+            label="Swim Lane"
+            className={classes.textField}
+            value={swimLaneId}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
+            id="outlined-textarea"
+            label="Acceptance Criteria"
+            placeholder="Placeholder"
+            multiline
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+            value={ticket.acceptanceCriteria}
+          />
         </Dialog>
       </Fragment>
     );
