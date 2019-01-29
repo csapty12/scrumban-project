@@ -2,6 +2,12 @@ import React, { Component } from "react";
 import Ticket from "./Tickets/Ticket";
 
 export default class InnerList extends Component {
+  componentWillUpdate(nextProps) {
+    if (nextProps.tickets === this.props.tickets) {
+      return false;
+    }
+    return true;
+  }
   render() {
     return this.props.tickets.map((ticket, index) => (
       <Ticket

@@ -76,16 +76,18 @@ class SwimLane extends Component {
           {this.props.swimLane.title}
           <span style={{ fontSize: 11 }}>({this.props.tickets.length})</span>
         </h4>
+
+        <Button
+          className="card-header"
+          onClick={this.handleClickOpen}
+          aria-labelledby="form-dialog-title"
+          disableRipple
+          style={{ backgroundColor: "#fff" }}
+        >
+          Add Ticket &#x2b;
+        </Button>
         <div className="card-vertical-scroll-enabled">
           <div className="card text-center">
-            <Button
-              className="card-header"
-              onClick={this.handleClickOpen}
-              aria-labelledby="form-dialog-title"
-              disableRipple
-            >
-              Add Ticket &#x2b;
-            </Button>
             <Dialog open={this.state.open} onClose={this.handleClose}>
               <DialogTitle id="form-dialog-title">
                 Create New Ticket
