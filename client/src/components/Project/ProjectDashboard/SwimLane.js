@@ -82,12 +82,16 @@ class SwimLane extends Component {
           onClick={this.handleClickOpen}
           aria-labelledby="form-dialog-title"
           disableRipple
-          style={{ backgroundColor: "#fff" }}
+          style={{
+            backgroundColor: "#fff",
+            border: "2px solid #e8e3e0",
+            borderRadius: 0
+          }}
         >
           Add Ticket &#x2b;
         </Button>
         <div className="card-vertical-scroll-enabled">
-          <div className="card text-center">
+          <div className="text-center">
             <Dialog open={this.state.open} onClose={this.handleClose}>
               <DialogTitle id="form-dialog-title">
                 Create New Ticket
@@ -158,7 +162,10 @@ class SwimLane extends Component {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 style={{
-                  backgroundColor: snapshot.isDraggingOver ? "#18aad0" : null
+                  background: snapshot.isDraggingOver
+                    ? "linear-gradient(#2196f3, 40%,transparent)"
+                    : null,
+                  transition: "0.3s"
                 }}
               >
                 <InnerList

@@ -23,7 +23,6 @@ const styles = theme => ({
   swimLane: {
     display: "flex",
     width: "100%"
-    // border: "2px solid green"
   }
 });
 

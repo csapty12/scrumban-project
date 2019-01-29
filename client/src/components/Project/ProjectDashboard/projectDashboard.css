@@ -22,25 +22,6 @@ body {
   flex-direction: column;
 }
 
-.title-backlog__border {
-  border-bottom: 2px solid #0297f9;
-}
-.title-todo__border {
-  border-bottom: 2px solid #18aad0;
-}
-.title-inprogress__border {
-  border-bottom: 2px solid #25bcaa;
-}
-.title-testing__border {
-  border-bottom: 2px solid #35d374;
-}
-.title-done__border {
-  border-bottom: 2px solid #41e44a;
-}
-.title-blocked__border {
-  border-bottom: 2px solid #f75a47;
-}
-
 .button__add-ticket {
   background: #fffaf6;
   padding: 5px;
@@ -82,4 +63,9 @@ body {
 .card--content {
   display: flex;
   flex-direction: column;
+}
+
+.title-backlog__border {
+  border-bottom: 2px solid #2196f3;
+  padding: 5px;
 }

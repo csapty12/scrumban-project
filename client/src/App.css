@@ -4,3 +4,8 @@ body {
 *:focus {
   outline: none !important;
 }
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
