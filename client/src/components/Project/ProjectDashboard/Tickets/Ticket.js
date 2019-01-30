@@ -58,10 +58,6 @@ const styles = theme => ({
   }
 });
 
-function Transition(props) {
-  return <Slide direction="up" {...props} />;
-}
-
 class Ticket extends Component {
   constructor(props) {
     super(props);
@@ -69,7 +65,11 @@ class Ticket extends Component {
       open: false,
       isHovering: false,
       openTicketDetails: false,
-      isDragDisabled: false
+      isDragDisabled: false,
+      fullWidth: true,
+      maxWidth: "sm",
+      readOnlyMode: true,
+      diableSaveButton: true
     };
   }
   handleDelete = ticket => {
@@ -94,6 +94,13 @@ class Ticket extends Component {
 
   handleCloseTicketDetails = () => {
     this.setState({ openTicketDetails: false, isDragDisabled: false });
+  };
+
+  handleEditTicket = () => {
+    this.setState({
+      readOnlyMode: !this.state.readOnlyMode,
+      diableSaveButton: !this.state.diableSaveButton
+    });
   };
 
   deleteButton = () => {
@@ -140,33 +147,30 @@ class Ticket extends Component {
 
   openProjectDetailsDialog = () => {
     const { classes, ticket, swimLaneId } = this.props;
-    console.log("ticket: " + JSON.stringify(swimLaneId));
+    // console.log("ticket: " + JSON.stringify(swimLaneId));
     return (
       <Fragment>
         <span onClick={this.handleOpenTicketDetails}>
           {ticket.projectSequence}
         </span>
         <Dialog
-          fullScreen
           open={this.state.openTicketDetails}
           onClose={this.handleCloseTicketDetails}
-          TransitionComponent={Transition}
+          aria-labelledby="form-dialog-title"
+          fullWidth={this.state.fullWidth}
+          maxWidth={this.state.maxWidth}
         >
           <AppBar className={classes.appBar}>
             <Toolbar>
-              <IconButton
-                color="inherit"
-                onClick={this.handleCloseTicketDetails}
-                aria-label="Close"
-              >
-                <CloseIcon />
-              </IconButton>
               <Typography variant="h6" color="inherit" className={classes.flex}>
                 {ticket.projectIdentifier} / {ticket.projectSequence}
               </Typography>
+              <Button color="inherit" onClick={this.handleEditTicket}>
+                Edit Ticket
+              </Button>
             </Toolbar>
           </AppBar>
-          <DialogTitle id="form-dialog-title">Ticket Details</DialogTitle>
+
           <TextField
             id="outlined-name"
             label="Ticket Summary"
@@ -174,6 +178,9 @@ class Ticket extends Component {
             value={ticket.summary}
             margin="normal"
             variant="outlined"
+            InputProps={{
+              readOnly: this.state.readOnlyMode
+            }}
           />
           <TextField
             id="outlined-name"
@@ -182,6 +189,9 @@ class Ticket extends Component {
             value={ticket.priority}
             margin="normal"
             variant="outlined"
+            InputProps={{
+              readOnly: this.state.readOnlyMode
+            }}
           />
           <TextField
             id="outlined-name"
@@ -190,6 +200,9 @@ class Ticket extends Component {
             value={swimLaneId}
             margin="normal"
             variant="outlined"
+            InputProps={{
+              readOnly: this.state.readOnlyMode
+            }}
           />
           <TextField
             id="outlined-textarea"
@@ -200,7 +213,22 @@ class Ticket extends Component {
             margin="normal"
             variant="outlined"
             value={ticket.acceptanceCriteria}
+            InputProps={{
+              readOnly: this.state.readOnlyMode
+            }}
           />
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Close
+            </Button>
+            <Button
+              onClick={this.handleSave}
+              color="primary"
+              disabled={this.state.diableSaveButton}
+            >
+              Save Changes
+            </Button>
+          </DialogActions>
         </Dialog>
       </Fragment>
     );

@@ -277,13 +277,13 @@ class TicketBoard extends Component {
     updatedStartSwimLane,
     updatedFinishSwimLane
   ) => {
-    console.log("start swim lane:  " + JSON.stringify(updatedStartSwimLane));
-    console.log("finish swim lane:  " + JSON.stringify(updatedFinishSwimLane));
+    // console.log("start swim lane:  " + JSON.stringify(updatedStartSwimLane));
+    // console.log("finish swim lane:  " + JSON.stringify(updatedFinishSwimLane));
     const udpatedSwimLanes = Array.of(
       updatedStartSwimLane,
       updatedFinishSwimLane
     );
-    console.log("updated swimlanes: " + JSON.stringify(udpatedSwimLanes));
+    // console.log("updated swimlanes: " + JSON.stringify(udpatedSwimLanes));
     axios.patch(
       `http://localhost:8080/dashboard/${this.state.projectIdentifier}`,
       udpatedSwimLanes
