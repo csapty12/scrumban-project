@@ -6,9 +6,11 @@ import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import Typography from "@material-ui/core/Typography";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import { withStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 import { red } from "@material-ui/core/colors";
 
 const styles = theme => ({
@@ -24,6 +26,14 @@ const styles = theme => ({
   error: {
     color: "red",
     fontSize: 12
+  },
+
+  appBar: {
+    position: "relative",
+    backgroundColor: "#2196F3"
+  },
+  flex: {
+    flex: 1
   }
 });
 
@@ -95,16 +105,11 @@ class Dashboard extends Component {
         this.handleClose();
       })
       .catch(json => {
-        const {
-          description,
-          projectIdentifier,
-          projectName
-        } = json.response.data;
+        const { description, projectName } = json.response.data;
         this.setState({
           errors: {
-            description: description,
-            projectIdentifier: projectIdentifier,
-            projectName: projectName
+            projectName: projectName,
+            description: description
           }
         });
         return;
@@ -137,9 +142,17 @@ class Dashboard extends Component {
                 aria-labelledby="form-dialog-title"
                 scroll="paper"
               >
-                <DialogTitle id="form-dialog-title">
-                  Create New Project
-                </DialogTitle>
+                <AppBar className={classes.appBar}>
+                  <Toolbar>
+                    <Typography
+                      variant="h6"
+                      color="inherit"
+                      className={classes.flex}
+                    >
+                      Create New Project
+                    </Typography>
+                  </Toolbar>
+                </AppBar>
                 <form onSubmit={this.handleSubmit}>
                   <DialogContent>
                     <TextField
@@ -152,7 +165,6 @@ class Dashboard extends Component {
                       fullWidth
                       onChange={this.handleChange}
                       value={this.state.projectName}
-                      // helperText={errors.projectName}
                     />
                     {errors.projectName && (
                       <span className={classes.error}>
@@ -169,7 +181,6 @@ class Dashboard extends Component {
                       fullWidth
                       onChange={this.handleChange}
                       value={this.state.description}
-                      // helperText={errors.description}
                     />
                     {errors.description && (
                       <span className={classes.error}>
