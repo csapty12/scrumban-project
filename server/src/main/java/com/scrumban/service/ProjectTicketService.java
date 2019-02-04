@@ -33,6 +33,10 @@ public class ProjectTicketService {
     public Tickets getProjectDashboard(String projectIdentifier) {
         Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
         List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
+        if(allProjectTickets.size() ==0){
+            allProjectTickets = new ArrayList<>();
+        }
+
         Tickets tickets = new Tickets();
         List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
         tickets.setTickets(allTickets);

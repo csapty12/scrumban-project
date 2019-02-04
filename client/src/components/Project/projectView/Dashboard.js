@@ -162,7 +162,6 @@ class Dashboard extends Component {
                       type="text"
                       fullWidth
                       onChange={this.handleChange}
-                      value={this.state.projectName}
                     />
                     {errors.projectName && (
                       <span className={classes.error}>
@@ -178,7 +177,6 @@ class Dashboard extends Component {
                       margin="normal"
                       fullWidth
                       onChange={this.handleChange}
-                      value={this.state.description}
                     />
                     {errors.description && (
                       <span className={classes.error}>
