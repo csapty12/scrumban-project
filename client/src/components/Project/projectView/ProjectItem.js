@@ -17,7 +17,20 @@ import TextField from "@material-ui/core/TextField";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const styles = theme => ({});
+const styles = theme => ({
+  error: {
+    color: "red",
+    fontSize: 12
+  },
+
+  appBar: {
+    position: "relative",
+    backgroundColor: "#2196F3"
+  },
+  flex: {
+    flex: 1
+  }
+});
 
 class ProjectItem extends Component {
   constructor(props) {
@@ -32,7 +45,8 @@ class ProjectItem extends Component {
       id: project.id,
       projectIdentifier: project.projectIdentifier,
       description: project.description,
-      createdAt: project.createdAt
+      createdAt: project.createdAt,
+      errors: {}
     };
   }
 
@@ -80,16 +94,32 @@ class ProjectItem extends Component {
       projectIdentifier: this.state.projectIdentifier,
       description: this.state.description
     };
-    axios.patch("http://localhost:8080/api/project", updatedProject);
+    axios
+      .patch("http://localhost:8080/api/project", updatedProject)
+      .then(() => {
+        this.handleUpdateProjectClose(null);
+      })
+      .catch(json => {
+        console.log("json response : " + JSON.stringify(json.response.data));
+        this.setState({
+          errors: {
+            projectName: json.response.data.projectName,
+            description: json.response.data.description
+          }
+        });
+        return;
+      });
   };
 
   render() {
-    const { project } = this.props;
+    const { classes, project } = this.props;
 
-    const { anchorEl, deleteProject, updateProject } = this.state;
+    const { anchorEl, deleteProject, updateProject, errors } = this.state;
     const menuOpen = Boolean(anchorEl);
     const deleteOpen = Boolean(deleteProject);
     const updateOpen = Boolean(updateProject);
+    console.log("errors: " + JSON.stringify(errors));
+
     return (
       <div className="col-md-6 col-lg-4 item">
         <Card>
@@ -136,6 +166,11 @@ class ProjectItem extends Component {
                             onChange={this.handleChange}
                             value={this.state.projectName}
                           />
+                          {errors.projectName && (
+                            <span className={classes.error}>
+                              {errors.projectName}
+                            </span>
+                          )}
                           <TextField
                             id="standard-multiline-static"
                             name="description"
@@ -147,6 +182,11 @@ class ProjectItem extends Component {
                             onChange={this.handleChange}
                             value={this.state.description}
                           />
+                          {errors.description && (
+                            <span className={classes.error}>
+                              {errors.description}
+                            </span>
+                          )}
                         </DialogContent>
                         <DialogActions>
                           <Button
@@ -155,11 +195,7 @@ class ProjectItem extends Component {
                           >
                             Cancel
                           </Button>
-                          <Button
-                            onClick={this.handleUpdateProjectClose}
-                            color="primary"
-                            type="submit"
-                          >
+                          <Button color="primary" type="submit">
                             Update
                           </Button>
                         </DialogActions>

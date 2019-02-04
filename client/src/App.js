@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import "./projectItem.css";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Project/projectView/Dashboard";
 import Navbar from "./components/Layout/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
