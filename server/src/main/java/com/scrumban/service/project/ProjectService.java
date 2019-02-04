@@ -1,6 +1,6 @@
 package com.scrumban.service.project;
 
-import com.scrumban.exception.ProjectIdException;
+import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectRepository;
@@ -34,7 +34,7 @@ public class ProjectService {
             log.info("new project: {} has been saved", savedNewProject.getProjectName());
             return savedNewProject;
         }
-        throw new ProjectIdException("project ID: " + projectEntity.getProjectIdentifier() + " already exists!");
+        throw new ProjectIdentifierException("project ID: " + projectEntity.getProjectIdentifier() + " already exists!");
     }
 
     public ProjectEntity updateProject(ProjectEntity projectEntity) {
@@ -42,7 +42,7 @@ public class ProjectService {
         if(foundProjectEntity.isPresent()){
             return projectRepository.save(projectEntity);
         }
-        throw new ProjectIdException("projectEntity ID: " + projectEntity.getProjectIdentifier() + " not found!");
+        throw new ProjectIdentifierException("projectEntity ID: " + projectEntity.getProjectIdentifier() + " not found!");
 
     }
 
@@ -54,7 +54,7 @@ public class ProjectService {
         Optional<ProjectEntity> projectEntity = tryToFindProject(projectIdentifier);
         if(!projectEntity.isPresent()){
 
-            throw new ProjectIdException("projectEntity ID: " + projectIdentifier.toUpperCase() + " does not exist!");
+            throw new ProjectIdentifierException("projectEntity ID: " + projectIdentifier.toUpperCase() + " does not exist!");
         }
 
         projectEntity.get().getProjectTickets().forEach(projectTicket -> projectTicketRepository.deleteProjectTicket(projectTicket.getId()));

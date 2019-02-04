@@ -77,8 +77,7 @@ class ProjectControllerTest {
                 .content(asJsonString(projectEntity)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.description", is("projectEntity description is needed")))
-                .andExpect(jsonPath("$.projectIdentifier", is("ProjectEntity identifier required.")))
+                .andExpect(jsonPath("$.description", is("Project description is needed")))
                 .andDo(print());
     }
 

@@ -1,9 +1,8 @@
 package com.scrumban.service.project;
 
-import com.scrumban.exception.ProjectIdException;
+import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.repository.ProjectRepository;
-import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,7 +61,7 @@ class ProjectServiceTest {
         ProjectEntity projectToSave = createProjectEntityObject();
         ProjectEntity savedProject = createProjectEntityWithId();
         when(projectRepository.findProjectByProjectIdentifier(projectToSave.getProjectIdentifier())).thenReturn(Optional.of(savedProject));
-        assertThrows(ProjectIdException.class,() -> projectService.saveProject(projectToSave));
+        assertThrows(ProjectIdentifierException.class,() -> projectService.saveProject(projectToSave));
 
     }
 
@@ -84,7 +83,7 @@ class ProjectServiceTest {
     void doNotUpdateProject(){
         ProjectEntity projectEntity = createProjectEntityWithId();
         when(projectRepository.findProjectByProjectIdentifier(projectEntity.getProjectIdentifier())).thenReturn(Optional.empty());
-        assertThrows(ProjectIdException.class,() -> projectService.updateProject(projectEntity));
+        assertThrows(ProjectIdentifierException.class,() -> projectService.updateProject(projectEntity));
     }
 
     @Test
@@ -118,7 +117,7 @@ class ProjectServiceTest {
     void cannotDeleteProject(){
         ProjectEntity existingProject = createProjectEntityWithId();
         when(projectRepository.findProjectByProjectIdentifier(existingProject.getProjectIdentifier())).thenReturn(Optional.empty());
-        assertThrows(ProjectIdException.class, ()-> projectService.deleteProject(existingProject.getProjectIdentifier()));
+        assertThrows(ProjectIdentifierException.class, ()-> projectService.deleteProject(existingProject.getProjectIdentifier()));
     }
 
 

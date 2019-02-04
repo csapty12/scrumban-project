@@ -23,14 +23,13 @@ public class ProjectEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "ProjectEntity name required.")
+    @NotBlank(message = "Project name required.")
     private String projectName;
 
-    @NotBlank(message = "ProjectEntity identifier required.")
     @Column(updatable = false, unique = true)
     private String projectIdentifier;
 
-    @NotBlank(message = "projectEntity description is needed")
+    @NotBlank(message = "Project description is needed")
     private String description;
 
     @JsonFormat(pattern = "dd-MM-yyyy")

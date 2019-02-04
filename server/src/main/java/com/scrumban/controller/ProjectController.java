@@ -1,6 +1,6 @@
 package com.scrumban.controller;
 
-import com.scrumban.exception.ProjectIdException;
+import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.service.ValidationErrorService;
 import com.scrumban.service.project.ProjectService;
@@ -47,7 +47,7 @@ public class ProjectController {
 
             return new ResponseEntity<>(projectEntity, HttpStatus.OK);
         }
-        throw new ProjectIdException("no projectEntity found with identifier: " + projectIdentifier);
+        throw new ProjectIdentifierException("no projectEntity found with identifier: " + projectIdentifier);
     }
 
     @GetMapping

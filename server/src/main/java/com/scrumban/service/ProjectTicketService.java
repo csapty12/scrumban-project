@@ -1,6 +1,6 @@
 package com.scrumban.service;
 
-import com.scrumban.exception.ProjectIdException;
+import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.model.ProjectDashboardColumn;
 import com.scrumban.model.SwimLane;
 import com.scrumban.model.Tickets;
@@ -83,7 +83,7 @@ public class ProjectTicketService {
 
         Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier);
         if (!project.isPresent()) {
-            throw new ProjectIdException(format("Project with Id: %s not found.", projectIdentifier));
+            throw new ProjectIdentifierException(format("Project with Id: %s not found.", projectIdentifier));
         }
         List<SwimLaneEntity> singleSwimLane = project.get().getSwimLaneEntities()
                 .stream()
@@ -107,7 +107,7 @@ public class ProjectTicketService {
     public void updateTicketSwimLane(String projectIdentifier, List<SwimLane> swimLanes) {
         Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier);
         if (!project.isPresent()) {
-            throw new ProjectIdException(format("Project with Id: %s not found.", projectIdentifier));
+            throw new ProjectIdentifierException(format("Project with Id: %s not found.", projectIdentifier));
         }
 
         swimLanes.forEach(swimLane -> {

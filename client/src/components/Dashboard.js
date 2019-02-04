@@ -7,7 +7,9 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import { withStyles } from "@material-ui/core/styles";
+import { red } from "@material-ui/core/colors";
 
 const styles = theme => ({
   createButton: {
@@ -18,6 +20,10 @@ const styles = theme => ({
     color: "white",
     height: 48,
     padding: "0 30px"
+  },
+  error: {
+    color: "red",
+    fontSize: 12
   }
 });
 
@@ -38,8 +44,9 @@ class Dashboard extends Component {
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ open: false, errors: {} });
   };
+
   componentDidMount() {
     axios.get("http://localhost:8080/api/project").then(json => {
       this.setState({
@@ -68,13 +75,6 @@ class Dashboard extends Component {
     });
   };
 
-  componentWillReceiveProps(nextProps) {
-    console.log("all errors retuened: " + JSON.stringify(nextProps.errors));
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
-    }
-  }
-
   handleSubmit = event => {
     event.preventDefault();
     let slugify = require("slugify");
@@ -86,19 +86,41 @@ class Dashboard extends Component {
       projectIdentifier: projectIdentifierSlug,
       description: this.state.description
     };
-    axios.post("http://localhost:8080/api/project", newProject).then(json => {
-      this.setState({ allProjects: [...this.state.allProjects, json.data] });
-    });
+    axios
+      .post("http://localhost:8080/api/project", newProject)
+      .then(json => {
+        this.setState({ allProjects: [...this.state.allProjects, json.data] });
+      })
+      .then(() => {
+        this.handleClose();
+      })
+      .catch(json => {
+        const {
+          description,
+          projectIdentifier,
+          projectName
+        } = json.response.data;
+        this.setState({
+          errors: {
+            description: description,
+            projectIdentifier: projectIdentifier,
+            projectName: projectName
+          }
+        });
+        return;
+      });
   };
   render() {
     const { classes } = this.props;
     const allProjects = this.state.allProjects;
+    const { errors } = this.state;
     return (
       <div className="projects">
         <div className="container">
           <div className="row">
             <div className="col-md-12">
               <h1 className="display-4 text-center">All Projects</h1>
+
               <br />
               <Button
                 variant="contained"
@@ -129,7 +151,14 @@ class Dashboard extends Component {
                       type="text"
                       fullWidth
                       onChange={this.handleChange}
+                      value={this.state.projectName}
+                      // helperText={errors.projectName}
                     />
+                    {errors.projectName && (
+                      <span className={classes.error}>
+                        {errors.projectName}
+                      </span>
+                    )}
                     <TextField
                       id="standard-multiline-static"
                       name="description"
@@ -139,14 +168,21 @@ class Dashboard extends Component {
                       margin="normal"
                       fullWidth
                       onChange={this.handleChange}
+                      value={this.state.description}
+                      // helperText={errors.description}
                     />
+                    {errors.description && (
+                      <span className={classes.error}>
+                        {errors.description}
+                      </span>
+                    )}
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={this.handleClose} color="primary">
                       Cancel
                     </Button>
                     <Button
-                      onClick={this.handleClose}
+                      // onClick={this.handleClose}
                       color="primary"
                       type="submit"
                     >

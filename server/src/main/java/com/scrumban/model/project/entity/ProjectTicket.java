@@ -28,6 +28,8 @@ public class ProjectTicket {
     private String acceptanceCriteria;
     private String priority;
 
+    private int complexity;
+
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(updatable = false)

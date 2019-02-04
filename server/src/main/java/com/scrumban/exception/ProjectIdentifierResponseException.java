@@ -5,10 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProjectIdResponseException{
+public class ProjectIdentifierResponseException {
     private String projectIdentifier;
 
-    public ProjectIdResponseException( String projectIdentifier) {
+    public ProjectIdentifierResponseException(String projectIdentifier) {
         this.projectIdentifier = projectIdentifier;
     }
 }

@@ -4,15 +4,7 @@ import styled from "styled-components";
 import InnerList from "./InnerList";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+import CreateTicket from "./Tickets/CreateTicket";
 
 const TaskList = styled.div`
   flex-grow: 1;
@@ -27,28 +19,12 @@ class SwimLane extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
-      summary: "",
-      acceptanceCriteria: "",
-      projectIdentifier: props.projectIdentifier,
-      priority: "",
-      openDropDown: false
+      isCreateTicketActive: false,
+      projectIdentifier: this.props.projectIdentifier
     };
   }
-  handleClickOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false });
-  };
-
-  handleDropDownOpen = () => {
-    this.setState({ openDropDown: true });
-  };
-
-  handleDropDownClose = () => {
-    this.setState({ openDropDown: false });
+  handleIsCreateTicketActive = () => {
+    this.setState({ isCreateTicketActive: !this.state.isCreateTicketActive });
   };
 
   handleChange = event => {
@@ -57,19 +33,10 @@ class SwimLane extends Component {
     });
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    const newTicket = {
-      summary: this.state.summary,
-      acceptanceCriteria: this.state.acceptanceCriteria,
-      projectIdentifier: this.state.projectIdentifier,
-      priority: this.state.priority,
-      swimLane: this.props.swimLane.title
-    };
-    this.props.addTicketToSwimLane(newTicket);
+  handleSubmit = ticket => {
+    this.props.addTicketToSwimLane(ticket);
   };
   render() {
-    const { classes } = this.props;
     return (
       <div className="card--content col-10 col-lg-3">
         <h4 className="display-5 text-center title-backlog__border">
@@ -79,7 +46,7 @@ class SwimLane extends Component {
 
         <Button
           className="card-header"
-          onClick={this.handleClickOpen}
+          onClick={this.handleIsCreateTicketActive}
           aria-labelledby="form-dialog-title"
           disableRipple
           style={{
@@ -90,75 +57,21 @@ class SwimLane extends Component {
         >
           Add Ticket &#x2b;
         </Button>
+
         <div className="card-vertical-scroll-enabled">
           <div className="text-center">
-            <Dialog open={this.state.open} onClose={this.handleClose}>
-              <DialogTitle id="form-dialog-title">
-                Create New Ticket
-              </DialogTitle>
-
-              <form onSubmit={this.handleSubmit}>
-                <DialogContent>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    name="summary"
-                    label="Summary"
-                    type="text"
-                    fullWidth
-                    onChange={this.handleChange}
-                  />
-                  <TextField
-                    id="standard-multiline-static"
-                    name="acceptanceCriteria"
-                    label="Acceptance Criteria"
-                    multiline
-                    rows="4"
-                    margin="normal"
-                    fullWidth
-                    onChange={this.handleChange}
-                  />
-                  <FormControl fullWidth>
-                    <InputLabel htmlFor="demo-controlled-open-select">
-                      Priority
-                    </InputLabel>
-                    <Select
-                      open={this.state.openDropDown}
-                      onClose={this.handleDropDownClose}
-                      onOpen={this.handleDropDownOpen}
-                      value={this.state.priority}
-                      onChange={this.handleChange}
-                      inputProps={{
-                        name: "priority",
-                        id: "demo-controlled-open-select"
-                      }}
-                    >
-                      <MenuItem value={"low"}>Low</MenuItem>
-                      <MenuItem value={"medium"}>Medium</MenuItem>
-                      <MenuItem value={"high"}>High</MenuItem>
-                    </Select>
-                  </FormControl>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={this.handleClose} color="primary">
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={this.handleClose}
-                    color="primary"
-                    type="submit"
-                  >
-                    Create
-                  </Button>
-                </DialogActions>
-              </form>
-            </Dialog>
+            {this.state.isCreateTicketActive && (
+              <CreateTicket
+                isActive={this.state.isCreateTicketActive}
+                saveNewTicket={this.handleSubmit}
+                swimLane={this.props.swimLane.title}
+                projectIdentifier={this.state.projectIdentifier}
+              />
+            )}
           </div>
           <Droppable droppableId={this.props.swimLane.title}>
             {(provided, snapshot) => (
               <TaskList
-                // innerRef={provided.innerRef}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 style={{
@@ -172,6 +85,7 @@ class SwimLane extends Component {
                   tickets={this.props.tickets}
                   removeTicket={this.props.removeTicket}
                   swimLaneId={this.props.swimLane.title}
+                  onChange={this.handleChange}
                 />
                 {provided.placeholder}
               </TaskList>

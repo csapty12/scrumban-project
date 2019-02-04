@@ -9,6 +9,7 @@ export default class InnerList extends Component {
     return true;
   }
   render() {
+    // console.log("this . props : " + JSON.stringify(this.props));
     return this.props.tickets.map((ticket, index) => (
       <Ticket
         key={index}
@@ -16,6 +17,7 @@ export default class InnerList extends Component {
         index={index}
         removeTicket={this.props.removeTicket}
         swimLaneId={this.props.swimLaneId}
+        handleChange={this.props.onChange}
       />
     ));
   }
