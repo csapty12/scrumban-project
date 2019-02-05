@@ -8,6 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import Ticket from "../../../../model/Ticket";
 const styles = theme => ({
   appBar: {
     position: "relative",
@@ -30,10 +31,7 @@ class TicketDialog extends Component {
       openTicketDetails: false,
       isDragDisabled: false,
       isDropDownActive: false,
-      summary: "",
-      acceptanceCriteria: "",
-      complexity: "",
-      priority: ""
+      ticket: new Ticket()
     };
   }
   handleEditTicket = () => {
@@ -66,6 +64,11 @@ class TicketDialog extends Component {
   handleSubmit = event => {
     event.preventDefault();
 
+    let ticket = new Ticket();
+    ticket.summary = this.state.summary;
+    this.setState({
+      ticket: ticket
+    });
     const updatedTicket = {
       id: this.props.ticket.id,
       summary: this.state.summary,

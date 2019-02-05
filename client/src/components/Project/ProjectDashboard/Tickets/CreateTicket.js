@@ -118,14 +118,14 @@ class CreateTicket extends Component {
               margin="dense"
               id="complexity"
               name="complexity"
-              label="Complexity"
+              label="Complexity (Optional)"
               type="number"
               fullWidth
               onChange={this.handleChange}
             />
             <FormControl fullWidth>
               <InputLabel htmlFor="demo-controlled-open-select">
-                Priority
+                Priority (Optional)
               </InputLabel>
               <Select
                 open={this.state.isDropDownActive}

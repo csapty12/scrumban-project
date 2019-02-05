@@ -22,13 +22,15 @@ public class ProjectTicket {
     private Long id;
     @Column(updatable = false)
     private String projectSequence;
-    @NotBlank(message = "please include projectEntity ticket summary")
+    @NotBlank(message = "please include ticket summary")
     private String summary;
     @NotBlank(message = "please include at least one acceptance criteria")
     private String acceptanceCriteria;
-    private String priority;
 
     private int complexity;
+
+    private String priority;
+
 
 
     @JsonFormat(pattern = "dd-MM-yyyy")

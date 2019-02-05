@@ -29,10 +29,10 @@ const styles = theme => ({
   appBar: {
     position: "relative",
     backgroundColor: "#2196F3"
-  },
-  flex: {
-    flex: 1
   }
+  // flex: {
+  //   flex: 1
+  // }
 });
 
 class Dashboard extends Component {
@@ -134,11 +134,15 @@ class Dashboard extends Component {
               >
                 Create New project
               </Button>
+
               <Dialog
                 open={this.state.open}
                 onClose={this.handleClose}
                 aria-labelledby="form-dialog-title"
                 scroll="paper"
+                fullWidth={true}
+                maxWidth={"md"}
+                fullwidth="true"
               >
                 <AppBar className={classes.appBar}>
                   <Toolbar>
@@ -162,6 +166,7 @@ class Dashboard extends Component {
                       type="text"
                       fullWidth
                       onChange={this.handleChange}
+                      maxWidth="lg"
                     />
                     {errors.projectName && (
                       <span className={classes.error}>
@@ -177,6 +182,7 @@ class Dashboard extends Component {
                       margin="normal"
                       fullWidth
                       onChange={this.handleChange}
+                      maxWidth="lg"
                     />
                     {errors.description && (
                       <span className={classes.error}>
@@ -198,6 +204,7 @@ class Dashboard extends Component {
                   </DialogActions>
                 </form>
               </Dialog>
+
               <br />
               <hr />
               <section className="gallery-block grid-gallery">
