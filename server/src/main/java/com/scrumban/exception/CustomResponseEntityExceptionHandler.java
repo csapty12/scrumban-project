@@ -25,5 +25,12 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     }
 
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleDuplicateProjectSwimLaneException(DuplicateProjectSwimLaneException duplicateProjectSwimLaneException){
+        DuplicateProjectSwimLaneResponseException duplicateProjectSwimLaneResponseException = new DuplicateProjectSwimLaneResponseException(duplicateProjectSwimLaneException.getMessage());
+        return new ResponseEntity<>(duplicateProjectSwimLaneResponseException, HttpStatus.BAD_REQUEST);
+
+    }
+
 
 }

@@ -23,6 +23,10 @@ const styles = theme => ({
   swimLane: {
     display: "flex",
     width: "100%"
+  },
+  error: {
+    color: "red",
+    fontSize: 12
   }
 });
 
@@ -102,7 +106,7 @@ class TicketBoard extends Component {
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ open: false, errors: {} });
   };
 
   handleSubmit = event => {
@@ -120,11 +124,19 @@ class TicketBoard extends Component {
           swimLanes: json.data.swimLanes,
           swimLaneOrder: json.data.swimLaneOrder
         });
+      })
+      .then(() => this.handleClose())
+      .catch(json => {
+        this.setState({
+          errors: json.response.data
+        });
+        return;
       });
   };
 
   handleAddTicket = ticket => {
     console.log("ticket being added: " + JSON.stringify(ticket));
+
     axios
       .post(
         `http://localhost:8080/dashboard/${ticket.projectIdentifier}/${
@@ -287,7 +299,7 @@ class TicketBoard extends Component {
 
   render() {
     const { classes } = this.props;
-
+    const { errors } = this.state;
     return (
       <div className="container-fluid">
         <section className="card-horizontal-scrollable-container">
@@ -339,16 +351,15 @@ class TicketBoard extends Component {
                       fullWidth
                       onChange={this.handleChange}
                     />
+                    {errors.name && (
+                      <span className={classes.error}>{errors.name}</span>
+                    )}
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={this.handleClose} color="primary">
                       Cancel
                     </Button>
-                    <Button
-                      onClick={this.handleClose}
-                      color="primary"
-                      type="submit"
-                    >
+                    <Button color="primary" type="submit">
                       Create
                     </Button>
                   </DialogActions>

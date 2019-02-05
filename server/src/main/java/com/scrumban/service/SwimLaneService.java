@@ -1,5 +1,6 @@
 package com.scrumban.service;
 
+import com.scrumban.exception.DuplicateProjectSwimLaneException;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.SwimLaneRepository;
@@ -24,14 +25,21 @@ public class SwimLaneService {
 
         Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
 
-        SwimLaneEntity foundSwimLand = swimLaneRepository.findByName(swimLaneEntity.getName());
-        if (foundSwimLand == null) {
+        SwimLaneEntity foundSwimLane = swimLaneRepository.findByName(swimLaneEntity.getName());
+        if (foundSwimLane == null) {
             SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
             List<SwimLaneEntity> swimLaneEntities = projectEntity.get().getSwimLaneEntities();
             swimLaneEntities.add(newSwimLaneEntity);
         } else {
-            List<SwimLaneEntity> swimLaneEntities = projectEntity.get().getSwimLaneEntities();
-            swimLaneEntities.add(foundSwimLand);
+            List<SwimLaneEntity> projectSwimLanes = projectEntity.get().getSwimLaneEntities();
+            if(projectSwimLanes.contains(foundSwimLane)){
+                throw new DuplicateProjectSwimLaneException("Swim lane already exists in this project");
+            }
+            else{
+                projectSwimLanes.add(foundSwimLane);
+            }
+
+
 
         }
         return projectService.updateProject(projectEntity.get());

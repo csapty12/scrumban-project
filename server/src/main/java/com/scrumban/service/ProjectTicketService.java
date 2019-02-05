@@ -32,14 +32,14 @@ public class ProjectTicketService {
 
     public Tickets getProjectDashboard(String projectIdentifier) {
         Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
-        List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
-        if(allProjectTickets.size() ==0){
-            allProjectTickets = new ArrayList<>();
-        }
+        Optional<List<ProjectTicket>> allProjectTickets = Optional.of(projectEntity.get().getProjectTickets());
 
         Tickets tickets = new Tickets();
-        List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
-        tickets.setTickets(allTickets);
+
+        if(allProjectTickets.isPresent()){
+            List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets.get());
+            tickets.setTickets(allTickets);
+        }
 
         List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(projectEntity);
         tickets.setSwimLanes(swimLanesAndTicketReferences);
@@ -181,7 +181,7 @@ public class ProjectTicketService {
         String initials = Arrays.stream(projectIdentifier.split("-"))
                 .map(s -> s.substring(0, 1))
                 .collect(Collectors.joining());
-        System.out.println(initials);
+//        System.out.println(initials);
         return initials.toUpperCase();
     }
 
@@ -193,6 +193,7 @@ public class ProjectTicketService {
 
             columnNames.add(column.getName());
         });
+
 
         List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
 
