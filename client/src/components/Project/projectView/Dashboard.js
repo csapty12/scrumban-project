@@ -10,6 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import Project from "../../../model/Project";
 
 const styles = theme => ({
   createButton: {
@@ -40,9 +41,7 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       allProjects: [],
-      projectName: "",
-      projectIdentifier: "",
-      description: "",
+      project: new Project(),
       errors: {},
       open: false
     };
@@ -52,7 +51,7 @@ class Dashboard extends Component {
   };
 
   handleClose = () => {
-    this.setState({ open: false, errors: {} });
+    this.setState({ open: false, errors: {}, project: new Project() });
   };
 
   componentDidMount() {
@@ -78,22 +77,24 @@ class Dashboard extends Component {
   };
 
   handleChange = event => {
+    const projectState = { ...this.state.project };
+    projectState[event.target.name] = event.target.value;
     this.setState({
-      [event.target.name]: event.target.value
+      project: projectState
     });
   };
 
   handleSubmit = event => {
     event.preventDefault();
     let slugify = require("slugify");
-    const projectIdentifierSlug = slugify(this.state.projectName);
+    const projectIdentifierSlug = slugify(this.state.project.projectName);
+    const newProject = new Project();
 
-    const newProject = {
-      id: this.state.id,
-      projectName: this.state.projectName,
-      projectIdentifier: projectIdentifierSlug,
-      description: this.state.description
-    };
+    newProject.projectName = this.state.project.projectName;
+    newProject.id = this.state.project.id;
+    newProject.description = this.state.project.description;
+    newProject.projectIdentifier = projectIdentifierSlug;
+
     axios
       .post("http://localhost:8080/api/project", newProject)
       .then(json => {
@@ -166,13 +167,13 @@ class Dashboard extends Component {
                       type="text"
                       fullWidth
                       onChange={this.handleChange}
-                      maxWidth="lg"
                     />
                     {errors.projectName && (
                       <span className={classes.error}>
                         {errors.projectName}
                       </span>
                     )}
+
                     <TextField
                       id="standard-multiline-static"
                       name="description"
@@ -182,8 +183,8 @@ class Dashboard extends Component {
                       margin="normal"
                       fullWidth
                       onChange={this.handleChange}
-                      maxWidth="lg"
                     />
+
                     {errors.description && (
                       <span className={classes.error}>
                         {errors.description}

@@ -118,7 +118,7 @@ class ProjectItem extends Component {
     const menuOpen = Boolean(anchorEl);
     const deleteOpen = Boolean(deleteProject);
     const updateOpen = Boolean(updateProject);
-    console.log("errors: " + JSON.stringify(errors));
+    // console.log("errors: " + JSON.stringify(errors));
 
     return (
       <div className="col-md-6 col-lg-4 item">
