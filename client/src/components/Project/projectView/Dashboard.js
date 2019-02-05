@@ -2,15 +2,9 @@ import React, { Component } from "react";
 import ProjectItem from "./ProjectItem";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import Project from "../../../model/Project";
+import ProjectDialog from "./ProjectDialog";
 
 const styles = theme => ({
   createButton: {
@@ -21,19 +15,7 @@ const styles = theme => ({
     color: "white",
     height: 48,
     padding: "0 30px"
-  },
-  error: {
-    color: "red",
-    fontSize: 12
-  },
-
-  appBar: {
-    position: "relative",
-    backgroundColor: "#2196F3"
   }
-  // flex: {
-  //   flex: 1
-  // }
 });
 
 class Dashboard extends Component {
@@ -42,11 +24,10 @@ class Dashboard extends Component {
     this.state = {
       allProjects: [],
       project: new Project(),
-      errors: {},
       open: false
     };
   }
-  handleClickOpen = () => {
+  handleOpenProjectDialogOpen = () => {
     this.setState({ open: true });
   };
 
@@ -76,136 +57,38 @@ class Dashboard extends Component {
       });
   };
 
-  handleChange = event => {
-    const projectState = { ...this.state.project };
-    projectState[event.target.name] = event.target.value;
-    this.setState({
-      project: projectState
-    });
+  updateAllProjects = state => {
+    this.setState({ allProjects: state });
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    let slugify = require("slugify");
-    const projectIdentifierSlug = slugify(this.state.project.projectName);
-    const newProject = new Project();
-
-    newProject.projectName = this.state.project.projectName;
-    newProject.id = this.state.project.id;
-    newProject.description = this.state.project.description;
-    newProject.projectIdentifier = projectIdentifierSlug;
-
-    axios
-      .post("http://localhost:8080/api/project", newProject)
-      .then(json => {
-        this.setState({ allProjects: [...this.state.allProjects, json.data] });
-      })
-      .then(() => {
-        this.handleClose();
-      })
-      .catch(json => {
-        const { description, projectName } = json.response.data;
-        this.setState({
-          errors: {
-            projectName: projectName,
-            description: description
-          }
-        });
-        return;
-      });
-  };
   render() {
     const { classes } = this.props;
     const allProjects = this.state.allProjects;
-    const { errors } = this.state;
     return (
       <div className="projects">
         <div className="container">
           <div className="row">
             <div className="col-md-12">
               <h1 className="display-4 text-center">All Projects</h1>
-
               <br />
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={this.handleClickOpen}
+                onClick={this.handleOpenProjectDialogOpen}
                 className={classes.createButton}
                 disableRipple
               >
                 Create New project
               </Button>
-
-              <Dialog
-                open={this.state.open}
-                onClose={this.handleClose}
-                aria-labelledby="form-dialog-title"
-                scroll="paper"
-                fullWidth={true}
-                maxWidth={"md"}
-                fullwidth="true"
-              >
-                <AppBar className={classes.appBar}>
-                  <Toolbar>
-                    <Typography
-                      variant="h6"
-                      color="inherit"
-                      className={classes.flex}
-                    >
-                      Create New Project
-                    </Typography>
-                  </Toolbar>
-                </AppBar>
-                <form onSubmit={this.handleSubmit}>
-                  <DialogContent>
-                    <TextField
-                      autoFocus
-                      margin="dense"
-                      id="name"
-                      name="projectName"
-                      label="Project Name"
-                      type="text"
-                      fullWidth
-                      onChange={this.handleChange}
-                    />
-                    {errors.projectName && (
-                      <span className={classes.error}>
-                        {errors.projectName}
-                      </span>
-                    )}
-
-                    <TextField
-                      id="standard-multiline-static"
-                      name="description"
-                      label="Project Description"
-                      multiline
-                      rows="4"
-                      margin="normal"
-                      fullWidth
-                      onChange={this.handleChange}
-                    />
-
-                    {errors.description && (
-                      <span className={classes.error}>
-                        {errors.description}
-                      </span>
-                    )}
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                      Cancel
-                    </Button>
-                    <Button
-                      // onClick={this.handleClose}
-                      color="primary"
-                      type="submit"
-                    >
-                      Create
-                    </Button>
-                  </DialogActions>
-                </form>
-              </Dialog>
-
+              {this.state.open && (
+                <ProjectDialog
+                  type="Create"
+                  open={this.state.open}
+                  onClose={this.handleClose}
+                  allProjects={this.state.allProjects}
+                  updateAllProjects={this.updateAllProjects}
+                />
+              )}
               <br />
               <hr />
               <section className="gallery-block grid-gallery">

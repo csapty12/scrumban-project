@@ -16,6 +16,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import ProjectDialog from "./ProjectDialog";
+import Project from "../../../model/Project";
 
 const styles = theme => ({
   error: {
@@ -41,11 +43,18 @@ class ProjectItem extends Component {
       anchorEl: null,
       deleteProject: null,
       updateProject: null,
-      projectName: project.projectName,
-      id: project.id,
-      projectIdentifier: project.projectIdentifier,
-      description: project.description,
-      createdAt: project.createdAt,
+      project: new Project(
+        project.id,
+        project.projectName,
+        project.projectIdentifier,
+        project.description,
+        project.createdAt
+      ),
+      // projectName: project.projectName,
+      // id: project.id,
+      // projectIdentifier: project.projectIdentifier,
+      // description: project.description,
+      // createdAt: project.createdAt,
       errors: {}
     };
   }
@@ -144,63 +153,73 @@ class ProjectItem extends Component {
                     <span onClick={this.handleUpdateProjectClick}>
                       Update Project
                     </span>
-                    <Dialog
-                      open={updateOpen}
-                      onClose={this.handleUpdateProjectClose}
-                      aria-labelledby="alert-dialog-title"
-                      aria-describedby="alert-dialog-description"
-                    >
-                      <DialogTitle id="alert-dialog-title">
-                        {"Update Project"}
-                      </DialogTitle>
-                      <form onSubmit={this.handleSubmit}>
-                        <DialogContent>
-                          <TextField
-                            autoFocus
-                            margin="dense"
-                            id="projectName"
-                            name="projectName"
-                            label="Project Name"
-                            type="text"
-                            fullWidth
-                            onChange={this.handleChange}
-                            value={this.state.projectName}
-                          />
-                          {errors.projectName && (
-                            <span className={classes.error}>
-                              {errors.projectName}
-                            </span>
-                          )}
-                          <TextField
-                            id="standard-multiline-static"
-                            name="description"
-                            label="Project Description"
-                            multiline
-                            rows="4"
-                            margin="normal"
-                            fullWidth
-                            onChange={this.handleChange}
-                            value={this.state.description}
-                          />
-                          {errors.description && (
-                            <span className={classes.error}>
-                              {errors.description}
-                            </span>
-                          )}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            onClick={this.handleUpdateProjectClose}
-                            color="primary"
-                          >
-                            Cancel
-                          </Button>
-                          <Button color="primary" type="submit">
-                            Update
-                          </Button>
-                        </DialogActions>
-                      </form>
-                    </Dialog>
+
+                    {updateOpen && (
+                      <ProjectDialog
+                        open={updateOpen}
+                        type="Update"
+                        onClose={this.handleUpdateProjectClose}
+                      />
+                    )}
+                    {
+                      // <Dialog
+                      //   open={updateOpen}
+                      //   onClose={this.handleUpdateProjectClose}
+                      //   aria-labelledby="alert-dialog-title"
+                      //   aria-describedby="alert-dialog-description"
+                      // >
+                      //   <DialogTitle id="alert-dialog-title">
+                      //     {"Update Project"}
+                      //   </DialogTitle>
+                      //   <form onSubmit={this.handleSubmit}>
+                      //     <DialogContent>
+                      //       <TextField
+                      //         autoFocus
+                      //         margin="dense"
+                      //         id="projectName"
+                      //         name="projectName"
+                      //         label="Project Name"
+                      //         type="text"
+                      //         fullWidth
+                      //         onChange={this.handleChange}
+                      //         value={this.state.projectName}
+                      //       />
+                      //       {errors.projectName && (
+                      //         <span className={classes.error}>
+                      //           {errors.projectName}
+                      //         </span>
+                      //       )}
+                      //       <TextField
+                      //         id="standard-multiline-static"
+                      //         name="description"
+                      //         label="Project Description"
+                      //         multiline
+                      //         rows="4"
+                      //         margin="normal"
+                      //         fullWidth
+                      //         onChange={this.handleChange}
+                      //         value={this.state.description}
+                      //       />
+                      //       {errors.description && (
+                      //         <span className={classes.error}>
+                      //           {errors.description}
+                      //         </span>
+                      //       )}
+                      //     </DialogContent>
+                      //     <DialogActions>
+                      //       <Button
+                      //         onClick={this.handleUpdateProjectClose}
+                      //         color="primary"
+                      //       >
+                      //         Cancel
+                      //       </Button>
+                      //       <Button color="primary" type="submit">
+                      //         Update
+                      //       </Button>
+                      //     </DialogActions>
+                      //   </form>
+                      // </Dialog>
+                    }
                   </MenuItem>
 
                   <MenuItem key="deleteItem">
