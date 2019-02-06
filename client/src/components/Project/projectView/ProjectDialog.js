@@ -29,13 +29,14 @@ class ProjectDialog extends Component {
     super(props);
 
     this.state = {
-      isDialogActive: this.props.open,
+      isDialogActive: true,
       project: new Project(),
       errors: {}
     };
   }
 
   handleChange = event => {
+    // console.log("event: " + event.target.value);
     const projectState = { ...this.state.project };
     projectState[event.target.name] = event.target.value;
     this.setState({
@@ -45,17 +46,65 @@ class ProjectDialog extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    let slugify = require("slugify");
-    const projectIdentifierSlug = slugify(this.state.project.projectName);
-    const newProject = new Project();
+    const projectInfo = new Project();
+    console.log("this.state.project: " + JSON.stringify(this.state.project));
+    console.log(
+      "this.props.projectInfo: " + JSON.stringify(this.props.projectInfo)
+    );
+    if (!this.props.projectInfo) {
+      projectInfo.projectName = this.state.project.projectName;
+      projectInfo.description = this.state.project.description;
+      projectInfo.createdAt = this.state.project.createdAt;
 
-    newProject.projectName = this.state.project.projectName;
-    newProject.id = this.state.project.id;
-    newProject.description = this.state.project.description;
-    newProject.projectIdentifier = projectIdentifierSlug;
+      let slugify = require("slugify");
+      const projectIdentifierSlug = slugify(this.state.project.projectName);
+      projectInfo.projectIdentifier = projectIdentifierSlug;
+      console.log("project to save: " + JSON.stringify(projectInfo));
+      this.saveNewProject(projectInfo);
+    } else {
+      projectInfo.id = this.props.projectInfo.id;
+      projectInfo.projectIdentifier = this.props.projectInfo.projectIdentifier;
+      projectInfo.projectName = !this.state.project.projectName
+        ? this.props.projectInfo.projectName
+        : this.state.project.projectName;
 
+      projectInfo.description = !this.state.project.description
+        ? this.props.projectInfo.description
+        : this.state.project.description;
+
+      projectInfo.createdAt = !this.state.project.createdAt
+        ? this.props.projectInfo.createdAt
+        : this.state.project.createdAt;
+
+      console.log("project to update: " + JSON.stringify(projectInfo));
+      this.updateProjectInformation(projectInfo);
+    }
+  };
+
+  updateProjectInformation(projectInfo) {
     axios
-      .post("http://localhost:8080/api/project", newProject)
+      .patch("http://localhost:8080/api/project", projectInfo)
+      .then(json => {
+        this.props.updateProjectInfo(json.data);
+      })
+      .then(() => {
+        this.props.onClose();
+      })
+      .catch(json => {
+        console.log("json response : " + JSON.stringify(json.response.data));
+        this.setState({
+          errors: {
+            projectName: json.response.data.projectName,
+            description: json.response.data.description
+          }
+        });
+        return;
+      });
+  }
+
+  saveNewProject(projectInfo) {
+    axios
+      .post("http://localhost:8080/api/project", projectInfo)
       .then(json => {
         this.props.updateAllProjects([...this.props.allProjects, json.data]);
       })
@@ -72,10 +121,10 @@ class ProjectDialog extends Component {
         });
         return;
       });
-  };
+  }
 
   render() {
-    const { classes } = this.props;
+    const { classes, projectInfo } = this.props;
     const { errors } = this.state;
 
     return (
@@ -86,7 +135,6 @@ class ProjectDialog extends Component {
         scroll="paper"
         fullWidth={true}
         maxWidth={"md"}
-        fullwidth="true"
       >
         <AppBar className={classes.appBar}>
           <Toolbar>
@@ -106,6 +154,9 @@ class ProjectDialog extends Component {
               type="text"
               fullWidth
               onChange={this.handleChange}
+              defaultValue={
+                projectInfo === undefined ? "" : projectInfo.projectName
+              }
             />
 
             {errors.projectName && (
@@ -121,6 +172,9 @@ class ProjectDialog extends Component {
                 margin="normal"
                 fullWidth
                 onChange={this.handleChange}
+                defaultValue={
+                  projectInfo === undefined ? "" : projectInfo.description
+                }
               />
             }
             {errors.description && (
@@ -132,7 +186,7 @@ class ProjectDialog extends Component {
               Cancel
             </Button>
             <Button color="primary" type="submit">
-              Create
+              {this.props.type}
             </Button>
           </DialogActions>
         </form>

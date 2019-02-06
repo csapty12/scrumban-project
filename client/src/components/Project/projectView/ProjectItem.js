@@ -13,49 +13,28 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import TextField from "@material-ui/core/TextField";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import ProjectDialog from "./ProjectDialog";
 import Project from "../../../model/Project";
 
-const styles = theme => ({
-  error: {
-    color: "red",
-    fontSize: 12
-  },
-
-  appBar: {
-    position: "relative",
-    backgroundColor: "#2196F3"
-  },
-  flex: {
-    flex: 1
-  }
-});
+const styles = theme => ({});
 
 class ProjectItem extends Component {
   constructor(props) {
     super(props);
 
     const { project } = this.props;
+    const currentProject = new Project();
+    currentProject.id = project.id;
+    currentProject.projectName = project.projectName;
+    currentProject.projectIdentifier = project.projectIdentifier;
+    currentProject.description = project.description;
+    currentProject.createdAt = project.createdAt;
     this.state = {
       anchorEl: null,
       deleteProject: null,
       updateProject: null,
-      project: new Project(
-        project.id,
-        project.projectName,
-        project.projectIdentifier,
-        project.description,
-        project.createdAt
-      ),
-      // projectName: project.projectName,
-      // id: project.id,
-      // projectIdentifier: project.projectIdentifier,
-      // description: project.description,
-      // createdAt: project.createdAt,
-      errors: {}
+      project: currentProject
     };
   }
 
@@ -76,7 +55,7 @@ class ProjectItem extends Component {
     this.setState({ deleteProject: event.currentTarget });
   };
 
-  handleDeleteProjectClose = option => {
+  handleDeleteProjectClose = () => {
     this.setState({ deleteProject: null });
   };
 
@@ -84,51 +63,22 @@ class ProjectItem extends Component {
     this.setState({ updateProject: event.currentTarget });
   };
 
-  handleUpdateProjectClose = option => {
+  handleUpdateProjectClose = () => {
     this.handleCloseMenuClick(null);
     this.setState({ updateProject: null });
   };
 
-  handleChange = event => {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
-  };
-
-  handleSubmit = event => {
-    event.preventDefault();
-    const updatedProject = {
-      id: this.state.id,
-      projectName: this.state.projectName,
-      projectIdentifier: this.state.projectIdentifier,
-      description: this.state.description
-    };
-    axios
-      .patch("http://localhost:8080/api/project", updatedProject)
-      .then(() => {
-        this.handleUpdateProjectClose(null);
-      })
-      .catch(json => {
-        console.log("json response : " + JSON.stringify(json.response.data));
-        this.setState({
-          errors: {
-            projectName: json.response.data.projectName,
-            description: json.response.data.description
-          }
-        });
-        return;
-      });
+  updateProjectInfo = projectInfo => {
+    this.setState({ project: projectInfo });
   };
 
   render() {
-    const { classes, project } = this.props;
+    const { project } = this.props;
 
-    const { anchorEl, deleteProject, updateProject, errors } = this.state;
+    const { anchorEl, deleteProject, updateProject } = this.state;
     const menuOpen = Boolean(anchorEl);
     const deleteOpen = Boolean(deleteProject);
     const updateOpen = Boolean(updateProject);
-    // console.log("errors: " + JSON.stringify(errors));
-
     return (
       <div className="col-md-6 col-lg-4 item">
         <Card>
@@ -156,70 +106,12 @@ class ProjectItem extends Component {
 
                     {updateOpen && (
                       <ProjectDialog
-                        open={updateOpen}
                         type="Update"
                         onClose={this.handleUpdateProjectClose}
+                        projectInfo={this.state.project}
+                        updateProjectInfo={this.updateProjectInfo}
                       />
                     )}
-                    {
-                      // <Dialog
-                      //   open={updateOpen}
-                      //   onClose={this.handleUpdateProjectClose}
-                      //   aria-labelledby="alert-dialog-title"
-                      //   aria-describedby="alert-dialog-description"
-                      // >
-                      //   <DialogTitle id="alert-dialog-title">
-                      //     {"Update Project"}
-                      //   </DialogTitle>
-                      //   <form onSubmit={this.handleSubmit}>
-                      //     <DialogContent>
-                      //       <TextField
-                      //         autoFocus
-                      //         margin="dense"
-                      //         id="projectName"
-                      //         name="projectName"
-                      //         label="Project Name"
-                      //         type="text"
-                      //         fullWidth
-                      //         onChange={this.handleChange}
-                      //         value={this.state.projectName}
-                      //       />
-                      //       {errors.projectName && (
-                      //         <span className={classes.error}>
-                      //           {errors.projectName}
-                      //         </span>
-                      //       )}
-                      //       <TextField
-                      //         id="standard-multiline-static"
-                      //         name="description"
-                      //         label="Project Description"
-                      //         multiline
-                      //         rows="4"
-                      //         margin="normal"
-                      //         fullWidth
-                      //         onChange={this.handleChange}
-                      //         value={this.state.description}
-                      //       />
-                      //       {errors.description && (
-                      //         <span className={classes.error}>
-                      //           {errors.description}
-                      //         </span>
-                      //       )}
-                      //     </DialogContent>
-                      //     <DialogActions>
-                      //       <Button
-                      //         onClick={this.handleUpdateProjectClose}
-                      //         color="primary"
-                      //       >
-                      //         Cancel
-                      //       </Button>
-                      //       <Button color="primary" type="submit">
-                      //         Update
-                      //       </Button>
-                      //     </DialogActions>
-                      //   </form>
-                      // </Dialog>
-                    }
                   </MenuItem>
 
                   <MenuItem key="deleteItem">

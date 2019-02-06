@@ -13,7 +13,7 @@ const styles = theme => ({
     borderRadius: 3,
     boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
     color: "white",
-    height: 48,
+    height: 35,
     padding: "0 30px"
   }
 });
@@ -24,15 +24,19 @@ class Dashboard extends Component {
     this.state = {
       allProjects: [],
       project: new Project(),
-      open: false
+      openProjectDialog: false
     };
   }
   handleOpenProjectDialogOpen = () => {
-    this.setState({ open: true });
+    this.setState({ openProjectDialog: true });
   };
 
   handleClose = () => {
-    this.setState({ open: false, errors: {}, project: new Project() });
+    this.setState({
+      openProjectDialog: false,
+      errors: {},
+      project: new Project()
+    });
   };
 
   componentDidMount() {
@@ -80,10 +84,9 @@ class Dashboard extends Component {
               >
                 Create New project
               </Button>
-              {this.state.open && (
+              {this.state.openProjectDialog && (
                 <ProjectDialog
                   type="Create"
-                  open={this.state.open}
                   onClose={this.handleClose}
                   allProjects={this.state.allProjects}
                   updateAllProjects={this.updateAllProjects}

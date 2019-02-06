@@ -4,12 +4,4 @@ export default class Project {
   projectIdentifier = "";
   description = "";
   createdAt = "";
-
-  constructor(id, projectName, projectIdentifier, description, createdAt) {
-    this.id = id;
-    this.projectName = projectName;
-    this.projectIdentifier = projectIdentifier;
-    this.description = description;
-    this.createdAt = createdAt;
-  }
 }
