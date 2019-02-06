@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
-
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import Typography from "@material-ui/core/Typography";
@@ -27,7 +26,6 @@ const styles = theme => ({
 class ProjectDialog extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       isDialogActive: true,
       project: new Project(),
@@ -36,7 +34,6 @@ class ProjectDialog extends Component {
   }
 
   handleChange = event => {
-    // console.log("event: " + event.target.value);
     const projectState = { ...this.state.project };
     projectState[event.target.name] = event.target.value;
     this.setState({
@@ -47,19 +44,13 @@ class ProjectDialog extends Component {
   handleSubmit = event => {
     event.preventDefault();
     const projectInfo = new Project();
-    console.log("this.state.project: " + JSON.stringify(this.state.project));
-    console.log(
-      "this.props.projectInfo: " + JSON.stringify(this.props.projectInfo)
-    );
     if (!this.props.projectInfo) {
       projectInfo.projectName = this.state.project.projectName;
       projectInfo.description = this.state.project.description;
       projectInfo.createdAt = this.state.project.createdAt;
-
-      let slugify = require("slugify");
-      const projectIdentifierSlug = slugify(this.state.project.projectName);
-      projectInfo.projectIdentifier = projectIdentifierSlug;
-      console.log("project to save: " + JSON.stringify(projectInfo));
+      projectInfo.projectIdentifier = this.slugifyProjectName(
+        this.state.project.projectName
+      );
       this.saveNewProject(projectInfo);
     } else {
       projectInfo.id = this.props.projectInfo.id;
@@ -67,27 +58,27 @@ class ProjectDialog extends Component {
       projectInfo.projectName = !this.state.project.projectName
         ? this.props.projectInfo.projectName
         : this.state.project.projectName;
-
       projectInfo.description = !this.state.project.description
         ? this.props.projectInfo.description
         : this.state.project.description;
-
       projectInfo.createdAt = !this.state.project.createdAt
         ? this.props.projectInfo.createdAt
         : this.state.project.createdAt;
-
-      console.log("project to update: " + JSON.stringify(projectInfo));
       this.updateProjectInformation(projectInfo);
     }
   };
+
+  slugifyProjectName(projectName) {
+    let slugify = require("slugify");
+    const projectIdentifierSlug = slugify(projectName);
+    return projectIdentifierSlug;
+  }
 
   updateProjectInformation(projectInfo) {
     axios
       .patch("http://localhost:8080/api/project", projectInfo)
       .then(json => {
         this.props.updateProjectInfo(json.data);
-      })
-      .then(() => {
         this.props.onClose();
       })
       .catch(json => {
