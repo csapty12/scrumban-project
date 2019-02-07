@@ -64,8 +64,13 @@ public class ProjectDashboardController {
     @PostMapping("/{projectIdentifier}/{swimLaneId}")
     public ResponseEntity<?> addTicketToSwimLane(@PathVariable String projectIdentifier,
                                                  @PathVariable String swimLaneId,
-                                                 @Valid @RequestBody ProjectTicket projectTicket) {
+                                                 @Valid @RequestBody ProjectTicket projectTicket,BindingResult bindingResult) {
 
+        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
+        if (errorMap != null) {
+            System.out.println("error map: " + errorMap);
+            return errorMap;
+        }
         LinkedHashMap<String, ProjectTicket> projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
         return new ResponseEntity<>( projectTicket1,HttpStatus.OK);
     }
