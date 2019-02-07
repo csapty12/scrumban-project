@@ -10,6 +10,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Project from "../../../model/Project";
 import axios from "axios";
+import DialogHeader from "./DialogHeader";
 
 const styles = theme => ({
   error: {
@@ -44,25 +45,31 @@ class ProjectDialog extends Component {
   handleSubmit = event => {
     event.preventDefault();
     const projectInfo = new Project();
-    if (!this.props.projectInfo) {
-      projectInfo.projectName = this.state.project.projectName;
-      projectInfo.description = this.state.project.description;
-      projectInfo.createdAt = this.state.project.createdAt;
-      projectInfo.projectIdentifier = this.slugifyProjectName(
-        this.state.project.projectName
-      );
+    const { projectName, description, createdAt } = this.state.project;
+    if (this.props.type === "Create") {
+      projectInfo.projectName = projectName;
+      projectInfo.description = description;
+      projectInfo.createdAt = createdAt;
+      projectInfo.projectIdentifier = this.slugifyProjectName(projectName);
       this.saveNewProject(projectInfo);
     } else {
-      projectInfo.id = this.props.projectInfo.id;
-      projectInfo.projectIdentifier = this.props.projectInfo.projectIdentifier;
+      const {
+        id,
+        projectIdentifier,
+        projectName,
+        description,
+        createdAt
+      } = this.props.projectInfo;
+      projectInfo.id = id;
+      projectInfo.projectIdentifier = projectIdentifier;
       projectInfo.projectName = !this.state.project.projectName
-        ? this.props.projectInfo.projectName
+        ? projectName
         : this.state.project.projectName;
       projectInfo.description = !this.state.project.description
-        ? this.props.projectInfo.description
+        ? description
         : this.state.project.description;
       projectInfo.createdAt = !this.state.project.createdAt
-        ? this.props.projectInfo.createdAt
+        ? createdAt
         : this.state.project.createdAt;
       this.updateProjectInformation(projectInfo);
     }
@@ -127,13 +134,7 @@ class ProjectDialog extends Component {
         fullWidth={true}
         maxWidth={"md"}
       >
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <Typography variant="h6" color="inherit" className={classes.flex}>
-              {this.props.type} Project
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <DialogHeader type={this.props.type} />
         <form onSubmit={this.handleSubmit}>
           <DialogContent>
             <TextField

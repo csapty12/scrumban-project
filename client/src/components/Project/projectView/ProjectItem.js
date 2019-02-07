@@ -20,17 +20,12 @@ class ProjectItem extends Component {
     super(props);
 
     const { project } = this.props;
-    const currentProject = new Project();
-    currentProject.id = project.id;
-    currentProject.projectName = project.projectName;
-    currentProject.projectIdentifier = project.projectIdentifier;
-    currentProject.description = project.description;
-    currentProject.createdAt = project.createdAt;
+
     this.state = {
       anchorEl: null,
       deleteProject: null,
       updateProject: null,
-      project: currentProject
+      project: project
     };
   }
 
