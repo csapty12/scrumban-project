@@ -22,6 +22,11 @@ class DeleteItem extends Component {
     });
   };
 
+  handleDeleteProject = project => {
+    this.props.handleDeleteProject(project);
+    this.handleDeleteProjectActiveDialog();
+  };
+
   render() {
     return (
       <Dialog
@@ -45,7 +50,7 @@ class DeleteItem extends Component {
             No
           </Button>
           <Button
-            //onClick={this.handleDeleteProject.bind(this, project)}
+            onClick={this.handleDeleteProject.bind(this, this.props.project)}
             color="primary"
             autoFocus
           >

@@ -43,16 +43,11 @@ class ProjectItem extends Component {
   };
 
   handleDeleteProject = project => {
-    this.handleDeleteProjectClose(null);
     this.props.deleteProject(project);
   };
 
   handleDeleteProjectClick = event => {
     this.setState({ deleteProject: event.currentTarget });
-  };
-
-  handleDeleteProjectClose = () => {
-    this.setState({ deleteProject: null });
   };
 
   handleUpdateProjectClick = event => {
@@ -115,40 +110,12 @@ class ProjectItem extends Component {
                       Delete Project
                     </span>
 
-                    {deleteOpen && <DeleteItem project={project} />}
-                    {/*
-                      <Dialog
-                      open={deleteOpen}
-                      onClose={this.handleDeleteProjectClose}
-                      aria-labelledby="alert-dialog-title"
-                      aria-describedby="alert-dialog-description"
-                    >
-                      <DialogTitle id="alert-dialog-title">
-                        {"Delete Project"}
-                      </DialogTitle>
-                      <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                          Are you sure you want to delete:
-                          {" " + project.projectName}
-                        </DialogContentText>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button
-                          onClick={this.handleDeleteProjectClose}
-                          color="primary"
-                        >
-                          No
-                        </Button>
-                        <Button
-                          onClick={this.handleDeleteProject.bind(this, project)}
-                          color="primary"
-                          autoFocus
-                        >
-                          Yes
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
-                    */}
+                    {deleteOpen && (
+                      <DeleteItem
+                        project={project}
+                        handleDeleteProject={this.handleDeleteProject}
+                      />
+                    )}
                   </MenuItem>
                 </Menu>
               </Fragment>
