@@ -25,6 +25,8 @@ jobs:
 
   test:
     working_directory: ~/circleci-scrumban
+    docker:
+      - image: circleci/openjdk:8-jdk
     steps:
       - checkout
       #   # Download and cache dependencies
