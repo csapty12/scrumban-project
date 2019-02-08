@@ -133,15 +133,6 @@ class ProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Delete a project successfully")
-    void deleteProject() {
-        ProjectEntity existingProject = createFakeProjectWithTickets();
-        when(projectRepository.findProjectByProjectIdentifier(existingProject.getProjectIdentifier())).thenReturn(Optional.of(existingProject));
-        projectService.deleteProject(existingProject.getProjectIdentifier());
-        verify(projectRepository, times(1)).delete(existingProject);
-    }
-
-    @Test
     @DisplayName("when deleting project that does not exist, throw exception")
     void cannotDeleteProject() {
         ProjectEntity existingProject = createFakeProjectWithId();
