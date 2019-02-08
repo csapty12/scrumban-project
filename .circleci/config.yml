@@ -41,7 +41,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
+          key: v1-dependencies-{{ checksum "./server/pom.xml" }}
 
       # run tests!
       - run: mvn clean install
