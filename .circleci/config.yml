@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  scrumban-CI:
+  build:
     working_directory: ~/circleci-scrumban
     docker:
       # specify the version you desire here
