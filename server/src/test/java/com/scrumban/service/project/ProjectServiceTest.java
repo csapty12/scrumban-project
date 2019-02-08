@@ -1,6 +1,7 @@
 package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdentifierException;
+import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.repository.ProjectRepository;
@@ -29,6 +30,7 @@ class ProjectServiceTest {
 
     @Autowired
     private ProjectService projectService;
+
 
     @Test
     @DisplayName("successfully save new project")
@@ -60,24 +62,12 @@ class ProjectServiceTest {
     }
 
     @Test
-    @DisplayName("When updating an existing project, save new details successfully")
-    void updateProject(){
-        ProjectEntity existingProject = createFakeProjectWithId();
-        ProjectEntity updatedProject = getUpdatedProject();
-        when(projectRepository.findProjectByProjectIdentifier(existingProject.getProjectIdentifier())).thenReturn(Optional.of(existingProject));
-        when(projectRepository.save(any())).thenReturn(updatedProject);
-        ProjectEntity projectWithUpdatedValues = projectService.updateProject(updatedProject);
-        verify(projectRepository, times(1)).save(any());
-        assertThat(projectWithUpdatedValues.getId(), is(1L));
-        assertThat(projectWithUpdatedValues.getDescription(), is("test description updated"));
-    }
-
-    @Test
-    @DisplayName("when update project that does not exist, throw projectId exception")
-    void doNotUpdateProject(){
-        ProjectEntity projectEntity = createFakeProjectWithId();
-        when(projectRepository.findProjectByProjectIdentifier(projectEntity.getProjectIdentifier())).thenReturn(Optional.empty());
-        assertThrows(ProjectIdentifierException.class,() -> projectService.updateProject(projectEntity));
+    @DisplayName("get single project successfully")
+    void getSingleProject(){
+        ProjectEntity project = createFakeProjectWithId();
+        when(projectService.tryToFindProject(project.getProjectIdentifier())).thenReturn(Optional.of(project));
+        Optional<ProjectEntity> foundProject = projectService.tryToFindProject("TEST-PROJECT");
+        assertThat(foundProject.get().getProjectName(), is("test project"));
     }
 
     @Test
@@ -114,6 +104,36 @@ class ProjectServiceTest {
     }
 
     @Test
+    @DisplayName("When find all projects, throw exception")
+    void findNoProjects(){
+        List<ProjectEntity> allProjectEntities = new ArrayList<>();
+        when(projectRepository.findAll()).thenReturn(allProjectEntities);
+       assertThrows(ProjectNotFoundException.class, ()-> projectService.findAllProjects());
+    }
+
+    @Test
+    @DisplayName("When updating an existing project, save new details successfully")
+    void updateProject(){
+        ProjectEntity existingProject = createFakeProjectWithId();
+        ProjectEntity updatedProject = getUpdatedProject();
+        when(projectRepository.findProjectByProjectIdentifier(existingProject.getProjectIdentifier())).thenReturn(Optional.of(existingProject));
+        when(projectRepository.save(any())).thenReturn(updatedProject);
+        ProjectEntity projectWithUpdatedValues = projectService.updateProject(updatedProject);
+        verify(projectRepository, times(1)).save(any());
+        assertThat(projectWithUpdatedValues.getId(), is(1L));
+        assertThat(projectWithUpdatedValues.getDescription(), is("test description updated"));
+    }
+
+    @Test
+    @DisplayName("when update project that does not exist, throw projectId exception")
+    void doNotUpdateProject(){
+        ProjectEntity projectEntity = createFakeProjectWithId();
+        when(projectRepository.findProjectByProjectIdentifier(projectEntity.getProjectIdentifier())).thenReturn(Optional.empty());
+        assertThrows(ProjectIdentifierException.class,() -> projectService.updateProject(projectEntity));
+    }
+
+
+    @Test
     @DisplayName("Delete a project successfully")
     void deleteProject(){
         ProjectEntity existingProject = createFakeProjectWithTickets();
@@ -122,7 +142,6 @@ class ProjectServiceTest {
         verify(projectRepository,times(1)).delete(existingProject);
 
     }
-
     @Test
     @DisplayName("when deleting project that does not exist, throw exception")
     void cannotDeleteProject(){

@@ -67,6 +67,10 @@ public class ProjectService {
 
     }
 
+
+    public Optional<ProjectEntity> tryToFindProject(String projectIdentifier) {
+        return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
+    }
     private void deleteProject(Optional<ProjectEntity> projectEntity) {
         deleteAllProjectTickets(projectEntity);
         projectRepository.delete(projectEntity.get());
@@ -74,10 +78,5 @@ public class ProjectService {
 
     private void deleteAllProjectTickets(Optional<ProjectEntity> projectEntity) {
         projectEntity.ifPresent(project -> project.getProjectTickets().forEach(projectTicket -> projectTicketRepository.deleteProjectTicket(projectTicket.getId())));
-    }
-
-
-    public Optional<ProjectEntity> tryToFindProject(String projectIdentifier) {
-        return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
     }
 }
