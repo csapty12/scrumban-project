@@ -4,16 +4,16 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
-      - image: mysql:latest
-        environment:
-          - MYSQL_ROOT_PASSWORD=root123
-          - MYSQL_DATABASE=spring_app_db
-          - MYSQL_USER=app_user
-          - MYSQL_PASSWORD=test123
-        ports:
-          - "2012:3306"
-        volumes:
-          - /data/mysql
+#      - image: mysql:latest
+#        environment:
+#          - MYSQL_ROOT_PASSWORD=root123
+#          - MYSQL_DATABASE=spring_app_db
+#          - MYSQL_USER=app_user
+#          - MYSQL_PASSWORD=test123
+#        ports:
+#          - "2012:3306"
+#        volumes:
+#          - /data/mysql
 
 
       # Specify service dependencies here if necessary
@@ -37,7 +37,7 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: mvn dependency:go-offline
+#      - run: mvn dependency:go-offline
 
       - save_cache:
           paths:
