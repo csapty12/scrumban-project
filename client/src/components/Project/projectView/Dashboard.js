@@ -24,16 +24,16 @@ class Dashboard extends Component {
     this.state = {
       allProjects: [],
       project: new Project(),
-      openProjectDialog: false
+      isProjectDialogActive: false
     };
   }
-  handleOpenProjectDialogOpen = () => {
-    this.setState({ openProjectDialog: true });
+  handleIsProjectDialogActive = () => {
+    this.setState({ isProjectDialogActive: true });
   };
 
   handleClose = () => {
     this.setState({
-      openProjectDialog: false,
+      isProjectDialogActive: false,
       errors: {},
       project: new Project()
     });
@@ -78,13 +78,13 @@ class Dashboard extends Component {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={this.handleOpenProjectDialogOpen}
+                onClick={this.handleIsProjectDialogActive}
                 className={classes.createButton}
                 disableRipple
               >
                 Create New project
               </Button>
-              {this.state.openProjectDialog && (
+              {this.state.isProjectDialogActive && (
                 <ProjectDialog
                   type="Create"
                   onClose={this.handleClose}

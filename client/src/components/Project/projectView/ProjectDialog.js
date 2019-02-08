@@ -3,9 +3,6 @@ import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import Typography from "@material-ui/core/Typography";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Project from "../../../model/Project";
@@ -16,11 +13,6 @@ const styles = theme => ({
   error: {
     color: "red",
     fontSize: 12
-  },
-
-  appBar: {
-    position: "relative",
-    backgroundColor: "#2196F3"
   }
 });
 
@@ -150,7 +142,6 @@ class ProjectDialog extends Component {
                 projectInfo === undefined ? "" : projectInfo.projectName
               }
             />
-
             {errors.projectName && (
               <span className={classes.error}>{errors.projectName}</span>
             )}
