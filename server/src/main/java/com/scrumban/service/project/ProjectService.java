@@ -1,6 +1,7 @@
 package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdentifierException;
+import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectRepository;
@@ -25,9 +26,10 @@ public class ProjectService {
     }
 
     public ProjectEntity saveProject(ProjectEntity projectEntity) {
-        Optional<ProjectEntity> foundProjectEntity = tryToFindProject(projectEntity.getProjectIdentifier().toUpperCase());
+        Optional<ProjectEntity> foundProject = tryToFindProject(projectEntity.getProjectIdentifier().toUpperCase());
+
         log.info("attempting to save project: {}", projectEntity.getProjectName());
-        if(!foundProjectEntity.isPresent()) {
+        if (!foundProject.isPresent()) {
             List<SwimLaneEntity> swimLaneEntitySet = new LinkedList<>();
             projectEntity.setSwimLaneEntities(swimLaneEntitySet);
             ProjectEntity savedNewProject = projectRepository.save(projectEntity);
@@ -39,31 +41,42 @@ public class ProjectService {
 
     public ProjectEntity updateProject(ProjectEntity projectEntity) {
         Optional<ProjectEntity> foundProjectEntity = tryToFindProject(projectEntity.getProjectIdentifier());
-        if(foundProjectEntity.isPresent()){
+        if (foundProjectEntity.isPresent()) {
             return projectRepository.save(projectEntity);
         }
         throw new ProjectIdentifierException("projectEntity ID: " + projectEntity.getProjectIdentifier() + " not found!");
 
     }
 
-    public Iterable<ProjectEntity> findAllProjects(){
-        return projectRepository.findAll();
+    public Iterable<ProjectEntity> findAllProjects() {
+
+        Iterable<ProjectEntity> allProjects = projectRepository.findAll();
+        boolean projectsExist = allProjects.iterator().hasNext();
+        if (projectsExist) {
+            return allProjects;
+        }
+        throw new ProjectNotFoundException("No projects found");
     }
 
-    public void deleteProject(String projectIdentifier){
+    public void deleteProject(String projectIdentifier) {
         Optional<ProjectEntity> projectEntity = tryToFindProject(projectIdentifier);
-        if(!projectEntity.isPresent()){
-
+        if (!projectEntity.isPresent()) {
             throw new ProjectIdentifierException("projectEntity ID: " + projectIdentifier.toUpperCase() + " does not exist!");
         }
-
-        projectEntity.get().getProjectTickets().forEach(projectTicket -> projectTicketRepository.deleteProjectTicket(projectTicket.getId()));
-        projectRepository.delete(projectEntity.get());
+        deleteProject(projectEntity);
 
     }
 
 
-    public Optional<ProjectEntity> tryToFindProject(String projectIdentifier){
+    public Optional<ProjectEntity> tryToFindProject(String projectIdentifier) {
         return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
+    }
+    private void deleteProject(Optional<ProjectEntity> projectEntity) {
+        deleteAllProjectTickets(projectEntity);
+        projectRepository.delete(projectEntity.get());
+    }
+
+    private void deleteAllProjectTickets(Optional<ProjectEntity> projectEntity) {
+        projectEntity.ifPresent(project -> project.getProjectTickets().forEach(projectTicket -> projectTicketRepository.deleteProjectTicket(projectTicket.getId())));
     }
 }

@@ -25,4 +25,6 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
 
     void deleteByProjectTickets(List<ProjectTicket> projectTicketList);
 
+
+
 }

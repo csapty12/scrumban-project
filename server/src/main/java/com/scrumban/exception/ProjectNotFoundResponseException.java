@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProjectNotFoundResponseException {
-    private String projectIdentifier;
+    private String project;
 
     public ProjectNotFoundResponseException(String projectIdentifier) {
-        this.projectIdentifier = projectIdentifier;
+        this.project = projectIdentifier;
     }
 }

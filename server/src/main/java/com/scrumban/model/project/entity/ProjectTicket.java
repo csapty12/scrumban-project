@@ -2,6 +2,7 @@ package com.scrumban.model.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,8 +14,8 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @Table(name="projectTickets")
+@Builder
 public class ProjectTicket {
 
     @Id
@@ -30,8 +31,6 @@ public class ProjectTicket {
     private int complexity;
 
     private String priority;
-
-
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(updatable = false)

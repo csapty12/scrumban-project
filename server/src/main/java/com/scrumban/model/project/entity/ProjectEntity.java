@@ -2,6 +2,7 @@ package com.scrumban.model.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,8 +16,8 @@ import java.util.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @Table(name="project")
+@Builder
 public class ProjectEntity {
 
     @Id
