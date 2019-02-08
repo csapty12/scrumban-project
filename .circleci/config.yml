@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/circleci-scrumban/server
+    working_directory: ~/circleci-scrumban
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
@@ -26,17 +26,17 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-{{ checksum "./server/pom.xml" }}
             - v1-dependencies-
 
-      - run: mvn dependency:go-offline
+      - run: cd ./server && mvn dependency:go-offline
 
       - save_cache:
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
+          key: v1-dependencies-{{ checksum "./server/pom.xml" }}
 
       # run tests!
       - run:
           name: clean install
-          command: mvn clean install
+          command: cd ./server && mvn clean install
