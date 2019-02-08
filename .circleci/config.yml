@@ -38,5 +38,5 @@ jobs:
 
       # run tests!
       - run:
-        name: clean install
-        command: cd ./server && mvn clean install
+          name: clean install
+          command: cd ./server && mvn clean install
