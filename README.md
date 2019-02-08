@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/csapty12/scrumban-project.svg?style=svg)](https://circleci.com/gh/csapty12/scrumban-project])
+
 # The Idea
 To create my own custom version of trello, for personal projects. 
 
