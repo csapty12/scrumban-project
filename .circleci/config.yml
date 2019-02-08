@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/circleci-scrumban
+    working_directory: ~/circleci-scrumban/server
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
@@ -19,8 +19,7 @@ jobs:
     environment:
       # Customize the JVM maximum heap limit
       MAVEN_OPTS: -Xmx3200m
-    
-    working_directory: ~/circleci-scrumban/server
+
     steps:
       - checkout
 
