@@ -29,40 +29,37 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<?> createProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) {
-        ResponseEntity<?> errorMap1 = validateIncomingRequest(bindingResult);
-        if (errorMap1 != null) return errorMap1;
-        ProjectEntity theProjectEntity = projectService.saveProject(projectEntity);
-        return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
+        ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
+        if (validationErrors != null) return validationErrors;
+
+        ProjectEntity newProject = projectService.saveProject(projectEntity);
+        return new ResponseEntity<>(newProject, HttpStatus.OK);
     }
 
 
-
     @GetMapping("/{projectIdentifier}")
-    public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
+    public ResponseEntity<?> getProjectByProjectIdentifier(@PathVariable String projectIdentifier) {
         projectIdentifier = projectIdentifier.toUpperCase();
-        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
+        Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier);
 
-        if (projectEntity.isPresent()) {
+        if (project.isPresent()) { return new ResponseEntity<>(project, HttpStatus.OK); }
 
-            return new ResponseEntity<>(projectEntity, HttpStatus.OK);
-        }
-        throw new ProjectIdentifierException("no projectEntity found with identifier: " + projectIdentifier);
+        throw new ProjectIdentifierException("No project found with identifier: " + projectIdentifier);
     }
 
     @GetMapping
     public ResponseEntity<?> getAllProjects() {
         Iterable<ProjectEntity> allProjects = projectService.findAllProjects();
         return new ResponseEntity<>(allProjects, HttpStatus.OK);
-
     }
 
     @PatchMapping
     public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) {
-        ResponseEntity<?> errorMap = validateIncomingRequest(bindingResult);
-        if (errorMap != null) return errorMap;
+        ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
+        if (validationErrors != null) return validationErrors;
 
-        ProjectEntity theProjectEntity = projectService.updateProject(projectEntity);
-        return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
+        ProjectEntity updatedProject = projectService.updateProject(projectEntity);
+        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectIdentifier}")

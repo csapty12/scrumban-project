@@ -2,8 +2,8 @@ package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.model.project.entity.ProjectEntity;
+import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.repository.ProjectRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,12 +16,9 @@ import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.notNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -33,22 +30,19 @@ class ProjectServiceTest {
     @Autowired
     private ProjectService projectService;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     @DisplayName("successfully save new project")
     void saveNewProject(){
-        ProjectEntity projectToSave = createProjectEntityObject();
-        ProjectEntity savedProject = createProjectEntityWithId();
+        ProjectEntity projectToSave = createFakeProject();
+        ProjectEntity savedProject = createFakeProjectWithId();
         when(projectRepository.findProjectByProjectIdentifier(projectToSave.getProjectIdentifier())).thenReturn(Optional.empty());
         when(projectRepository.save(projectToSave)).thenReturn(savedProject);
         ProjectEntity projectEntity = projectService.saveProject(projectToSave);
+
         assertThat(projectEntity.getSwimLaneEntities().size(), is(0));
         assertThat(projectEntity.getId(), is(1L));
-        assertThat(projectEntity.getProjectIdentifier(), is("TEST"));
-        assertThat(projectEntity.getProjectName(), is("tes project"));
+        assertThat(projectEntity.getProjectIdentifier(), is("TEST-PROJECT"));
+        assertThat(projectEntity.getProjectName(), is("test project"));
         assertThat(projectEntity.getDescription(), is("test description"));
 
         verify(projectRepository,times(1)).save(any());
@@ -58,17 +52,17 @@ class ProjectServiceTest {
     @Test
     @DisplayName("when project already exists, throw a projectId exception")
     void doNotSaveProject(){
-        ProjectEntity projectToSave = createProjectEntityObject();
-        ProjectEntity savedProject = createProjectEntityWithId();
+        ProjectEntity projectToSave = createFakeProject();
+        ProjectEntity savedProject = createFakeProjectWithId();
         when(projectRepository.findProjectByProjectIdentifier(projectToSave.getProjectIdentifier())).thenReturn(Optional.of(savedProject));
         assertThrows(ProjectIdentifierException.class,() -> projectService.saveProject(projectToSave));
 
     }
 
     @Test
-    @DisplayName("When update project, save new details successfully")
+    @DisplayName("When updating an existing project, save new details successfully")
     void updateProject(){
-        ProjectEntity existingProject = createProjectEntityWithId();
+        ProjectEntity existingProject = createFakeProjectWithId();
         ProjectEntity updatedProject = getUpdatedProject();
         when(projectRepository.findProjectByProjectIdentifier(existingProject.getProjectIdentifier())).thenReturn(Optional.of(existingProject));
         when(projectRepository.save(any())).thenReturn(updatedProject);
@@ -81,7 +75,7 @@ class ProjectServiceTest {
     @Test
     @DisplayName("when update project that does not exist, throw projectId exception")
     void doNotUpdateProject(){
-        ProjectEntity projectEntity = createProjectEntityWithId();
+        ProjectEntity projectEntity = createFakeProjectWithId();
         when(projectRepository.findProjectByProjectIdentifier(projectEntity.getProjectIdentifier())).thenReturn(Optional.empty());
         assertThrows(ProjectIdentifierException.class,() -> projectService.updateProject(projectEntity));
     }
@@ -89,19 +83,26 @@ class ProjectServiceTest {
     @Test
     @DisplayName("When find all projects, return 2 projects")
     void findAllProjects(){
-        ProjectEntity projectEntity = new ProjectEntity();
-        projectEntity.setId(1L);
-        projectEntity.setProjectName("test project 1");
-        projectEntity.setDescription("test description 1");
-        projectEntity.setProjectIdentifier("TS");
 
-        ProjectEntity secondProjectEntity = new ProjectEntity();
-        secondProjectEntity.setId(2L);
-        projectEntity.setProjectName("test project 2");
-        projectEntity.setDescription("test description 2");
-        projectEntity.setProjectIdentifier("TSNEW");
+        ProjectEntity firstProject =  ProjectEntity
+                .builder()
+                .id(1L)
+                .projectName("test project 1")
+                .description("test description 1")
+                .projectIdentifier("TEST-PROJECT-1")
+                .swimLaneEntities(new LinkedList<>())
+                .build();
 
-        List<ProjectEntity> allProjectEntities = new ArrayList<>(Arrays.asList(projectEntity,secondProjectEntity));
+        ProjectEntity secondProject =  ProjectEntity
+                .builder()
+                .id(1L)
+                .projectName("test project 2")
+                .description("test description 2")
+                .projectIdentifier("TEST-PROJECT-2")
+                .swimLaneEntities(new LinkedList<>())
+                .build();
+
+        List<ProjectEntity> allProjectEntities = new ArrayList<>(Arrays.asList(firstProject,secondProject));
         when(projectRepository.findAll()).thenReturn(allProjectEntities);
 
         Iterable<ProjectEntity> allProjects = projectService.findAllProjects();
@@ -113,39 +114,62 @@ class ProjectServiceTest {
     }
 
     @Test
+    @DisplayName("Delete a project successfully")
+    void deleteProject(){
+        ProjectEntity existingProject = createFakeProjectWithTickets();
+        when(projectRepository.findProjectByProjectIdentifier(existingProject.getProjectIdentifier())).thenReturn(Optional.of(existingProject));
+        projectService.deleteProject(existingProject.getProjectIdentifier());
+        verify(projectRepository,times(1)).delete(existingProject);
+
+    }
+
+    @Test
     @DisplayName("when deleting project that does not exist, throw exception")
     void cannotDeleteProject(){
-        ProjectEntity existingProject = createProjectEntityWithId();
+        ProjectEntity existingProject = createFakeProjectWithId();
         when(projectRepository.findProjectByProjectIdentifier(existingProject.getProjectIdentifier())).thenReturn(Optional.empty());
         assertThrows(ProjectIdentifierException.class, ()-> projectService.deleteProject(existingProject.getProjectIdentifier()));
     }
-
-
     private ProjectEntity getUpdatedProject() {
-        ProjectEntity projectEntity = new ProjectEntity();
-        projectEntity.setId(1L);
-        projectEntity.setProjectName("tes project updated");
-        projectEntity.setDescription("test description updated");
-        projectEntity.setProjectIdentifier("TEST");
-        projectEntity.setSwimLaneEntities(new LinkedList<>());
-        return projectEntity;
+        return  ProjectEntity
+                .builder()
+                .id(1L)
+                .projectName("test project updated")
+                .description("test description updated")
+                .projectIdentifier("TEST-PROJECT")
+                .swimLaneEntities(new LinkedList<>())
+                .build();
     }
 
-    private ProjectEntity createProjectEntityObject() {
-        ProjectEntity projectEntity = new ProjectEntity();
-        projectEntity.setProjectName("tes project");
-        projectEntity.setDescription("test description");
-        projectEntity.setProjectIdentifier("TEST");
-        return projectEntity;
+    private ProjectEntity createFakeProject() {
+        return ProjectEntity
+                .builder()
+                .projectName("test project")
+                .description("test description")
+                .projectIdentifier("TEST-PROJECT")
+                .build();
     }
 
-    private ProjectEntity createProjectEntityWithId() {
-        ProjectEntity projectEntity = new ProjectEntity();
-        projectEntity.setId(1L);
-        projectEntity.setProjectName("tes project");
-        projectEntity.setDescription("test description");
-        projectEntity.setProjectIdentifier("TEST");
-        projectEntity.setSwimLaneEntities(new LinkedList<>());
-        return projectEntity;
+    private ProjectEntity createFakeProjectWithId() {
+
+        return  ProjectEntity
+                .builder()
+                .id(1L)
+                .projectName("test project")
+                .description("test description")
+                .projectIdentifier("TEST-PROJECT")
+                .swimLaneEntities(new LinkedList<>())
+                .build();
+    }
+
+    private ProjectEntity createFakeProjectWithTickets(){
+        ProjectEntity  project = createFakeProject();
+        ProjectTicket projectTicket = ProjectTicket
+                .builder()
+                .id(1L)
+                .build();
+
+        project.setProjectTickets(Arrays.asList(projectTicket));
+        return project;
     }
 }

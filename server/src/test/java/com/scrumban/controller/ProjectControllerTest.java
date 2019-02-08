@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
+import java.util.LinkedList;
 import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
@@ -44,13 +45,9 @@ class ProjectControllerTest {
     @Test
     @DisplayName("POST request to save new project - /api/project/")
     void saveProject() throws Exception {
-        ProjectEntity projectEntity = createProjectEntityObject();
+        ProjectEntity projectEntity = createProject();
 
-        ProjectEntity newEntity = new ProjectEntity();
-        newEntity.setId(1L);
-        newEntity.setProjectName("test");
-        newEntity.setDescription("test description");
-        newEntity.setProjectIdentifier("TEST");
+        ProjectEntity newEntity = createProject();
 
         when(projectService.saveProject(any())).thenReturn(newEntity);
         mockMvc.perform(post("/api/project")
@@ -58,7 +55,6 @@ class ProjectControllerTest {
                 .content(asJsonString(projectEntity)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.projectName", is("test")))
                 .andExpect(jsonPath("$.projectIdentifier", is("TEST")))
                 .andExpect(jsonPath("$.description", is("test description")));
@@ -68,8 +64,7 @@ class ProjectControllerTest {
     @Test
     @DisplayName("POST failure to save new project - /api/project")
     void cannotSaveProject() throws Exception {
-        ProjectEntity projectEntity = new ProjectEntity();
-        projectEntity.setProjectName("failure");
+        ProjectEntity projectEntity = ProjectEntity.builder().projectName("failure").build();
 
         when(mockBindingResult.hasErrors()).thenReturn(true);
         mockMvc.perform(post("/api/project")
@@ -84,7 +79,7 @@ class ProjectControllerTest {
     @Test
     @DisplayName("GET request to load one specific project - /api/project/test - Found")
     void getSingleProject() throws Exception {
-        ProjectEntity projectEntity = createProjectEntityObject();
+        ProjectEntity projectEntity = createProject();
         projectEntity.setId(1L);
 
         when(projectService.tryToFindProject("TEST")).thenReturn(Optional.of(projectEntity));
@@ -106,20 +101,17 @@ class ProjectControllerTest {
         mockMvc.perform(get("/api/project/{projectIdentifier}", "failure"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.projectIdentifier", is("no projectEntity found with identifier: FAILURE")));
+                .andExpect(jsonPath("$.projectIdentifier", is("No project found with identifier: FAILURE")));
     }
 
     @Test
     @DisplayName("PATCH request to update a specific project - /api/project")
     void updateProject() throws Exception {
-        ProjectEntity projectEntity = createProjectEntityObject();
+        ProjectEntity projectEntity = createProject();
         projectEntity.setId(1L);
 
-        ProjectEntity newEntity = new ProjectEntity();
-        newEntity.setId(1L);
-        newEntity.setProjectName("test project name");
-        newEntity.setDescription("test description");
-        newEntity.setProjectIdentifier("TEST");
+        ProjectEntity newEntity = createProject();
+
 
         when(projectService.tryToFindProject(anyString())).thenReturn(Optional.of(projectEntity));
         when(projectService.updateProject(any())).thenReturn(newEntity);
@@ -128,8 +120,7 @@ class ProjectControllerTest {
                 .content(asJsonString(projectEntity)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.projectName", is("test project name")))
+                .andExpect(jsonPath("$.projectName", is("test")))
                 .andExpect(jsonPath("$.projectIdentifier", is("TEST")))
                 .andExpect(jsonPath("$.description", is("test description")));
 
@@ -139,7 +130,7 @@ class ProjectControllerTest {
     @Test
     @DisplayName("DELETE request to delete a project - /api/project/test")
     void deleteProject() throws Exception {
-        ProjectEntity projectEntity = createProjectEntityObject();
+        ProjectEntity projectEntity = createProject();
         when(projectService.tryToFindProject("TEST")).thenReturn(Optional.of(projectEntity));
         mockMvc.perform(delete("/api/project/{projectIdentifier}", "test"))
                 .andExpect(status().isOk());
@@ -154,12 +145,13 @@ class ProjectControllerTest {
         }
     }
 
-    private ProjectEntity createProjectEntityObject() {
-        ProjectEntity projectEntity = new ProjectEntity();
-        projectEntity.setProjectName("test");
-        projectEntity.setDescription("test description");
-        projectEntity.setProjectIdentifier("TEST");
-        return projectEntity;
+    private ProjectEntity createProject() {
+        return ProjectEntity
+                .builder()
+                .projectName("test")
+                .description("test description")
+                .projectIdentifier("TEST")
+                .swimLaneEntities(new LinkedList<>())
+                .build();
     }
-
 }
