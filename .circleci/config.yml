@@ -1,11 +1,8 @@
 version: 2
-aliases:
-  - &defaults
-    working_directory: ~/circleci-scrumban
 
 jobs:
   build:
-    <<: *defaults
+    working_directory: ~/circleci-scrumban
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
