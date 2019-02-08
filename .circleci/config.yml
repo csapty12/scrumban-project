@@ -27,12 +27,14 @@ jobs:
       MAVEN_OPTS: -Xmx3200m
 
     steps:
+      working_directory: ./server
       - checkout
+      
 
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "./server/pom.xml" }}
+            - v1-dependencies-{{ checksum "pom.xml" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
@@ -41,9 +43,9 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "./server/pom.xml" }}
+          key: v1-dependencies-{{ checksum "pom.xml" }}
 
       # run tests!
       
-      working_directory: ./server
+      
         - run: mvn clean install
