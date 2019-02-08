@@ -1,11 +1,16 @@
 version: 2
 
-jobs:
-  build:
+aliases:
+  - &defaults
     working_directory: ~/circleci-scrumban
     docker:
-      # specify the version you desire here
       - image: circleci/openjdk:8-jdk
+
+jobs:
+  build:
+    <<: *defaults
+    docker:
+      # specify the version you desire here
       - image: mysql:latest
         environment:
           - MYSQL_ROOT_PASSWORD=root123
@@ -24,7 +29,7 @@ jobs:
       - checkout
 
   test:
-    working_directory: ~/circleci-scrumban
+    <<: *defaults
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
