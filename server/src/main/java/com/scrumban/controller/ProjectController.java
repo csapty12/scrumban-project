@@ -29,14 +29,13 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<?> createProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) {
-        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
-        if (errorMap != null) {
-            System.out.println("error map: " + errorMap);
-            return errorMap;
-        }
+        ResponseEntity<?> errorMap1 = validateIncomingRequest(bindingResult);
+        if (errorMap1 != null) return errorMap1;
         ProjectEntity theProjectEntity = projectService.saveProject(projectEntity);
         return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
     }
+
+
 
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier) {
@@ -59,11 +58,8 @@ public class ProjectController {
 
     @PatchMapping
     public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult) {
-        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
-        if (errorMap != null) {
-            System.out.println("error map: " + errorMap);
-            return errorMap;
-        }
+        ResponseEntity<?> errorMap = validateIncomingRequest(bindingResult);
+        if (errorMap != null) return errorMap;
 
         ProjectEntity theProjectEntity = projectService.updateProject(projectEntity);
         return new ResponseEntity<>(theProjectEntity, HttpStatus.OK);
@@ -73,6 +69,14 @@ public class ProjectController {
     public void deleteProject(@PathVariable String projectIdentifier) {
         projectIdentifier = projectIdentifier.toUpperCase();
         projectService.deleteProject(projectIdentifier);
+    }
 
+    private ResponseEntity<?> validateIncomingRequest(BindingResult bindingResult) {
+        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
+        if (errorMap != null) {
+            System.out.println("error map: " + errorMap);
+            return errorMap;
+        }
+        return null;
     }
 }
