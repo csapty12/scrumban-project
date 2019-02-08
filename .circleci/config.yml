@@ -28,7 +28,6 @@ jobs:
     
     
     working_directory: ./server
-
     steps:
       - checkout
     
@@ -47,6 +46,4 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
       # run tests!
-      
-
-        - run: mvn clean install
+      - run: mvn clean install
