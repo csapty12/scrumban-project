@@ -1,4 +1,4 @@
-package com.scrumban.service;
+package com.scrumban.service.project;
 
 import com.scrumban.exception.DuplicateProjectSwimLaneException;
 import com.scrumban.model.project.entity.ProjectEntity;
@@ -38,8 +38,6 @@ public class SwimLaneService {
             else{
                 projectSwimLanes.add(foundSwimLane);
             }
-
-
 
         }
         return projectService.updateProject(projectEntity.get());

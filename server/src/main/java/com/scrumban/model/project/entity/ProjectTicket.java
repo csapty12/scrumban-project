@@ -2,10 +2,7 @@ package com.scrumban.model.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +13,8 @@ import java.util.Date;
 @Setter
 @Table(name="projectTickets")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectTicket {
 
     @Id

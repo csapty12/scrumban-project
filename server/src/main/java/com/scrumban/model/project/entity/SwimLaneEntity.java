@@ -1,9 +1,7 @@
 package com.scrumban.model.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,6 +12,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Table(name="swimLane")
+@AllArgsConstructor
+@Builder
 public class SwimLaneEntity {
 
     @Id

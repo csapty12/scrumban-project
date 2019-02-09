@@ -67,7 +67,6 @@ public class ProjectService {
 
     }
 
-
     public Optional<ProjectEntity> tryToFindProject(String projectIdentifier) {
         return projectRepository.findProjectByProjectIdentifier(projectIdentifier);
     }

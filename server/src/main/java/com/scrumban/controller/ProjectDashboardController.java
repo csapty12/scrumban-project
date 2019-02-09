@@ -5,14 +5,13 @@ import com.scrumban.model.Tickets;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.model.project.entity.SwimLaneEntity;
-import com.scrumban.service.ProjectTicketService;
-import com.scrumban.service.SwimLaneService;
+import com.scrumban.service.project.ProjectTicketService;
+import com.scrumban.service.project.SwimLaneService;
 import com.scrumban.service.ValidationErrorService;
 import com.scrumban.service.project.ProjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 

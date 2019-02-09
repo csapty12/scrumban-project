@@ -1,6 +1,7 @@
-package com.scrumban.service;
+package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdentifierException;
+import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.ProjectDashboardColumn;
 import com.scrumban.model.SwimLane;
 import com.scrumban.model.Tickets;
@@ -8,7 +9,6 @@ import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
-import com.scrumban.service.project.ProjectService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -32,27 +32,24 @@ public class ProjectTicketService {
 
     public Tickets getProjectDashboard(String projectIdentifier) {
         Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
-        Optional<List<ProjectTicket>> allProjectTickets = Optional.of(projectEntity.get().getProjectTickets());
-
-        Tickets tickets = new Tickets();
-
-        if(allProjectTickets.isPresent()){
-            List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets.get());
+        if(projectEntity.isPresent()) {
+            List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
+            Tickets tickets = new Tickets();
+            List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
             tickets.setTickets(allTickets);
+            List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(projectEntity);
+            tickets.setSwimLanes(swimLanesAndTicketReferences);
+            List<String> swimLaneOrder = new ArrayList<>();
+            swimLanesAndTicketReferences.forEach(column -> {
+                for (String key : column.keySet()) {
+                    swimLaneOrder.add(key);
+                }
+            });
+            tickets.setSwimLaneOrder(swimLaneOrder);
+
+            return tickets;
         }
-
-        List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(projectEntity);
-        tickets.setSwimLanes(swimLanesAndTicketReferences);
-
-        List<String> swimLaneOrder = new ArrayList<>();
-        swimLanesAndTicketReferences.forEach(column -> {
-            for (String key : column.keySet()) {
-                swimLaneOrder.add(key);
-            }
-        });
-        tickets.setSwimLaneOrder(swimLaneOrder);
-
-        return tickets;
+        throw new ProjectNotFoundException("Project with identifier: " + projectIdentifier +" does not exist.");
 
     }
 
@@ -157,6 +154,7 @@ public class ProjectTicketService {
         });
         return projectTaskIds;
     }
+
     private void updateTicketPositionInSwimLane(SwimLane swimLane, ProjectTicket ticket) {
 
         int indexOfTicket = swimLane.getTicketIds().indexOf(ticket.getProjectSequence());
@@ -181,7 +179,6 @@ public class ProjectTicketService {
         String initials = Arrays.stream(projectIdentifier.split("-"))
                 .map(s -> s.substring(0, 1))
                 .collect(Collectors.joining());
-//        System.out.println(initials);
         return initials.toUpperCase();
     }
 
