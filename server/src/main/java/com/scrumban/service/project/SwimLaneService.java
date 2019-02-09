@@ -21,32 +21,25 @@ public class SwimLaneService {
         this.swimLaneRepository = swimLaneRepository;
     }
 
-    public ProjectEntity addSwimLaneToProject(String projectIdentifier, SwimLaneEntity swimLaneEntity) {
+    public ProjectEntity addSwimLaneToProject(ProjectEntity project, SwimLaneEntity swimLaneEntity) {
 
-        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
-
-        SwimLaneEntity foundSwimLane = swimLaneRepository.findByName(swimLaneEntity.getName());
-        if (foundSwimLane == null) {
+        Optional<SwimLaneEntity> foundSwimLane = swimLaneRepository.findByName(swimLaneEntity.getName());
+        List<SwimLaneEntity> projectSwimLanes = project.getSwimLaneEntities();
+        if (!foundSwimLane.isPresent()) {
             SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
-            List<SwimLaneEntity> swimLaneEntities = projectEntity.get().getSwimLaneEntities();
-            swimLaneEntities.add(newSwimLaneEntity);
+            projectSwimLanes.add(newSwimLaneEntity);
         } else {
-            List<SwimLaneEntity> projectSwimLanes = projectEntity.get().getSwimLaneEntities();
-            if(projectSwimLanes.contains(foundSwimLane)){
+            if (projectSwimLanes.contains(foundSwimLane.get())) {
                 throw new DuplicateProjectSwimLaneException("Swim lane already exists in this project");
             }
-            else{
-                projectSwimLanes.add(foundSwimLane);
-            }
+            projectSwimLanes.add(foundSwimLane.get());
 
         }
-        return projectService.updateProject(projectEntity.get());
+        return projectService.updateProject(project);
     }
 
 
-
-
-    public SwimLaneEntity findSwimLaneByName(String swimLaneName) {
+    public Optional<SwimLaneEntity> findSwimLaneByName(String swimLaneName) {
         return swimLaneRepository.findByName(swimLaneName);
     }
 

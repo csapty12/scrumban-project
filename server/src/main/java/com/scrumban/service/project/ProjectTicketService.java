@@ -30,26 +30,23 @@ public class ProjectTicketService {
         this.swimLaneService = swimLaneService;
     }
 
-    public Tickets getProjectDashboard(String projectIdentifier) {
-        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
-        if(projectEntity.isPresent()) {
-            List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
-            Tickets tickets = new Tickets();
-            List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
-            tickets.setTickets(allTickets);
-            List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(projectEntity);
-            tickets.setSwimLanes(swimLanesAndTicketReferences);
-            List<String> swimLaneOrder = new ArrayList<>();
-            swimLanesAndTicketReferences.forEach(column -> {
-                for (String key : column.keySet()) {
-                    swimLaneOrder.add(key);
-                }
-            });
-            tickets.setSwimLaneOrder(swimLaneOrder);
+    public Tickets getProjectDashboard(ProjectEntity project) {
 
-            return tickets;
-        }
-        throw new ProjectNotFoundException("Project with identifier: " + projectIdentifier +" does not exist.");
+        List<ProjectTicket> allProjectTickets = project.getProjectTickets();
+        Tickets tickets = new Tickets();
+        List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
+        tickets.setTickets(allTickets);
+        List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(project);
+        tickets.setSwimLanes(swimLanesAndTicketReferences);
+        List<String> swimLaneOrder = new ArrayList<>();
+        swimLanesAndTicketReferences.forEach(column -> {
+            for (String key : column.keySet()) {
+                swimLaneOrder.add(key);
+            }
+        });
+        tickets.setSwimLaneOrder(swimLaneOrder);
+
+        return tickets;
 
     }
 
@@ -62,9 +59,9 @@ public class ProjectTicketService {
         int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
         String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
         projectTicket.setProjectSequence(projectSequence);
-        SwimLaneEntity swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
+        Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
         projectTicket.setProject(projectEntity.get());
-        projectTicket.setSwimLaneEntity(swimLaneEntity);
+        projectTicket.setSwimLaneEntity(swimLaneEntity.get());
         projectTicket.setProjectIdentifier(projectIdentifier);
         projectTicketRepository.save(projectTicket);
 
@@ -113,10 +110,10 @@ public class ProjectTicketService {
 
         swimLanes.forEach(swimLane -> {
             List<String> ticketIds = swimLane.getTicketIds();
-            SwimLaneEntity swimLaneEntity = swimLaneService.findSwimLaneByName(swimLane.getTitle());
+            Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLane.getTitle());
             ticketIds.forEach(ticketId -> {
                 ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticketId);
-                projectTicket.setSwimLaneEntity(swimLaneEntity);
+                projectTicket.setSwimLaneEntity(swimLaneEntity.get());
                 projectTicketRepository.save(projectTicket);
             });
         });
@@ -182,17 +179,17 @@ public class ProjectTicketService {
         return initials.toUpperCase();
     }
 
-    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(Optional<ProjectEntity> projectEntity) {
+    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(ProjectEntity projectEntity) {
 
         List<String> columnNames = new ArrayList<>();
 
-        projectEntity.get().getSwimLaneEntities().forEach(column -> {
+        projectEntity.getSwimLaneEntities().forEach(column -> {
 
             columnNames.add(column.getName());
         });
 
 
-        List<ProjectTicket> allProjectTickets = projectEntity.get().getProjectTickets();
+        List<ProjectTicket> allProjectTickets = projectEntity.getProjectTickets();
 
 
         List<Map<String, ProjectDashboardColumn>> listOfColumns = new ArrayList<>();
