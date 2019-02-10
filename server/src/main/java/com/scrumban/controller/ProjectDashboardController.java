@@ -62,9 +62,8 @@ public class ProjectDashboardController {
         }
         Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier);
         if (project.isPresent()) {
-            ProjectEntity projectEntity = swimLaneService.addSwimLaneToProject(project.get(), swimLaneEntity);
+            swimLaneService.addSwimLaneToProject(project.get(), swimLaneEntity);
             Tickets allTicketsForProject = projectTicketService.getProjectDashboard(project.get());
-            System.out.println("swimalne order: " + allTicketsForProject.getSwimLaneOrder());
             return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
         }
         throw new ProjectNotFoundException("No project found with identifier: " + projectIdentifier);
@@ -76,17 +75,24 @@ public class ProjectDashboardController {
                                                  @PathVariable String swimLaneId,
                                                  @Valid @RequestBody ProjectTicket projectTicket, BindingResult bindingResult) {
 
-        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
-        if (errorMap != null) {
-            System.out.println("error map: " + errorMap);
-            return errorMap;
+        ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
+        if (validationErrors != null) return validationErrors;
+
+        Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier);
+        if(project.isPresent()){
+            LinkedHashMap<String, ProjectTicket> newTicket = projectTicketService.addProjectTicketToProject(project.get(), swimLaneId, projectTicket);
+            return new ResponseEntity<>(newTicket, HttpStatus.OK);
         }
-        LinkedHashMap<String, ProjectTicket> projectTicket1 = projectTicketService.addProjectTicketToProject(projectIdentifier, swimLaneId, projectTicket);
-        return new ResponseEntity<>(projectTicket1, HttpStatus.OK);
+        throw new ProjectNotFoundException("No project found with identifier: " + projectIdentifier);
+
     }
 
     @DeleteMapping("/{projectIdentifier}/{id}")
-    public ResponseEntity<?> removeTicketFromProject(@PathVariable String projectIdentifier, @PathVariable Long id, @Valid @RequestBody ProjectTicket projectTicket) {
+    public ResponseEntity<?> removeTicketFromProject(@PathVariable String projectIdentifier, @PathVariable Long id, @Valid @RequestBody ProjectTicket projectTicket, BindingResult bindingResult) {
+
+        ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
+        if (validationErrors != null) return validationErrors;
+
         projectTicketService.removeTicketFromProject(projectTicket);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -107,5 +113,13 @@ public class ProjectDashboardController {
 
         projectTicketService.updateTicketPositionInNewSwimLane(swimLanes);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private ResponseEntity<?> validateIncomingRequest(BindingResult bindingResult) {
+        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
+        if (errorMap != null) {
+            return errorMap;
+        }
+        return null;
     }
 }

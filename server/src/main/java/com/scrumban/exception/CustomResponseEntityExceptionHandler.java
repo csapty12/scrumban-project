@@ -32,5 +32,12 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     }
 
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleProjectSwimLaneNotFoundException(ProjectSwimLaneNotFoundException projectSwimLaneNotFoundException){
+        ProjectSwimLaneNotFoundReponseException projectSwimLaneNotFoundReponseException = new ProjectSwimLaneNotFoundReponseException(projectSwimLaneNotFoundException.getMessage());
+        return new ResponseEntity<>(projectSwimLaneNotFoundReponseException, HttpStatus.BAD_REQUEST);
+
+    }
+
 
 }

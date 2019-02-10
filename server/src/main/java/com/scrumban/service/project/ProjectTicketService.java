@@ -2,6 +2,7 @@ package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.exception.ProjectNotFoundException;
+import com.scrumban.exception.ProjectSwimLaneNotFoundException;
 import com.scrumban.model.ProjectDashboardColumn;
 import com.scrumban.model.SwimLane;
 import com.scrumban.model.Tickets;
@@ -50,25 +51,31 @@ public class ProjectTicketService {
 
     }
 
-    public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(String projectIdentifier, String swimLaneName, ProjectTicket projectTicket) {
+    public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(ProjectEntity projectEntity, String swimLaneName, ProjectTicket projectTicket) {
 
-        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier);
-        int currentTicketNumber = projectEntity.get().getCurrentTicketNumber();
+        Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
+        if (!swimLaneEntity.isPresent()) {
+            throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
+        }
+        
+        int currentTicketNumber = projectEntity.getCurrentTicketNumber();
         int incrementValue = 1;
-        String acronym = getAcronymFromProjectIdentifier(projectIdentifier);
+        String acronym = getAcronymFromProjectIdentifier(projectEntity.getProjectIdentifier());
         int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
         String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
         projectTicket.setProjectSequence(projectSequence);
-        Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
-        projectTicket.setProject(projectEntity.get());
+
+
+        projectTicket.setProject(projectEntity);
         projectTicket.setSwimLaneEntity(swimLaneEntity.get());
-        projectTicket.setProjectIdentifier(projectIdentifier);
+        projectTicket.setProjectIdentifier(projectEntity.getProjectIdentifier());
         projectTicketRepository.save(projectTicket);
 
         LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
         singleProjectTicket.put(projectSequence, projectTicket);
 
         return singleProjectTicket;
+
     }
 
 
