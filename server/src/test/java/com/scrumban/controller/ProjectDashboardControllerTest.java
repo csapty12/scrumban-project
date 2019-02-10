@@ -135,20 +135,20 @@ class ProjectDashboardControllerTest {
 
     }
 
-    @Test
-    @DisplayName("POST request to add new swimLane fails when project already has swimlane  -  /dashboard/{projectID}")
-    void duplicateSwimLane() throws Exception {
-        ProjectEntity project = createProjectWithSwimLane();
-        SwimLaneEntity swimLaneEntity = createDefaultSwimLane();
-        when(projectService.tryToFindProject("TEST-PROJECT")).thenReturn(Optional.of(project));
-        when(swimLaneRepository.findByName(swimLaneEntity.getName())).thenReturn(Optional.of(project.getSwimLaneEntities().get(0)));
-
-        mockMvc.perform(post("/dashboard/{projectIdentifier}", "TEST-PROJECT")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(asJsonString(swimLaneEntity)))
-                .andDo(print())
-                .andExpect(content().json("{'name':'Swim lane already exists in this project'}"));
-    }
+//    @Test
+//    @DisplayName("POST request to add new swimLane fails when project already has swimlane  -  /dashboard/{projectID}")
+//    void duplicateSwimLane() throws Exception {
+//        ProjectEntity project = createProjectWithSwimLane();
+//        SwimLaneEntity swimLaneEntity = createDefaultSwimLane();
+//        when(projectService.tryToFindProject("TEST-PROJECT")).thenReturn(Optional.of(project));
+//        when(swimLaneRepository.findByName(swimLaneEntity.getName())).thenReturn(Optional.of(project.getSwimLaneEntities().get(0)));
+//
+//        mockMvc.perform(post("/dashboard/{projectIdentifier}", "TEST-PROJECT")
+//                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+//                .content(asJsonString(swimLaneEntity)))
+//                .andDo(print())
+//                .andExpect(content().json("{'name':'Swim lane already exists in this project'}"));
+//    }
 
 
     @DisplayName("POST request to add a new ticket to swim lane fails with invalid JSON - /{projectIdentifier}/{swimLaneId} ")
@@ -179,23 +179,23 @@ class ProjectDashboardControllerTest {
                 .andExpect(content().json("{'TP-1':{'id':1,'projectSequence':'TP-1','summary':'test summary','acceptanceCriteria':'test AC','complexity':0,'priority':null,'createdAt':null,'ticketNumberPosition':0,'projectIdentifier':'TEST-PROJECT'}}"));
     }
 
-    @DisplayName("POST request to add a new ticket to swim lane fails when sent to invalid swim lane -  /{projectIdentifier}/{swimLaneId}")
-    @Test
-    void invalidSwimLane() throws Exception {
-        ProjectTicket projectTicket = ProjectTicket.builder().summary("test summary").acceptanceCriteria("test AC").id(1L).build();
-        ProjectEntity project =  createProjectWithSwimLane();
-        when(projectService.tryToFindProject(project.getProjectIdentifier())).thenReturn(Optional.of(project));
-        when(swimLaneService.findSwimLaneByName("failure")).thenReturn(Optional.empty());
-        when(projectTicketRepository.save(any())).thenReturn(projectTicket);
-
-        mockMvc.perform(post("/dashboard/{projectIdentifier}/{swimlaneId}", "TEST-PROJECT","failure")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(asJsonString(projectTicket)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().json("{'name':'Swim lane with name: failure not found'}"));
-
-    }
+//    @DisplayName("POST request to add a new ticket to swim lane fails when sent to invalid swim lane -  /{projectIdentifier}/{swimLaneId}")
+//    @Test
+//    void invalidSwimLane() throws Exception {
+//        ProjectTicket projectTicket = ProjectTicket.builder().summary("test summary").acceptanceCriteria("test AC").id(1L).build();
+//        ProjectEntity project =  createProjectWithSwimLane();
+//        when(projectService.tryToFindProject(project.getProjectIdentifier())).thenReturn(Optional.of(project));
+//        when(swimLaneService.findSwimLaneByName("failure")).thenReturn(Optional.empty());
+//        when(projectTicketRepository.save(any())).thenReturn(projectTicket);
+//
+//        mockMvc.perform(post("/dashboard/{projectIdentifier}/{swimlaneId}", "TEST-PROJECT","failure")
+//                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+//                .content(asJsonString(projectTicket)))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+//                .andExpect(content().json("{'name':'Swim lane with name: failure not found'}"));
+//
+//    }
 
 
 
