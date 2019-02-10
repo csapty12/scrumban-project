@@ -38,4 +38,12 @@ describe('Project list', () => {
     projectList.find('button').simulate('click');
     expect(projectList.state('activeTile')).toEqual(1);
   });
+
+  it('closes a project menu when a project tile button is clicked', () => {
+    const projectList = mount(<ProjectList {...props} data={projectInfo} />);
+    const button = projectList.find('button');
+    button.simulate('click');
+    button.simulate('click');
+    expect(projectList.state('activeTile')).toEqual(null);
+  });
 });

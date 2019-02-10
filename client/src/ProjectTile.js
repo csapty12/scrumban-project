@@ -14,8 +14,12 @@ export default ({
     <button onClick={toggleMenu} />
     {isMenuOpen && (
       <ol>
-        <li data-test="tile__update" onClick={handleUpdate} />
-        <li data-test="tile__delete" onClick={handleDelete} />
+        <li data-test="tile__update" onClick={handleUpdate}>
+          update
+        </li>
+        <li data-test="tile__delete" onClick={handleDelete}>
+          delete
+        </li>
       </ol>
     )}
   </div>

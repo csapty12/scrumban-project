@@ -29,7 +29,7 @@ class ProjectList extends Component {
           <ProjectTile
             name={item.projectName}
             date={new Date(item.createdAt)}
-            key={`tile-${item.projectIdentifier}`}
+            key={`tile-${item.id}-${item.projectIdentifier}`}
             isMenuOpen={item.id === activeTile}
             toggleMenu={this.setActiveTile(item.id)}
           />

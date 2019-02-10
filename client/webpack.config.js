@@ -7,7 +7,7 @@ module.exports = {
     hot: true,
   },
   module: {
-    rules: [
+    loaders: [
       {
         test: /\.(js|jsx)$/,
         loaders: ['babel-loader'],
