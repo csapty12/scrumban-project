@@ -65,9 +65,10 @@
     "build": "webpack --mode production",
     "run:project": "webpack-dev-server --mode development --open",
     "test": "jest --verbose",
-    "test:cover": "jest --verbose --coverage",
     "lint": "eslint src/**/*.js",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "test:coverage": "jest --verbose --coverage",
+    "test:watch": "jest --watchAll --verbose"
   }
 }

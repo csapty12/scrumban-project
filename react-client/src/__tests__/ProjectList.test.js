@@ -48,4 +48,5 @@ describe('Project list', () => {
     button.simulate('click');
     expect(projectList.state('activeTile')).toEqual(null);
   });
+
 });

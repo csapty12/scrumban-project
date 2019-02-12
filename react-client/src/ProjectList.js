@@ -2,13 +2,24 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProjectTile from './ProjectTile';
 import style from './projectList.css';
-
+import {fetchAllProjects} from "./api/ProjectList"
 class ProjectList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeTile: null,
+      activeTile: null, 
+      data: []
+
     };
+  }
+
+  componentDidMount(){
+    const allProjectData = fetchAllProjects().then(data =>
+      this.setState({ 
+        ...this.state,
+        data: data 
+        })
+    );
   }
 
   setActiveTile = id => e => {
@@ -20,9 +31,9 @@ class ProjectList extends Component {
   };
 
   render() {
-    const { data } = this.props;
+    const { data } = this.state;
     const { activeTile } = this.state;
-    
+
     return (
       <div>
         <h1 className={style.projectHeader}>All Projects</h1>
