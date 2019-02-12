@@ -5,3 +5,8 @@
   align-items: left;
   justify-content: center;
 }
+.projectHeader{
+  font-weight:100;
+  font-size:3em;
+  text-align:center;
+}

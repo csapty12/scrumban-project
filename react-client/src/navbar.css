@@ -1,0 +1,22 @@
+*{
+    margin: 0;
+}
+.topNav {
+  position: relative;
+  overflow: hidden;
+  background-color: #FF6700;
+  padding:15px;
+  }
+
+.topNav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topNavRight {
+  float: right;
+}

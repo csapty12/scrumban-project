@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ProjectList from './ProjectList';
+import Navbar from "./Navbar"
 import style from './app.css';
 
 const data = [
@@ -42,6 +43,7 @@ const data = [
 ];
 const App = () => (
   <div>
+    <Navbar />
     <ProjectList data={data} />
   </div>
 );
