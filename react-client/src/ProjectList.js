@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProjectTile from './ProjectTile';
+import style from './projectList.css';
 
 class ProjectList extends Component {
   constructor(props) {
@@ -25,15 +26,17 @@ class ProjectList extends Component {
     return (
       <div>
         <h1>Projects</h1>
-        {data.map(item => (
-          <ProjectTile
-            name={item.projectName}
-            date={new Date(item.createdAt)}
-            key={`tile-${item.id}-${item.projectIdentifier}`}
-            isMenuOpen={item.id === activeTile}
-            toggleMenu={this.setActiveTile(item.id)}
-          />
-        ))}
+        <div className={style.flexContainer}>
+          {data.map(item => (
+            <ProjectTile
+              name={item.projectName}
+              date={new Date(item.createdAt)}
+              key={`tile-${item.id}-${item.projectIdentifier}`}
+              isMenuOpen={item.id === activeTile}
+              toggleMenu={this.setActiveTile(item.id)}
+            />
+          ))}
+        </div>
       </div>
     );
   }

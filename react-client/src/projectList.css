@@ -1,0 +1,7 @@
+.flexContainer {
+  display: flex;
+  flex-wrap: wrap;
+  /* background-color: DodgerBlue; */
+  align-items: left;
+  justify-content: center;
+}

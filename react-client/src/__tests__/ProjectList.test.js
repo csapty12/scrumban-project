@@ -1,8 +1,10 @@
 import React from 'react';
-import { mount } from 'enzyme';
-
+import Enzyme, { mount } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 import ProjectList from '../ProjectList';
 import ProjectTile from '../ProjectTile';
+
+Enzyme.configure({ adapter: new Adapter() });
 
 describe('Project list', () => {
   const props = {};
