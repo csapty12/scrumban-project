@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProjectTile from './ProjectTile';
 import style from './projectList.css';
-import {fetchAllProjects} from "./api/ProjectList"
+import {fetchAllProjects} from "./api/CallProjectListAPI"
 class ProjectList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeTile: null, 
+      activeTile: null,
+      showModal:false,
       data: []
 
     };
@@ -43,6 +44,10 @@ class ProjectList extends Component {
     }));
   };
 
+  toggleModal = (e)=>{
+    this.setState({showModal: !this.state.showModal})
+
+  }
   render() {
     const { data } = this.state;
     const { activeTile } = this.state;
@@ -58,6 +63,9 @@ class ProjectList extends Component {
               key={`tile-${item.id}-${item.projectIdentifier}`}
               isMenuOpen={item.id === activeTile}
               toggleMenu={this.setActiveTile(item.id)}
+              toggleModal={this.toggleModal}
+              isDialogOpen={item.id === activeTile && this.state.showModal}
+
             />
           ))}
         </div>
