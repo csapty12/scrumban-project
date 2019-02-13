@@ -13,13 +13,26 @@ class ProjectList extends Component {
     };
   }
 
-  componentDidMount(){
-    const allProjectData = fetchAllProjects().then(data =>
+  // componentDidMount(){
+  //   const allProjectData = fetchAllProjects().then(data =>
+  //     this.setState({ 
+  //       ...this.state,
+  //       data: data 
+  //       })
+  //   );
+  // }
+
+  async componentDidMount(){
+    try{
+    const allProjectData = await fetchAllProjects();
+    const json = await allProjectData.json();
       this.setState({ 
         ...this.state,
-        data: data 
+        data: json
         })
-    );
+    }catch (error) {
+    console.log(error);
+  }
   }
 
   setActiveTile = id => e => {
@@ -52,15 +65,5 @@ class ProjectList extends Component {
     );
   }
 }
-
-ProjectList.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      projectName: PropTypes.string,
-      createdAt: PropTypes.string,
-      projectIdentifier: PropTypes.string,
-    })
-  ).isRequired,
-};
 
 export default ProjectList;
