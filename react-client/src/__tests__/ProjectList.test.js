@@ -3,6 +3,7 @@ import Enzyme, { mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import ProjectList from '../ProjectList';
 import ProjectTile from '../ProjectTile';
+import ModalDialog from "../modalDialog/ModalDialog"
 
 Enzyme.configure({ adapter: new Adapter() });
 beforeAll(() => {
@@ -17,6 +18,10 @@ describe('Project list', () => {
       mount(<ProjectList {...props} />).find('h1').length
     ).toEqual(1);
   });
+  it('has no dialog open by default', () => {
+    const modal = mount(<ModalDialog {...props} />);
+    expect(modal.find('#myModal').length).toEqual(0);
+  }
 
 //   // it('renders a project tile', () => {
 //   //   const projectList = mount(<ProjectList {...props} />);

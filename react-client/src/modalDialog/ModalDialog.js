@@ -1,10 +1,10 @@
 import React from 'react';
 import style from './Modal.css';
 
-const ModalDialog = ({ toggleDialog, handleCloseDialog, type }) => {
-  let displayBlock = 'none';
+const ModalDialog = ({ toggleDialog, handleCloseDialog, type, onKeyDown }) => {
+  let displayFlex = 'none';
   if (toggleDialog) {
-    displayBlock = 'flex';
+    displayFlex = 'flex';
   }
 
   return (
@@ -12,15 +12,16 @@ const ModalDialog = ({ toggleDialog, handleCloseDialog, type }) => {
       <div
         id="myModal"
         className={style.modal}
-        style={{ display: displayBlock }}
+        style={{ display: displayFlex }}
         role="dialog"
       >
-        <div className={style.modalContent}>
-          <div className={style.modalHeader}>
+        <div className={style.modalContent} >
+          <div className={style.modalHeader} >
             <span
               className={style.close}
               onClick={handleCloseDialog}
               role="presentation"
+              
             >
               &times;
             </span>
@@ -28,13 +29,13 @@ const ModalDialog = ({ toggleDialog, handleCloseDialog, type }) => {
             <h2>{type} Project</h2>
           </div>
           <div className={style.modalBody}>
-            <form action="/action_page.php">
+            <form action="#">
               <div className={style.row}>
                 <div className={style.col25}>
-                  <label htmlFor="pname">Project Name</label>
+                  <label htmlFor="pname" name="projectName">Project Name</label>
                 </div>
                 <div className={style.col75}>
-                  <input type="text" id="pname" name="projectName" />
+                  <input type="text" id="projectName" name="projectName" />
                 </div>
               </div>
               <div className="row">
@@ -43,26 +44,17 @@ const ModalDialog = ({ toggleDialog, handleCloseDialog, type }) => {
                 </div>
                 <div className={style.col75}>
                   <textarea
-                    id="subject"
-                    name="subject"
-                    placeholder="Write something.."
+                    id="description"
+                    name="description"
+                    placeholder="This problem aims to solve..."
                     style={{ height: '200px' }}
                   />
                 </div>
               </div>
               <div className={style.row}>
-                <input type="submit" value="Create" />
-                <input type="submit" value="Cancel" />
+                <button type="submit" className={style.projectButton}>{type}</button>
+                <button onClick={handleCloseDialog}  className={style.projectButton}>Cancel</button>
               </div>
-              {
-                // <div className={style.row}>
-                //   <div className={style.modalFooter}>
-                //     <h3>Cancel </h3>
-                //     <h3>{type}</h3>
-                //   </div>
-                //   {/*<input type="submit" value="Submit" />*/}
-                // </div>
-              }
             </form>
             <br />
           </div>

@@ -17,7 +17,11 @@
   letter-spacing: 2px;
   /* border: 2px solid blue; */
   color: #fff;
-  padding: 5px 8px;
+  padding: 14px 16px;
   border-radius: 4px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  margin-left:25px;
+}
+.newProjectContainer{
+  clear:both
 }

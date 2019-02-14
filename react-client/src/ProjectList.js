@@ -47,14 +47,16 @@ class ProjectList extends Component {
     const { activeTile } = this.state;
 
     return (
-      <div>
+      <div className={style.newProjectContainer}>
         <h1 className={style.projectHeader}>All Projects</h1>
+        <div>
         <span
           className={style.newProject}
           onClick={this.handleIsProjectDialogActive}
         >
           NEW PROJECT +
         </span>
+        </div>
         {this.state.toggleDialog && (
           <ModalDialog
             type="Create"
