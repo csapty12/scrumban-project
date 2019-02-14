@@ -2,38 +2,29 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProjectTile from './ProjectTile';
 import style from './projectList.css';
-import {fetchAllProjects} from "./api/CallProjectListAPI"
+import { fetchAllProjects } from './api/CallProjectListAPI';
+import ModalDialog from './modalDialog/ModalDialog';
 class ProjectList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       activeTile: null,
-      showModal:false,
-      data: []
-
+      toggleDialog: false,
+      data: [],
     };
   }
 
-  // componentDidMount(){
-  //   const allProjectData = fetchAllProjects().then(data =>
-  //     this.setState({ 
-  //       ...this.state,
-  //       data: data 
-  //       })
-  //   );
-  // }
-
-  async componentDidMount(){
-    try{
-    const allProjectData = await fetchAllProjects();
-    const json = await allProjectData.json();
-      this.setState({ 
+  async componentDidMount() {
+    try {
+      const allProjectData = await fetchAllProjects();
+      const json = await allProjectData.json();
+      this.setState({
         ...this.state,
-        data: json
-        })
-    }catch (error) {
-    console.log(error);
-  }
+        data: json,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   setActiveTile = id => e => {
@@ -44,10 +35,13 @@ class ProjectList extends Component {
     }));
   };
 
-  toggleModal = (e)=>{
-    this.setState({showModal: !this.state.showModal})
+  handleIsProjectDialogActive = item => {
+    this.setState({
+      ...this.state,
+      toggleDialog: !this.state.toggleDialog,
+    });
+  };
 
-  }
   render() {
     const { data } = this.state;
     const { activeTile } = this.state;
@@ -55,20 +49,33 @@ class ProjectList extends Component {
     return (
       <div>
         <h1 className={style.projectHeader}>All Projects</h1>
-        <div className={style.flexContainer}>
-          {data.map(item => (
-            <ProjectTile
-              name={item.projectName}
-              date={new Date(item.createdAt)}
-              key={`tile-${item.id}-${item.projectIdentifier}`}
-              isMenuOpen={item.id === activeTile}
-              toggleMenu={this.setActiveTile(item.id)}
-              toggleModal={this.toggleModal}
-              isDialogOpen={item.id === activeTile && this.state.showModal}
-
-            />
-          ))}
-        </div>
+        <span
+          className={style.newProject}
+          onClick={this.handleIsProjectDialogActive}
+        >
+          NEW PROJECT +
+        </span>
+        {this.state.toggleDialog && (
+          <ModalDialog
+            type="Create"
+            handleCloseDialog={this.handleIsProjectDialogActive}
+            toggleDialog={this.state.toggleDialog}
+          />
+        )}
+        <hr />
+        {
+          <div className={style.flexContainer}>
+            {data.map(item => (
+              <ProjectTile
+                name={item.projectName}
+                date={new Date(item.createdAt)}
+                key={`tile-${item.id}-${item.projectIdentifier}`}
+                isMenuOpen={item.id === activeTile}
+                toggleMenu={this.setActiveTile(item.id)}
+              />
+            ))}
+          </div>
+        }
       </div>
     );
   }

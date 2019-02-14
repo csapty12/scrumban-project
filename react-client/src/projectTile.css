@@ -3,7 +3,7 @@
   margin: 10px;
   padding: 10px;
   border-radius: 4px;
-    box-shadow: 0 1px 3px #759FBC, 0 1px 2px #759FBC;
+  box-shadow: 0 1px 3px #759fbc, 0 1px 2px #759fbc;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   height: 35%;
   width: 344px;
