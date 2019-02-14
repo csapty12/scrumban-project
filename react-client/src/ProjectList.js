@@ -62,7 +62,8 @@ class ProjectList extends Component {
             toggleDialog={this.state.toggleDialog}
           />
         )}
-        <hr />
+        <br />
+
         {
           <div className={style.flexContainer}>
             {data.map(item => (

@@ -10,7 +10,9 @@
   font-size: 3em;
   text-align: center;
 }
+
 .newProject {
+  font-weight: 100;
   background-color: #6200ee;
   letter-spacing: 2px;
   /* border: 2px solid blue; */
