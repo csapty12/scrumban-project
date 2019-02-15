@@ -4,12 +4,15 @@ import ProjectTile from './ProjectTile';
 import style from './projectList.css';
 import { fetchAllProjects } from './api/CallProjectListAPI';
 import ModalDialog from './modalDialog/ModalDialog';
+import Project from "./model/Project"
+
 class ProjectList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       activeTile: null,
       toggleDialog: false,
+      project: null,
       data: [],
     };
   }
@@ -35,12 +38,17 @@ class ProjectList extends Component {
     }));
   };
 
-  handleIsProjectDialogActive = item => {
+  handleIsProjectDialogActive = event => {
     this.setState({
       ...this.state,
       toggleDialog: !this.state.toggleDialog,
     });
   };
+
+  handleSubmit =(project) =>{
+    this.handleIsProjectDialogActive(null);
+    console.log("submitted form: " + JSON.stringify(project));
+  }
 
   render() {
     const { data } = this.state;
@@ -62,6 +70,8 @@ class ProjectList extends Component {
             type="Create"
             handleCloseDialog={this.handleIsProjectDialogActive}
             toggleDialog={this.state.toggleDialog}
+            handleSubmit={this.handleSubmit.bind(this)}
+            project={new Project()}
           />
         )}
         <br />
@@ -75,6 +85,7 @@ class ProjectList extends Component {
                 key={`tile-${item.id}-${item.projectIdentifier}`}
                 isMenuOpen={item.id === activeTile}
                 toggleMenu={this.setActiveTile(item.id)}
+                projectIdentifier={item.projectIdentifier}
               />
             ))}
           </div>

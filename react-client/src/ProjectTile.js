@@ -1,6 +1,7 @@
 import React from 'react';
 import style from './projectTile.css';
 import ModalDialog from './modalDialog/ModalDialog';
+import { Link } from "react-router-dom";
 
 export default ({
   name,
@@ -10,6 +11,7 @@ export default ({
   handleUpdate,
   handleDelete,
   isDialogOpen,
+  projectIdentifier
 }) => (
   <div className={style.card}>
     <h2 className={style.projectTitle}>{name}</h2>
@@ -30,9 +32,10 @@ export default ({
     <div className={style.createdAt}>
       <span data-test="tile__date">created: {"'14-12-2019'"}</span>
     </div>
-    <footer className={style.dashboardLink}>Dashboard</footer>
+    <Link to={`/dashboard/${projectIdentifier}`}>
+      <footer className={style.dashboardLink}>Dashboard</footer>
+    </Link>
     <footer>
-      {' '}
       <ModalDialog show={isDialogOpen} />
     </footer>
   </div>

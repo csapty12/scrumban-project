@@ -10,7 +10,6 @@ const App = () => (
     <div className="App">
       <Navbar />
       <Route exact path="/dashboard" component={ProjectList} />
-      {/* <ProjectList /> */}
     </div>
   </Router>
 );

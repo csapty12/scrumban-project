@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { Component } from 'react'
 import style from './Modal.css';
+import Project from "../model/Project"
 
-const ModalDialog = ({ toggleDialog, handleCloseDialog, type, onKeyDown }) => {
-  let displayFlex = 'none';
-  if (toggleDialog) {
-    displayFlex = 'flex';
+export default class ModalDialog extends Component {
+  constructor(props){
+    super(props);
+    this.state={
+      project: new Project()
+    }
   }
 
-  return (
+  handleChange=event=>{
+    console.log("event: " + event.target.value);
+    const projectState = { ...this.state.project };
+    projectState[event.target.name] = event.target.value;
+    this.setState({
+      project: projectState
+    });
+   
+  }
+   handleSubmit = event => {
+      event.preventDefault();
+      console.log("handling submit");
+      this.props.handleSubmit(this.state.project);
+
+    }
+  render() {
+    const { toggleDialog, handleCloseDialog, type, onKeyDown} = this.props;
+    let displayFlex = 'none';
+    if (toggleDialog) {
+      displayFlex = 'flex';
+    }
+    return (
     <div className={style.overlay}>
       <div
         id="myModal"
@@ -20,22 +44,20 @@ const ModalDialog = ({ toggleDialog, handleCloseDialog, type, onKeyDown }) => {
             <span
               className={style.close}
               onClick={handleCloseDialog}
-              role="presentation"
-              
-            >
+              role="presentation">
               &times;
             </span>
 
             <h2>{type} Project</h2>
           </div>
           <div className={style.modalBody}>
-            <form action="#">
+            <form onSubmit={this.handleSubmit}>
               <div className={style.row}>
                 <div className={style.col25}>
                   <label htmlFor="pname" name="projectName">Project Name</label>
                 </div>
                 <div className={style.col75}>
-                  <input type="text" id="projectName" name="projectName" />
+                  <input type="text" id="projectName" name="projectName" onChange={this.handleChange}/>
                 </div>
               </div>
               <div className="row">
@@ -48,6 +70,7 @@ const ModalDialog = ({ toggleDialog, handleCloseDialog, type, onKeyDown }) => {
                     name="description"
                     placeholder="This problem aims to solve..."
                     style={{ height: '200px' }}
+                    onChange={this.handleChange}
                   />
                 </div>
               </div>
@@ -62,6 +85,5 @@ const ModalDialog = ({ toggleDialog, handleCloseDialog, type, onKeyDown }) => {
       </div>
     </div>
   );
-};
-
-export default ModalDialog;
+  }
+}
