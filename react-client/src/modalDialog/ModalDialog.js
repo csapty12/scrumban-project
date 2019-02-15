@@ -52,8 +52,8 @@ const ModalDialog = ({ toggleDialog, handleCloseDialog, type, onKeyDown }) => {
                 </div>
               </div>
               <div className={style.row}>
-                <button type="submit" className={style.projectButton}>{type}</button>
-                <button onClick={handleCloseDialog}  className={style.projectButton}>Cancel</button>
+                <button type="submit" className={style.projectButton} data-test="button__create">{type}</button>
+                <button onClick={handleCloseDialog} className={style.projectButton}  data-test="button__cancel">Cancel</button>
               </div>
             </form>
             <br />

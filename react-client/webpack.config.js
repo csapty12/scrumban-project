@@ -9,12 +9,18 @@ const htmlWebpackPlugin = new HtmlWebPackPlugin({
 
 module.exports = {
   entry: './src/Client.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'index_bundle.js',
+    publicPath: '/'
+  },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
     watchContentBase: true,
     progress: true,
+    historyApiFallback: true
   },
 
   module: {
@@ -49,17 +55,6 @@ module.exports = {
         options: {
           limit: 25000,
         },
-      },
-      {
-        test: /\.(jpg|png|gif|svg|pdf|ico)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[path][name]-[hash:8].[ext]',
-            },
-          },
-        ],
       },
     ],
   },

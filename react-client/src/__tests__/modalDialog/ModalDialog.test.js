@@ -29,9 +29,13 @@ describe("Modal dialog", ()=>{
                 const wrapper=mount(<ModalDialog {...props} />);
                 expect(wrapper.find('#description').length).toEqual(1);
         })
-        it("contains a cancel and create button", ()=>{
+        it("contains a cancel button", ()=>{
                 const wrapper=mount(<ModalDialog {...props} />);
-                expect(wrapper.find('.projectButton').length).toEqual(2);
+                expect(wrapper.find("[data-test='button__cancel']").length).toEqual(1);
+        })
+        it("contains a create button", ()=>{
+                const wrapper=mount(<ModalDialog {...props} />);
+                expect(wrapper.find("[data-test='button__create']").length).toEqual(1);
         })
     })
 })
