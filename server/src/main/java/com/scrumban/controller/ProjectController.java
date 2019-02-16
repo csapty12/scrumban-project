@@ -33,6 +33,7 @@ public class ProjectController {
         if (validationErrors != null) return validationErrors;
 
         ProjectEntity newProject = projectService.saveProject(projectEntity);
+        System.out.println("new project: " + newProject);
         return new ResponseEntity<>(newProject, HttpStatus.OK);
     }
 

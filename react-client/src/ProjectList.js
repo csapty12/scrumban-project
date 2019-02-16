@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import ProjectTile from './ProjectTile';
 import style from './projectList.css';
-import { fetchAllProjects } from './api/CallProjectListAPI';
+import {
+  fetchAllProjects,
+  createNewProject,
+} from './service/CallProjectListAPI';
 import ModalDialog from './modalDialog/ModalDialog';
-import Project from "./model/Project"
+import Project from './model/Project';
 
 class ProjectList extends Component {
   constructor(props) {
@@ -45,10 +47,19 @@ class ProjectList extends Component {
     });
   };
 
-  handleSubmit =(project) =>{
+  handleSubmit = project => {
     this.handleIsProjectDialogActive(null);
-    console.log("submitted form: " + JSON.stringify(project));
-  }
+    console.log('submitting form: ' + JSON.stringify(project));
+    const response = createNewProject(project).then(response =>
+      response.json().then(data =>
+        this.setState({
+          ...this.state,
+          data: [...this.state.data, data],
+        })
+      )
+    );
+    console.log('resposnee from server: ' + JSON.stringify(response));
+  };
 
   render() {
     const { data } = this.state;
@@ -58,12 +69,12 @@ class ProjectList extends Component {
       <div className={style.newProjectContainer}>
         <h1 className={style.projectHeader}>All Projects</h1>
         <div>
-        <span
-          className={style.newProject}
-          onClick={this.handleIsProjectDialogActive}
-        >
-          NEW PROJECT +
-        </span>
+          <span
+            className={style.newProject}
+            onClick={this.handleIsProjectDialogActive}
+          >
+            NEW PROJECT +
+          </span>
         </div>
         {this.state.toggleDialog && (
           <ModalDialog
