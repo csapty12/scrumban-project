@@ -53,20 +53,22 @@ class TicketBoard extends Component {
           swimLanes: json.data.swimLanes,
           swimLaneOrder: json.data.swimLaneOrder
         });
+      })
+      .catch(json => {
+        console.log("error:  " + JSON.stringify(json.response.data.project));
+        this.setState({
+          errors: {
+            projectError: json.response.data.project
+          }
+        });
       });
-    // .catch(json => {
-    //   this.setState({
-    //     errors: {
-    //       projectIdentifier: json.response.data.projectIdentifier
-    //     }
-    //   });
-    // });
   }
 
   handleTicketDelete = ticket => {
     const { projectTickets, swimLanes } = this.state;
     // const allTickets = projectTickets;
     const { projectIdentifier, id } = ticket;
+
     axios
       .delete(`http://localhost:8080/dashboard/${projectIdentifier}/${id}`, {
         data: ticket
@@ -135,8 +137,6 @@ class TicketBoard extends Component {
   };
 
   handleAddTicket = ticket => {
-    console.log("ticket being added: " + JSON.stringify(ticket));
-
     axios
       .post(
         `http://localhost:8080/dashboard/${ticket.projectIdentifier}/${
@@ -178,12 +178,10 @@ class TicketBoard extends Component {
     document.body.style.color = "inherit";
     const { destination, source, draggableId } = result;
 
-    if (!destination) {
-      return;
-    }
     if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
+      !destination ||
+      (destination.droppableId === source.droppableId &&
+        destination.index === source.index)
     ) {
       return;
     }
@@ -300,8 +298,15 @@ class TicketBoard extends Component {
   render() {
     const { classes } = this.props;
     const { errors } = this.state;
+    console.log("error from server: " + this.state.errors.projectError);
+
     return (
       <div className="container-fluid">
+        {this.state.errors.projectError && (
+          <div className="container alert alert-danger text-center">
+            {this.state.errors.projectError}
+          </div>
+        )}
         <section className="card-horizontal-scrollable-container">
           <div className={classes.swimLane}>
             <DragDropContext
@@ -325,15 +330,18 @@ class TicketBoard extends Component {
                 );
               })}
             </DragDropContext>
+
             <div className="col-10 col-lg-3">
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={this.handleClickOpen}
-                disableRipple
-              >
-                New Swimlane &#x2b;
-              </Button>
+              {!this.state.errors.projectError && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={this.handleClickOpen}
+                  disableRipple
+                >
+                  New Swimlane &#x2b;
+                </Button>
+              )}
               <Dialog
                 open={this.state.open}
                 onClose={this.handleClose}
