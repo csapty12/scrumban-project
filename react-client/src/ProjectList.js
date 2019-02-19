@@ -49,7 +49,6 @@ class ProjectList extends Component {
 
   handleSubmit = project => {
     this.handleIsProjectDialogActive(null);
-    console.log('submitting form: ' + JSON.stringify(project));
     const response = createNewProject(project).then(response =>
       response.json().then(data =>
         this.setState({
@@ -58,7 +57,6 @@ class ProjectList extends Component {
         })
       )
     );
-    console.log('resposnee from server: ' + JSON.stringify(response));
   };
 
   render() {
