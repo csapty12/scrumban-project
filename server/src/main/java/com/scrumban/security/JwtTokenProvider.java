@@ -1,7 +1,8 @@
 package com.scrumban.security;
 
 import com.scrumban.model.domain.User;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.util.Map;
 import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     @Value("${jwt.expirationTime}")
@@ -42,5 +44,32 @@ public class JwtTokenProvider {
                 .signWith(HS512, secret)
                 .compact();
 
+    }
+
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        }catch (SignatureException e){
+            log.warn("Invalid JWT signature");
+        }
+        catch(MalformedJwtException e){
+            log.warn("Invalid JWT token ");
+        }
+        catch(ExpiredJwtException e){
+            log.warn("JWT has expired");
+        }
+        catch(UnsupportedJwtException e){
+            log.warn("JWT is not supported");
+        }
+        catch(IllegalArgumentException e){
+            log.warn("JWT claim string is empty");
+        }
+        return  false;
+    }
+
+    public Long getUserIdFromToken(String token){
+        Claims claims =  Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Long.parseLong((String) claims.get("id"));
     }
 }
