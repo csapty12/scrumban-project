@@ -38,6 +38,12 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return new ResponseEntity<>(projectSwimLaneNotFoundReponseException, HttpStatus.BAD_REQUEST);
 
     }
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleUserEmailAlreadyExistsException(EmailAlreadyExistsException emailAlreadyExistsException){
+        EmailAlreadyExistsResponseException emailAlreadyExistsResponseException = new EmailAlreadyExistsResponseException(emailAlreadyExistsException.getMessage());
+        return new ResponseEntity<>(emailAlreadyExistsResponseException, HttpStatus.BAD_REQUEST);
+
+    }
 
 
 }
