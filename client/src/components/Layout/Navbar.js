@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
   navbar: {
-    background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+    background: "linear-gradient(45deg, #C7CCC8 30%, #C7CCC8 90%)",
     border: 0,
     borderRadius: 3,
     boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
@@ -27,14 +27,14 @@ class Navbar extends Component {
       <div>
         <AppBar position="static" className={classes.navbar}>
           <Toolbar>
-            <Typography variant="h6" color="inherit" className={classes.grow}>
+            <Typography variant="h6" color="primary" className={classes.grow}>
               TrellBan
             </Typography>
-            <Button color="inherit" href="/dashboard">
+            <Button color="primary" href="/dashboard">
               Dashboard
             </Button>
-            <Button color="inherit">Login</Button>
-            <Button color="inherit">Register</Button>
+            <Button color="primary">Login</Button>
+            <Button color="primary">Register</Button>
           </Toolbar>
         </AppBar>
       </div>

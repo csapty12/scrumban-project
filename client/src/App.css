@@ -1,5 +1,6 @@
 body {
-  background: #f3f3f3 !important;
+  background: #007bff;
+  background: linear-gradient(to right, #0062e6, #33aeff);
 }
 *:focus {
   outline: none !important;

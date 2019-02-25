@@ -86,7 +86,7 @@ class Dashboard extends Component {
               </Button>
               {this.state.isProjectDialogActive && (
                 <ProjectDialog
-                  type="Create"
+                  type="Create Project"
                   onClose={this.handleClose}
                   allProjects={this.state.allProjects}
                   updateAllProjects={this.updateAllProjects}

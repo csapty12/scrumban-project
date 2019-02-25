@@ -16,7 +16,7 @@ function DialogHeader(props) {
     <AppBar className={classes.appBar}>
       <Toolbar>
         <Typography variant="h6" color="inherit">
-          {props.type} Project
+          {props.type}
         </Typography>
       </Toolbar>
     </AppBar>
