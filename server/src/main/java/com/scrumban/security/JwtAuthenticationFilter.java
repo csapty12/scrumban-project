@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,29 +40,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        try{
+        try {
             String jwt = getJwtFromRequest(httpServletRequest);
-            if(hasText(jwt) && jwtTokenProvider.validateToken(jwt)){
-                Long userId =  jwtTokenProvider.getUserIdFromToken(jwt);
+            if (hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
+                Long userId = jwtTokenProvider.getUserIdFromToken(jwt);
                 User user = userDetailsService.loadUserById(userId);
-
+                System.out.println("user found: " + user.toString());
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        user, null, Collections.emptyList());
+                        user , null, Collections.emptyList());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken );
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
 
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error("could not set user authentication in security context" + e);
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
-
     }
 
-    private String getJwtFromRequest(HttpServletRequest request){
-        String bearerToken=request.getHeader(headerString);
+    private String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader(headerString);
 
-        if(hasText(bearerToken) && bearerToken.startsWith(tokenPrefix)){
+        if (hasText(bearerToken) && bearerToken.startsWith(tokenPrefix)) {
             return bearerToken.substring(7, bearerToken.length());
         }
         return null;

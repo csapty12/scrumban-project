@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface ProjectTicketRepository  extends CrudRepository<ProjectTicket, Long> {
-    List<ProjectTicket> findProjectTicketsByProjectIdentifier(String projectIdentifier);
+
 
     @Modifying
     @Transactional

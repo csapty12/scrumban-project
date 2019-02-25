@@ -1,5 +1,6 @@
 package com.scrumban.repository;
 
+import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import org.springframework.data.repository.CrudRepository;
@@ -13,18 +14,10 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     @Override
     Iterable<ProjectEntity> findAllById(Iterable<Long> iterable);
 
-    Optional<ProjectEntity> findProjectByProjectIdentifier(String projectIdentifier);
+    Optional<ProjectEntity> findProjectEntityByProjectIdentifier(String projectIdentifier);
 
-    @Override
-    Iterable<ProjectEntity> findAll();
+    List<ProjectEntity> findAllByUser(User user);
 
     @Override
     void delete(ProjectEntity projectEntity);
-
-    ProjectEntity findByProjectIdentifier(String projectIdentifier);
-
-    void deleteByProjectTickets(List<ProjectTicket> projectTicketList);
-
-
-
 }

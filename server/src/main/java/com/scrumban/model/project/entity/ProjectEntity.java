@@ -2,6 +2,7 @@ package com.scrumban.model.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.scrumban.model.domain.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -47,6 +48,12 @@ public class ProjectEntity {
     @ManyToMany
     @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
     private List<SwimLaneEntity> swimLaneEntities;
+
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JsonIgnore
+    private User user;
+
+    private String projectLeader;
 
     @PrePersist
     protected void onCreate() throws ParseException {
