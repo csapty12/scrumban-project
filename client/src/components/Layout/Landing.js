@@ -77,7 +77,7 @@ export default class Landing extends Component {
                 <TextField
                   autoFocus
                   margin="dense"
-                  id="name"
+                  id="loginEmail"
                   name="email"
                   label="Email Address"
                   type="text"
@@ -86,7 +86,7 @@ export default class Landing extends Component {
                 />
                 <TextField
                   margin="dense"
-                  id="name"
+                  id="loginPassword"
                   name="password"
                   label="Password"
                   type="password"
@@ -126,7 +126,7 @@ export default class Landing extends Component {
                 <TextField
                   autoFocus
                   margin="dense"
-                  id="name"
+                  id="firstName"
                   name="firstName"
                   label="First Name"
                   type="text"
@@ -135,7 +135,7 @@ export default class Landing extends Component {
                 />
                 <TextField
                   margin="dense"
-                  id="name"
+                  id="lastName"
                   name="lastName"
                   label="Last Name"
                   type="text"
@@ -144,7 +144,7 @@ export default class Landing extends Component {
                 />
                 <TextField
                   margin="dense"
-                  id="name"
+                  id="regPassword"
                   name="password"
                   label="Password"
                   type="password"
@@ -153,7 +153,7 @@ export default class Landing extends Component {
                 />
                 <TextField
                   margin="dense"
-                  id="name"
+                  id="confPassword"
                   name="confPassword"
                   label="Confirm Password"
                   type="password"
@@ -162,7 +162,7 @@ export default class Landing extends Component {
                 />
                 <TextField
                   margin="dense"
-                  id="name"
+                  id="regEmail"
                   name="email"
                   label="Email Address"
                   type="email"
