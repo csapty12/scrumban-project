@@ -7,12 +7,11 @@ import DialogContent from "@material-ui/core/DialogContent";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import PropTypes from "prop-types";
-
-// import { createNewUser } from "../../actions/SecurityActions";
+import { login } from "../../actions/SecurityActions";
 import { connect } from "react-redux";
 import axios from "axios";
 
-export default class Landing extends Component {
+class Landing extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,7 +60,6 @@ export default class Landing extends Component {
   };
 
   handleRegisterOnSubmit = event => {
-    console.log("jere");
     event.preventDefault();
     const newUser = {
       email: this.state.email,
@@ -98,8 +96,18 @@ export default class Landing extends Component {
       );
   };
 
+  handleLoginSubmit = event => {
+    console.log("here");
+    event.preventDefault();
+    const LoginRequest = {
+      email: this.state.email,
+      password: this.state.password
+    };
+    console.log("login request sent:  " + JSON.stringify(LoginRequest));
+    this.props.login(LoginRequest);
+  };
+
   render() {
-    console.log("reg obj: " + JSON.stringify(this.state));
     return (
       <div className="container text-center">
         <h1 className="mt-5 text-white font-weight-light">TrellBan</h1>
@@ -124,7 +132,7 @@ export default class Landing extends Component {
             onClose={this.handleCloseLoginForm}
           >
             <DialogHeader type="Login" />
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleLoginSubmit}>
               <DialogContent>
                 <TextField
                   autoFocus
@@ -146,15 +154,16 @@ export default class Landing extends Component {
                   onChange={this.handleChange}
                 />
               </DialogContent>
+
+              <DialogActions>
+                <Button onClick={this.handleCloseLoginForm} color="primary">
+                  Cancel
+                </Button>
+                <Button type="submit" color="primary">
+                  Login
+                </Button>
+              </DialogActions>
             </form>
-            <DialogActions>
-              <Button onClick={this.handleCloseLoginForm} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={this.handleCloseLoginForm} color="primary">
-                Login
-              </Button>
-            </DialogActions>
           </Dialog>
         )}
         <button
@@ -258,14 +267,14 @@ export default class Landing extends Component {
   }
 }
 
-// Landing.propTypes = {
-//   createNewUser: PropTypes.func.isRequired
-// };
+Landing.propTypes = {
+  login: PropTypes.func.isRequired
+};
 
-// const mapStateToProps = state => ({
-//   errors: state.errors
-// });
-// export default connect(
-//   mapStateToProps,
-//   { createNewUser }
-// )(Landing);
+const mapStateToProps = state => ({
+  security: state.security
+});
+export default connect(
+  mapStateToProps,
+  { login }
+)(Landing);
