@@ -27,13 +27,5 @@ public class UserService {
         }catch(Exception e){
             throw new EmailAlreadyExistsException("Email already exists!");
         }
-
-        //email has to be unique
-
-        //make sure that passowrd and conf password match
-        //dont persists conf password
-
     }
-
-
 }

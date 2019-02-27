@@ -6,13 +6,24 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import PropTypes from "prop-types";
+
+// import { createNewUser } from "../../actions/SecurityActions";
+import { connect } from "react-redux";
+import axios from "axios";
 
 export default class Landing extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoginFormActive: false,
-      isRegistrationFormActive: false
+      isRegistrationFormActive: false,
+      email: "",
+      firstName: "",
+      lastName: "",
+      password: "",
+      confirmPassword: "",
+      errors: {}
     };
   }
 
@@ -30,24 +41,65 @@ export default class Landing extends Component {
 
   handleCloseLoginForm = e => {
     this.setState({
-      isLoginFormActive: false
+      isLoginFormActive: false,
+      errors: {}
     });
   };
 
   handleCloseRegistrationForm = e => {
     this.setState({
-      isRegistrationFormActive: false
+      isRegistrationFormActive: false,
+      errors: {}
     });
   };
 
   handleChange = event => {
-    console.log("event vaue :  " + event.target.value);
+    // console.log("event vaue :  " + event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
   };
 
+  handleRegisterOnSubmit = event => {
+    console.log("jere");
+    event.preventDefault();
+    const newUser = {
+      email: this.state.email,
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      password: this.state.password,
+      confirmPassword: this.state.confirmPassword
+    };
+    console.log("new user to be created: " + JSON.stringify(newUser));
+    // this.props.createNewUser(newUser, this.props.history);
+    axios
+      .post("http://localhost:8080/api/users/register", newUser)
+      .then(json => {
+        this.setState({
+          email: json.data.email,
+          firstName: json.data.firstName,
+          lastName: json.data.lastName,
+          password: json.data.password
+        });
+      })
+      .then(() => {
+        this.handleCloseRegistrationForm(null);
+      })
+      .catch(json =>
+        this.setState({
+          errors: {
+            email: json.response.data.email,
+            firstName: json.response.data.firstName,
+            lastName: json.response.data.lastName,
+            password: json.response.data.password,
+            confirmPassword: json.response.data.confirmPassword
+          }
+        })
+      );
+  };
+
   render() {
+    console.log("reg obj: " + JSON.stringify(this.state));
     return (
       <div className="container text-center">
         <h1 className="mt-5 text-white font-weight-light">TrellBan</h1>
@@ -121,7 +173,7 @@ export default class Landing extends Component {
             onClose={this.handleCloseRegistrationForm}
           >
             <DialogHeader type="Register" />
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleRegisterOnSubmit}>
               <DialogContent>
                 <TextField
                   autoFocus
@@ -133,6 +185,9 @@ export default class Landing extends Component {
                   fullWidth
                   onChange={this.handleChange}
                 />
+                {this.state.errors.firstName && (
+                  <span>{this.state.errors.firstName}</span>
+                )}
                 <TextField
                   margin="dense"
                   id="lastName"
@@ -142,6 +197,9 @@ export default class Landing extends Component {
                   fullWidth
                   onChange={this.handleChange}
                 />
+                {this.state.errors.lastName && (
+                  <span>{this.state.errors.lastName}</span>
+                )}
                 <TextField
                   margin="dense"
                   id="regPassword"
@@ -151,15 +209,21 @@ export default class Landing extends Component {
                   fullWidth
                   onChange={this.handleChange}
                 />
+                {this.state.errors.password && (
+                  <span>{this.state.errors.password}</span>
+                )}
                 <TextField
                   margin="dense"
                   id="confPassword"
-                  name="confPassword"
+                  name="confirmPassword"
                   label="Confirm Password"
                   type="password"
                   fullWidth
                   onChange={this.handleChange}
                 />
+                {this.state.errors.confirmPassword && (
+                  <span>{this.state.errors.confirmPassword}</span>
+                )}
                 <TextField
                   margin="dense"
                   id="regEmail"
@@ -169,25 +233,39 @@ export default class Landing extends Component {
                   fullWidth
                   onChange={this.handleChange}
                 />
+                {this.state.errors.email && (
+                  <span>{this.state.errors.email}</span>
+                )}
               </DialogContent>
+
+              <DialogActions>
+                <Button
+                  onClick={this.handleCloseRegistrationForm}
+                  color="primary"
+                >
+                  Cancel
+                </Button>
+
+                <Button color="primary" type="submit">
+                  Register
+                </Button>
+              </DialogActions>
             </form>
-            <DialogActions>
-              <Button
-                onClick={this.handleCloseRegistrationForm}
-                color="primary"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={this.handleCloseRegistrationForm}
-                color="primary"
-              >
-                Register
-              </Button>
-            </DialogActions>
           </Dialog>
         )}
       </div>
     );
   }
 }
+
+// Landing.propTypes = {
+//   createNewUser: PropTypes.func.isRequired
+// };
+
+// const mapStateToProps = state => ({
+//   errors: state.errors
+// });
+// export default connect(
+//   mapStateToProps,
+//   { createNewUser }
+// )(Landing);
