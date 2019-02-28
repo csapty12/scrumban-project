@@ -7,11 +7,13 @@ import DialogContent from "@material-ui/core/DialogContent";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import PropTypes from "prop-types";
-import { login } from "../../actions/SecurityActions";
 import { connect } from "react-redux";
 import axios from "axios";
+import store from "../../store";
+import jwt_decode from "jwt-decode";
+import { SET_CURRENT_USER } from "../../actions/Types";
 
-class Landing extends Component {
+export default class Landing extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -104,10 +106,29 @@ class Landing extends Component {
       password: this.state.password
     };
     console.log("login request sent:  " + JSON.stringify(LoginRequest));
-    this.props.login(LoginRequest);
+    this.login(LoginRequest);
+  };
+
+  login = request => {
+    console.log("we inhere");
+    const res = axios
+      .post("http://localhost:8080/api/users/login", request)
+      .then(json => {
+        const { token } = json.data;
+        localStorage.setItem("jwtToken", token);
+        const decodedToken = jwt_decode(token);
+        console.log("decoded token: " + JSON.stringify(decodedToken));
+
+        store.dispatch({
+          type: SET_CURRENT_USER,
+          payload: decodedToken
+        });
+      })
+      .catch(err => console.log("errrrrooorrr: " + JSON.stringify(err)));
   };
 
   render() {
+    // console.log("values in store: " + JSON.stringify(store.getState()));
     return (
       <div className="container text-center">
         <h1 className="mt-5 text-white font-weight-light">TrellBan</h1>
@@ -274,7 +295,3 @@ Landing.propTypes = {
 const mapStateToProps = state => ({
   security: state.security
 });
-export default connect(
-  mapStateToProps,
-  { login }
-)(Landing);
