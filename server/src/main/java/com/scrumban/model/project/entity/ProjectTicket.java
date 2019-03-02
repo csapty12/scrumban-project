@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@Table(name="projectTickets")
+@Table(name = "projectTickets")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,8 +53,8 @@ public class ProjectTicket {
     protected void onCreate() {
         this.createdAt = new Date();
         int totalNumberOfTickets = this.project.getCurrentTicketNumber();
-        this.project.setCurrentTicketNumber(totalNumberOfTickets+1);
-        this.ticketNumberPosition = this.getSwimLaneEntity().getProjectTickets().size()+1;
+        this.project.setCurrentTicketNumber(totalNumberOfTickets + 1);
+        this.ticketNumberPosition = this.getSwimLaneEntity().getProjectTickets().size() + 1;
 
     }
 

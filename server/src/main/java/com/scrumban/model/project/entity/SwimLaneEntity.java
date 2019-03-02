@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name="swimLane")
+@Table(name = "swimLane")
 @AllArgsConstructor
 @Builder
 public class SwimLaneEntity {
@@ -21,11 +21,11 @@ public class SwimLaneEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotBlank(message="Please provide a swim lane name.")
+    @NotBlank(message = "Please provide a swim lane name.")
     private String name;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "swimLaneEntities",  cascade = CascadeType.DETACH)
+    @ManyToMany(mappedBy = "swimLaneEntities", cascade = CascadeType.DETACH)
     private Set<ProjectEntity> projectEntities;
 
     @JsonIgnore

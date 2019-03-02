@@ -9,12 +9,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@Table(name="project")
+@Table(name = "project")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,7 +50,7 @@ public class ProjectEntity {
     @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
     private List<SwimLaneEntity> swimLaneEntities;
 
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
 

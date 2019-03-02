@@ -65,6 +65,7 @@ class TicketBoard extends Component {
   }
 
   handleTicketDelete = ticket => {
+    console.log("ticket to delete: " + JSON.stringify(ticket));
     const { projectTickets, swimLanes } = this.state;
     // const allTickets = projectTickets;
     const { projectIdentifier, id } = ticket;
@@ -298,7 +299,6 @@ class TicketBoard extends Component {
   render() {
     const { classes } = this.props;
     const { errors } = this.state;
-    console.log("error from server: " + this.state.errors.projectError);
 
     return (
       <div className="container-fluid">

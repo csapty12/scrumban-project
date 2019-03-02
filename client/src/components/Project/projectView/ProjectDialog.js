@@ -38,7 +38,8 @@ class ProjectDialog extends Component {
     event.preventDefault();
     const projectInfo = new Project();
     const { projectName, description, createdAt } = this.state.project;
-    if (this.props.type === "Create") {
+    console.log("this.props.type: " + this.props.type);
+    if (this.props.type === "Create Project") {
       projectInfo.projectName = projectName;
       projectInfo.description = description;
       projectInfo.createdAt = createdAt;

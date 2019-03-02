@@ -1,6 +1,8 @@
 package com.scrumban.model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.ArrayList;
 

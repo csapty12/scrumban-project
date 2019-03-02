@@ -31,7 +31,13 @@ class TicketDialog extends Component {
       openTicketDetails: false,
       isDragDisabled: false,
       isDropDownActive: false,
-      ticket: new Ticket()
+      id: this.props.ticket.id,
+      summary: this.props.ticket.summary,
+      acceptanceCriteria: this.props.ticket.acceptanceCriteria,
+      priority: this.props.ticket.priority,
+      complexity: this.props.ticket.complexity,
+      projectSequence: this.props.ticket.projectSequence,
+      ticketNumberPostition: this.props.ticket.ticketNumberPostition
     };
   }
   handleEditTicket = () => {
@@ -55,7 +61,6 @@ class TicketDialog extends Component {
   };
 
   handleChange = event => {
-    console.log("event: " + event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -63,21 +68,15 @@ class TicketDialog extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-
-    let ticket = new Ticket();
-    ticket.summary = this.state.summary;
-    this.setState({
-      ticket: ticket
-    });
     const updatedTicket = {
-      id: this.props.ticket.id,
+      id: this.state.id,
+      projectSequence: this.state.projectSequence,
       summary: this.state.summary,
       acceptanceCriteria: this.state.acceptanceCriteria,
-      complexity: this.state.complexity,
-      priority: this.props.ticket.priority
+      priority: this.state.priority,
+      complexity: this.state.complexity
     };
-
-    console.log("updated ticket: " + JSON.stringify(updatedTicket));
+    this.props.handleUpdateTicket(updatedTicket);
   };
 
   render() {
@@ -128,7 +127,6 @@ class TicketDialog extends Component {
                 label="Acceptance Criteria"
                 multiline
                 rows="4"
-                // margin="normal"
                 fullWidth
                 onChange={this.handleChange}
                 defaultValue={ticket.acceptanceCriteria}

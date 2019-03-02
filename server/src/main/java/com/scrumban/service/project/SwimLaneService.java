@@ -27,7 +27,7 @@ public class SwimLaneService {
 
     public ProjectEntity addSwimLaneToProject(ProjectEntity project, SwimLaneEntity swimLaneEntity, String userEmail) {
         Optional<User> user = userRepository.findByEmail(userEmail);
-        if(user.isPresent()){
+        if (user.isPresent()) {
             Optional<SwimLaneEntity> foundSwimLane = swimLaneRepository.findByName(swimLaneEntity.getName());
             List<SwimLaneEntity> projectSwimLanes = project.getSwimLaneEntities();
             if (!foundSwimLane.isPresent()) {

@@ -12,38 +12,33 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
-    public final ResponseEntity<Object> handleProjectIdException(ProjectIdentifierException projectIdentifierException){
+    public final ResponseEntity<Object> handleProjectIdException(ProjectIdentifierException projectIdentifierException) {
         ProjectIdentifierResponseException projectIdentifierResponseException = new ProjectIdentifierResponseException(projectIdentifierException.getMessage());
         return new ResponseEntity<>(projectIdentifierResponseException, HttpStatus.BAD_REQUEST);
 
     }
 
     @ExceptionHandler
-    public final ResponseEntity<Object> handleProjectNotFoundException(ProjectNotFoundException projectNotFoundException){
+    public final ResponseEntity<Object> handleProjectNotFoundException(ProjectNotFoundException projectNotFoundException) {
         ProjectNotFoundResponseException projectNotFoundResponseException = new ProjectNotFoundResponseException(projectNotFoundException.getMessage());
         return new ResponseEntity<>(projectNotFoundResponseException, HttpStatus.BAD_REQUEST);
-
     }
 
     @ExceptionHandler
-    public final ResponseEntity<Object> handleDuplicateProjectSwimLaneException(DuplicateProjectSwimLaneException duplicateProjectSwimLaneException){
+    public final ResponseEntity<Object> handleDuplicateProjectSwimLaneException(DuplicateProjectSwimLaneException duplicateProjectSwimLaneException) {
         DuplicateProjectSwimLaneResponseException duplicateProjectSwimLaneResponseException = new DuplicateProjectSwimLaneResponseException(duplicateProjectSwimLaneException.getMessage());
         return new ResponseEntity<>(duplicateProjectSwimLaneResponseException, HttpStatus.BAD_REQUEST);
-
     }
 
     @ExceptionHandler
-    public final ResponseEntity<Object> handleProjectSwimLaneNotFoundException(ProjectSwimLaneNotFoundException projectSwimLaneNotFoundException){
+    public final ResponseEntity<Object> handleProjectSwimLaneNotFoundException(ProjectSwimLaneNotFoundException projectSwimLaneNotFoundException) {
         ProjectSwimLaneNotFoundReponseException projectSwimLaneNotFoundReponseException = new ProjectSwimLaneNotFoundReponseException(projectSwimLaneNotFoundException.getMessage());
         return new ResponseEntity<>(projectSwimLaneNotFoundReponseException, HttpStatus.BAD_REQUEST);
-
     }
+
     @ExceptionHandler
-    public final ResponseEntity<Object> handleUserEmailAlreadyExistsException(EmailAlreadyExistsException emailAlreadyExistsException){
+    public final ResponseEntity<Object> handleUserEmailAlreadyExistsException(EmailAlreadyExistsException emailAlreadyExistsException) {
         EmailAlreadyExistsResponseException emailAlreadyExistsResponseException = new EmailAlreadyExistsResponseException(emailAlreadyExistsException.getMessage());
         return new ResponseEntity<>(emailAlreadyExistsResponseException, HttpStatus.BAD_REQUEST);
-
     }
-
-
 }

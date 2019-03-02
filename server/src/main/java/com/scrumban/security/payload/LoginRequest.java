@@ -13,4 +13,5 @@ public class LoginRequest {
     private String email;
     @NotBlank(message = "Required field")
     private String password;
+    
 }

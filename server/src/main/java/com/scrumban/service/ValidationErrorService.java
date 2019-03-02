@@ -11,11 +11,11 @@ import java.util.Map;
 @Service
 public class ValidationErrorService {
 
-    public ResponseEntity<?> validateObject(BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    public ResponseEntity<?> validateObject(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             //check if the object contains ay invalid content. if it does, add the errors to a map and return the map
-            Map<String, String> mapOfErrors=new HashMap<>();
-            bindingResult.getFieldErrors().forEach(item-> mapOfErrors.put(item.getField(), item.getDefaultMessage()));
+            Map<String, String> mapOfErrors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(item -> mapOfErrors.put(item.getField(), item.getDefaultMessage()));
 
             return new ResponseEntity<>(mapOfErrors, HttpStatus.BAD_REQUEST);
         }

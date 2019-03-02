@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import "../projectDashboard.css";
 import { Draggable } from "react-beautiful-dnd";
 import Card from "@material-ui/core/Card";
@@ -7,6 +7,7 @@ import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import TicketDialog from "./TicketDialog";
 import DeleteButton from "./DeleteButton";
+import axios from "axios";
 
 const styles = theme => ({
   cards: {
@@ -67,6 +68,26 @@ class Ticket extends Component {
     });
   };
 
+  handleUpdateTicket = ticket => {
+    console.log(this.props.ticket.projectIdentifier);
+    console.log("updated ticket when submitting: " + JSON.stringify(ticket));
+    const { projectIdentifier } = this.props.ticket;
+    const { swimLaneId } = this.props;
+    ticket["projectIdentifer"] = projectIdentifier;
+    ticket["swimLaneId"] = swimLaneId;
+    ticket["ticketNumberPosition"] = this.props.ticket.ticketNumberPosition;
+
+    axios
+      .patch(
+        `http://localhost:8080/dashboard/${projectIdentifier}/${swimLaneId}/${
+          ticket.projectSequence
+        }`,
+        ticket
+      )
+      .then(json => console.log("response: " + JSON.stringify(json)))
+      .catch(err => console.log("errr: " + JSON.stringify(err)));
+  };
+
   deleteButton = () => {
     const { ticket } = this.props;
 
@@ -85,12 +106,18 @@ class Ticket extends Component {
   };
 
   openProjectDetailsDialog = ticket => {
-    return <TicketDialog ticket={ticket} />;
+    return (
+      <TicketDialog
+        ticket={ticket}
+        handleUpdateTicket={this.handleUpdateTicket}
+      />
+    );
   };
 
   render() {
     const { ticket, classes } = this.props;
     const priorityClass = ticket.priority;
+    // console.log("this current ticket: " + JSON.stringify(ticket));
     return (
       <Draggable
         index={this.props.index}

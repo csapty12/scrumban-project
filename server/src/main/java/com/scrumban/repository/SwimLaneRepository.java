@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface SwimLaneRepository extends CrudRepository<SwimLaneEntity, Long> {
-        Optional<SwimLaneEntity> findByName(String swimLaneName);
 
+    Optional<SwimLaneEntity> findByName(String swimLaneName);
 }

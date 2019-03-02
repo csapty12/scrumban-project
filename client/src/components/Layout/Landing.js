@@ -6,12 +6,12 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import axios from "axios";
 import store from "../../store";
 import jwt_decode from "jwt-decode";
 import { SET_CURRENT_USER } from "../../actions/Types";
+import { Redirect } from "react-router-dom";
+import setJwt from "../security/setJwt";
 
 export default class Landing extends Component {
   constructor(props) {
@@ -24,9 +24,15 @@ export default class Landing extends Component {
       lastName: "",
       password: "",
       confirmPassword: "",
-      errors: {}
+      errors: {},
+      redirect: false
     };
   }
+  setRedirect = () => {
+    this.setState({
+      redirect: true
+    });
+  };
 
   isLoginFormDialogActive = e => {
     this.setState({
@@ -70,8 +76,7 @@ export default class Landing extends Component {
       password: this.state.password,
       confirmPassword: this.state.confirmPassword
     };
-    console.log("new user to be created: " + JSON.stringify(newUser));
-    // this.props.createNewUser(newUser, this.props.history);
+    // console.log("new user to be created: " + JSON.stringify(newUser));
     axios
       .post("http://localhost:8080/api/users/register", newUser)
       .then(json => {
@@ -99,38 +104,53 @@ export default class Landing extends Component {
   };
 
   handleLoginSubmit = event => {
-    console.log("here");
     event.preventDefault();
     const LoginRequest = {
       email: this.state.email,
       password: this.state.password
     };
-    console.log("login request sent:  " + JSON.stringify(LoginRequest));
     this.login(LoginRequest);
   };
 
   login = request => {
     console.log("we inhere");
-    const res = axios
+    axios
       .post("http://localhost:8080/api/users/login", request)
       .then(json => {
         const { token } = json.data;
         localStorage.setItem("jwtToken", token);
         const decodedToken = jwt_decode(token);
-        console.log("decoded token: " + JSON.stringify(decodedToken));
-
+        setJwt(token);
         store.dispatch({
           type: SET_CURRENT_USER,
           payload: decodedToken
         });
       })
-      .catch(err => console.log("errrrrooorrr: " + JSON.stringify(err)));
+      .then(() => {
+        this.handleCloseLoginForm(null);
+        this.setRedirect();
+      })
+      .catch(err =>
+        this.setState({
+          errors: err.response.data
+        })
+      );
   };
 
+  componentDidMount() {
+    const { user } = store.getState().security;
+    const userExists =
+      Object.entries(user).length !== 0 && user.constructor === Object;
+    if (userExists) {
+      this.setRedirect();
+    }
+  }
+
   render() {
-    // console.log("values in store: " + JSON.stringify(store.getState()));
+    const { errors } = this.state;
     return (
       <div className="container text-center">
+        {this.state.redirect && <Redirect to="/dashboard" />}
         <h1 className="mt-5 text-white font-weight-light">TrellBan</h1>
         <p className="lead text-white-50">
           Your Personal Project Management Tool
@@ -165,6 +185,7 @@ export default class Landing extends Component {
                   fullWidth
                   onChange={this.handleChange}
                 />
+                {errors.email && <span>{errors.email}</span>}
                 <TextField
                   margin="dense"
                   id="loginPassword"
@@ -174,6 +195,7 @@ export default class Landing extends Component {
                   fullWidth
                   onChange={this.handleChange}
                 />
+                {errors.password && <span>{errors.password}</span>}
               </DialogContent>
 
               <DialogActions>
@@ -287,11 +309,3 @@ export default class Landing extends Component {
     );
   }
 }
-
-Landing.propTypes = {
-  login: PropTypes.func.isRequired
-};
-
-const mapStateToProps = state => ({
-  security: state.security
-});

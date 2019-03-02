@@ -2,7 +2,6 @@ package com.scrumban.repository;
 
 import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
-import com.scrumban.model.project.entity.ProjectTicket;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

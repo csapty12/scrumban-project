@@ -47,7 +47,9 @@ public class ProjectController {
         projectIdentifier = projectIdentifier.toUpperCase();
         Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier, principal.getEmail());
 
-        if (project.isPresent()) { return new ResponseEntity<>(project, HttpStatus.OK); }
+        if (project.isPresent()) {
+            return new ResponseEntity<>(project, HttpStatus.OK);
+        }
 
         throw new ProjectIdentifierException("No project found with identifier: " + projectIdentifier);
     }
@@ -61,7 +63,7 @@ public class ProjectController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, Authentication authentication,  BindingResult bindingResult) {
+    public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, Authentication authentication, BindingResult bindingResult) {
         ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
         if (validationErrors != null) return validationErrors;
         User principal = (User) authentication.getPrincipal();
@@ -80,7 +82,6 @@ public class ProjectController {
     private ResponseEntity<?> validateIncomingRequest(BindingResult bindingResult) {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
         if (errorMap != null) {
-            System.out.println("error map: " + errorMap);
             return errorMap;
         }
         return null;

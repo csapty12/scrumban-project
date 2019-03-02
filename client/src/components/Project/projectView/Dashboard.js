@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import ProjectItem from "./ProjectItem";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
@@ -24,7 +24,8 @@ class Dashboard extends Component {
     this.state = {
       allProjects: [],
       project: new Project(),
-      isProjectDialogActive: false
+      isProjectDialogActive: false,
+      errors: {}
     };
   }
   handleIsProjectDialogActive = () => {
@@ -40,11 +41,18 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-    axios.get("http://localhost:8080/api/project").then(json => {
-      this.setState({
-        allProjects: json.data
-      });
-    });
+    axios
+      .get("http://localhost:8080/api/project")
+      .then(json => {
+        this.setState({
+          allProjects: json.data
+        });
+      })
+      .catch(err =>
+        this.setState({
+          noProjectFound: err.response.data
+        })
+      );
   }
 
   handleProjectDelete = project => {
@@ -96,6 +104,13 @@ class Dashboard extends Component {
               <hr />
               <section className="gallery-block grid-gallery">
                 <div className="container">
+                  {this.state.allProjects.length <= 0 && (
+                    <div className="alert alert-warning text-center">
+                      No Projects Found! Please Click{" "}
+                      <strong>"Create Project"</strong> to start a new project.
+                    </div>
+                  )}
+
                   <div className="row">
                     {allProjects.map(project => (
                       <ProjectItem

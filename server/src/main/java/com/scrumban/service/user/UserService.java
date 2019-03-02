@@ -19,12 +19,12 @@ public class UserService {
     }
 
 
-    public User saveUser(User newUser){
-        try{
+    public User saveUser(User newUser) {
+        try {
             newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
             newUser.setConfirmPassword("");
             return userRepository.save(newUser);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new EmailAlreadyExistsException("Email already exists!");
         }
     }

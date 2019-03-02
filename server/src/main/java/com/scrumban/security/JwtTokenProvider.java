@@ -23,15 +23,15 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String generateToken(Authentication authentication){
+    public String generateToken(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         Date now = new Date(System.currentTimeMillis());
 
-        Date expirationDate = new Date(now.getTime()+expirationTime);
+        Date expirationDate = new Date(now.getTime() + expirationTime);
         String userId = Long.toString(user.getId());
 
-        Map<String, Object>  claims = new HashMap<>();
-        claims.put( "id", (Long.toString(user.getId())));
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", (Long.toString(user.getId())));
         claims.put("email", user.getEmail());
         claims.put("firstName", user.getFirstName());
         claims.put("lastName", user.getLastName());
@@ -46,31 +46,26 @@ public class JwtTokenProvider {
 
     }
 
-    public boolean validateToken(String token){
-        try{
+    public boolean validateToken(String token) {
+        try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
-        }catch (SignatureException e){
+        } catch (SignatureException e) {
             log.warn("Invalid JWT signature");
-        }
-        catch(MalformedJwtException e){
+        } catch (MalformedJwtException e) {
             log.warn("Invalid JWT token ");
-        }
-        catch(ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             log.warn("JWT has expired");
-        }
-        catch(UnsupportedJwtException e){
+        } catch (UnsupportedJwtException e) {
             log.warn("JWT is not supported");
-        }
-        catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             log.warn("JWT claim string is empty");
         }
-        return  false;
+        return false;
     }
 
-    public Long getUserIdFromToken(String token){
-        Claims claims =  Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-        System.out.println("claims: " + claims.toString());
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         return Long.parseLong((String) claims.get("id"));
     }
 }

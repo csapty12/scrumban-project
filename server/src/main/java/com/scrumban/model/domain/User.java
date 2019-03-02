@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @NotBlank(message = "Required field")
     private String lastName;
     @NotBlank(message = "Required field")
-    @Size(min = 5,message = "Must be at least 5 characters")
+    @Size(min = 5, message = "Must be at least 5 characters")
     private String password;
     @Transient
     private String confirmPassword;
