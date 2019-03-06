@@ -32,7 +32,7 @@ jobs:
           name: rebuild backend
           command: cd server && mvn clean install
 
-  build_frontend:
+  build-frontend:
     docker:
       - image: circleci/node:8
     steps:
