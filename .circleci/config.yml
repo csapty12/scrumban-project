@@ -52,8 +52,6 @@ workflows:
   build_backend_and_front_end:
     jobs:
       - build-frontend
-      - build-backend
+      - build-backend:
           requires:
             - build-frontend
-      
-    
