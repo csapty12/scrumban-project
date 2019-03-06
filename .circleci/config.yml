@@ -32,8 +32,25 @@ jobs:
           name: rebuild backend
           command: cd server && mvn clean install
 
+  build_frontend:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+
+      - restore_cache: # special step to restore the dependency cache
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Setup Dependencies
+          command: npm install
+
 workflows:
   version: 2
   build_backend_only:
     jobs:
+      - build-frontend
       - build-backend
+        requires:
+          - build-backend
+      
+    
