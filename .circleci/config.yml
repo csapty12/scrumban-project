@@ -41,7 +41,7 @@ jobs:
       - restore_cache: # special step to restore the dependency cache
           key: dependency-cache-{{ checksum "./client/package.json" }}
 
-       - save_cache:
+      - save_cache:
           key: dependency-cache-{{ checksum "./client/package.json" }}
       - run:
           name: Setup Dependencies
