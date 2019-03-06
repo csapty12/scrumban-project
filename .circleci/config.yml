@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build_backend:
+  build:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
@@ -36,4 +36,4 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build_backend
+      - build
