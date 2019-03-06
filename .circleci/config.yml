@@ -49,11 +49,11 @@ jobs:
 
 workflows:
   version: 2
-  build_backend_only:
+  build_backend_and_front_end:
     jobs:
       - build-frontend
       - build-backend
           requires:
-            - build-backend
+            - build-frontend
       
     
