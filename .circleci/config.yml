@@ -1,26 +1,11 @@
 version: 2
-
-aliases:
-  - &defaults
-    working_directory: ~/circleci-scrumban
-    docker:
-      - image: circleci/openjdk:8-jdk
-
 jobs:
-  build:
-    <<: *defaults
+  build_backend:
     docker:
       # specify the version you desire here
-      - image: mysql:latest
-        environment:
-          - MYSQL_ROOT_PASSWORD=root123
-          - MYSQL_DATABASE=spring_app_db
-          - MYSQL_USER=app_user
-          - MYSQL_PASSWORD=test123
-        ports:
-          - "2012:3306"
-        volumes:
-          - /data/mysql
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
 
     environment:
       # Customize the JVM maximum heap limit
@@ -28,35 +13,27 @@ jobs:
     steps:
       - checkout
 
-  test:
-    <<: *defaults
-    docker:
-      - image: circleci/openjdk:8-jdk
-    steps:
-      - checkout
-      #   # Download and cache dependencies
+      # Download and cache dependencies
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "./server/pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: cd ./server && mvn dependency:go-offline
+
+      - run: mvn dependency:go-offline
+
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "./server/pom.xml" }}
+
       # run tests!
       - run:
-          name: clean install
-          command: cd ./server && mvn clean install
+          name: rebuild backend
+          command: mvn clean install
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
+      - build_backend
