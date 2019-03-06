@@ -68,8 +68,8 @@ class ProjectDialog extends Component {
   };
 
   slugifyProjectName(projectName) {
-    let slugify = require("slugify");
-    const projectIdentifierSlug = slugify(projectName);
+    const splitString = projectName.split(" ");
+    const projectIdentifierSlug = splitString.join("-");
     return projectIdentifierSlug;
   }
 
