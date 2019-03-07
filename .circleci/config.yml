@@ -48,6 +48,17 @@ jobs:
       - run:
           name: Setup Dependencies
           command: cd client && yarn install
+  deploy-to-heroku:
+    machine:
+      enabled: true
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Deploy Master to Heroku
+          command: |
+            git subtree push --prefix www/tutapp heroku master)
+            git subtree push --prefix server https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master
 
 workflows:
   version: 2
@@ -57,3 +68,6 @@ workflows:
       - build-backend:
           requires:
             - build-frontend
+      - deploy-to-heroku:
+          requires:
+            - build-backend
