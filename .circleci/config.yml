@@ -56,7 +56,7 @@ jobs:
       - checkout
       - run:
           name: Deploy Master to Heroku
-          command: git subtree push --prefix server https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master
+          command: git subtree push --prefix server heroku master
 
 workflows:
   version: 2
