@@ -65,7 +65,7 @@ jobs:
           command: mkdir -p ~/repo/server/src/resources/static
       - run:
           name: Copy frontend to backend
-          command: cp -r ~/repo/client/build ~/repo/server/src/resources/static
+          command: cp -a ~/repo/client/build/. ~/repo/server/src/resources/static
 
       - run: ls -la ~/repo/server/src/resources/static
       - run:
