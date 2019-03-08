@@ -27,7 +27,7 @@ jobs:
 
       - persist_to_workspace:
           root: workspace
-          paths: ~/repo/client/build
+          paths: client/build
       - run:
           name: verify build has been persisted
           command: ls -la /workspace/client/build
