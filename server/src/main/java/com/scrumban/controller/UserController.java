@@ -7,6 +7,7 @@ import com.scrumban.security.payload.LoginRequest;
 import com.scrumban.service.ValidationErrorService;
 import com.scrumban.service.user.UserService;
 import com.scrumban.validator.UserValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
+@Slf4j
 public class UserController {
 
     @Value("${jwt.token.prefix}")
@@ -52,6 +54,7 @@ public class UserController {
             return errorMap;
         }
         User newUser = userService.saveUser(user);
+        log.info("new user: " + newUser.getUsername() + "created");
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
