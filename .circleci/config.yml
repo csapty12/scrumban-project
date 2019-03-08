@@ -16,16 +16,15 @@ jobs:
             - ./node_modules
           key: dependency-cache-{{ checksum "./client/package.json" }}
 
+      - run:
+          name: Setup Dependencies
+          command: cd client && yarn build
+
       - run: mkdir -p workspace
-      - run: echo "Hello, world!" > workspace/echo-output
       - persist_to_workspace:
           root: workspace
           paths:
-            - echo-output
-
-      - run:
-          name: Setup Dependencies
-          command: cd client && yarn install
+            - client/build
 
   build-backend:
     docker:
@@ -64,12 +63,7 @@ jobs:
 
       - run:
           name: test workspace
-          command: |
-            if [[ `cat ~/repo/workspace/echo-output` == "Hello, world!" ]]; then
-              echo "It worked!";
-            else
-              echo "Nope!"; exit 1
-            fi
+          command: ls ~/repo/workspace/client/build
 
   deploy-to-heroku:
     machine:
