@@ -3,6 +3,8 @@ jobs:
   build-frontend:
     docker:
       - image: circleci/node:8
+
+    working_directory: ~/repo
     steps:
       - checkout
 
@@ -56,6 +58,10 @@ jobs:
       - run:
           name: rebuild backend
           command: cd server && mvn clean install
+
+      - attach_workspace:
+          at: /tmp/workspace
+
       - run:
           name: test workspace
           command: |
