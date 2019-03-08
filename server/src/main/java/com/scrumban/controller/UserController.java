@@ -69,7 +69,7 @@ public class UserController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenPrefix +jwtTokenProvider.generateToken(authentication);
-
+        log.info("login has been attempted");
         return ResponseEntity.ok(new JWTLoginResponse(true, jwt));
 
     }
