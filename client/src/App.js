@@ -6,7 +6,7 @@ import Navbar from "./components/Layout/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
 import ProjectDashboard from "./components/Project/ProjectDashboard/ProjectDashboard";
 import Landing from "./components/Layout/Landing";
 import Login from "./components/Layout/Login";
