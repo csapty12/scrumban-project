@@ -10,7 +10,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Link } from "react-router-dom";
 import ProjectDialog from "./ProjectDialog";
-import Project from "../../../model/Project";
 import DeleteItem from "./DeleteItem";
 
 const styles = theme => ({});

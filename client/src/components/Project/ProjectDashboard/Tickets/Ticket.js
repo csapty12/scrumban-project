@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import "../projectDashboard.css";
 import { Draggable } from "react-beautiful-dnd";
 import Card from "@material-ui/core/Card";
