@@ -86,6 +86,9 @@ jobs:
           at: .
       - run: ls -la ~/repo/server/src/resources/static
       - run:
+          name: Build application
+          command: cd server && mvn clean install
+      - run:
           name: Deploy Master to Heroku
           command: git subtree push --prefix server https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master
 
