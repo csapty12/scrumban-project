@@ -59,7 +59,7 @@ jobs:
 
       # run tests!
       - attach_workspace:
-          - at: ./client
+          - at: .
 
       - run: ls -la ~/repo/client/build
 
