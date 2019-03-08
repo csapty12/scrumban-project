@@ -52,9 +52,6 @@ jobs:
     machine:
       enabled: true
     working_directory: ~/repo
-    environment:
-      HEROKU_APP: "trellban"
-      HEROKU_API_KEY: 8fbf1a98-4292-45d1-8121-bcfa2dd1a7d0
     steps:
       - checkout
       - run:
