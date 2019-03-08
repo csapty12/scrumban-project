@@ -1,5 +1,30 @@
 version: 2
 jobs:
+  build-frontend:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+
+      - restore_cache: # special step to restore the dependency cache
+          key: dependency-cache-{{ checksum "./client/package.json" }}
+
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: dependency-cache-{{ checksum "./client/package.json" }}
+
+      - run: mkdir -p workspace
+      - run: echo "Hello, world!" > workspace/echo-output
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - echo-output
+
+      - run:
+          name: Setup Dependencies
+          command: cd client && yarn install
+
   build-backend:
     docker:
       # specify the version you desire here
@@ -31,23 +56,15 @@ jobs:
       - run:
           name: rebuild backend
           command: cd server && mvn clean install
-
-  build-frontend:
-    docker:
-      - image: circleci/node:8
-    steps:
-      - checkout
-
-      - restore_cache: # special step to restore the dependency cache
-          key: dependency-cache-{{ checksum "./client/package.json" }}
-
-      - save_cache:
-          paths:
-            - ./node_modules
-          key: dependency-cache-{{ checksum "./client/package.json" }}
       - run:
-          name: Setup Dependencies
-          command: cd client && yarn install
+          name: test workspace
+          command: |
+            if [[ `cat /tmp/workspace/echo-output` == "Hello, world!" ]]; then
+              echo "It worked!";
+            else
+              echo "Nope!"; exit 1
+            fi
+
   deploy-to-heroku:
     machine:
       enabled: true

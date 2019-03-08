@@ -8,6 +8,7 @@ import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import ProjectDashboard from "./components/Project/ProjectDashboard/ProjectDashboard";
+import Landing from "./components/Layout/Landing";
 // import { Provider } from "react-redux";
 // import store from "./Store";
 
@@ -19,6 +20,7 @@ class App extends Component {
         <div className="App">
           <Navbar />
           <Route exact path="/dashboard" component={Dashboard} />
+          <Route exact path="/" component={Landing} />
           <Route
             exact
             path="/dashboard/:projectIdentifier"
