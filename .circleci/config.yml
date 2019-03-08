@@ -23,10 +23,14 @@ jobs:
           name: Build js files
           command: cd client && yarn build
 
+      - run: mkdir -p workspace
+
       - persist_to_workspace:
-          root: ~/repo
-          paths: client/build
-      - run: ls ~/repo/client/build
+          root: workspace
+          paths: ~/repo/client/build
+      - run:
+          name: verify build has been persisted
+          command: ls -la /workspace/client/build
 
   build-backend:
     docker:
