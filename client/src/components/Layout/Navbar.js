@@ -6,6 +6,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Link from "react-router-dom";
 
 const styles = theme => ({
   navbar: {
@@ -30,9 +31,14 @@ class Navbar extends Component {
             <Typography variant="h6" color="inherit" className={classes.grow}>
               TrellBan
             </Typography>
-            <Button color="inherit" href="/dashboard">
-              Dashboard
-            </Button>
+            {
+              <Link to="/dashboard">
+                <Button color="inherit">Dashboard</Button>
+              </Link>
+              //   <Button color="inherit" href="/dashboard">
+              //   Dashboard
+              // </Button>
+            }
             <Button color="inherit">Login</Button>
             <Button color="inherit">Register</Button>
           </Toolbar>
