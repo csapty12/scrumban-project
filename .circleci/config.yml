@@ -21,7 +21,9 @@ jobs:
           command: cd client && yarn install
       - run:
           name: Build js files
-          command: yarn install
+          command: yarn build
+
+      - run: mkdir -p workspace
 
   build-backend:
     docker:
