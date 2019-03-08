@@ -58,10 +58,11 @@ jobs:
           key: v1-dependencies-{{ checksum "./server/pom.xml" }}
 
       # run tests!
-
       - attach_workspace:
-          - at: ~/repo/client/
+          - at: ~/repo/client
+
       - run: ls -la ~/repo/client/build
+
       - run:
           name: rebuild backend
           command: cd server && mvn clean install
