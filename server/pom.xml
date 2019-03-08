@@ -6,7 +6,7 @@
     <groupId>com.scrumban</groupId>
     <artifactId>scrumban</artifactId>
     <version>1.0.1</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>scrumban</name>
     <description>Demo projectEntity for Spring Boot</description>
