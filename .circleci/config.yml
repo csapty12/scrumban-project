@@ -20,12 +20,6 @@ jobs:
           name: Setup Dependencies
           command: cd client && yarn build
 
-      - run: mkdir -p workspace
-      - persist_to_workspace:
-          root: workspace
-          paths:
-            - client/build
-
   build-backend:
     docker:
       # specify the version you desire here
@@ -57,13 +51,6 @@ jobs:
       - run:
           name: rebuild backend
           command: cd server && mvn clean install
-
-      - attach_workspace:
-          at: ~/repo/workspace
-
-      - run:
-          name: test workspace
-          command: ls ~/repo/workspace/client/build
 
   deploy-to-heroku:
     machine:
