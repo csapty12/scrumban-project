@@ -61,8 +61,11 @@ jobs:
       - attach_workspace:
           at: .
 
-      - run: ls -la ~/repo/client/build
+      - run:
+          name: Copy frontend to backend
+          command: cp -r ~/repo/client/build ~/repo/server/src/resources/static
 
+      - run: ls -la ~/repo/server/src/resources/static
       - run:
           name: rebuild backend
           command: cd server && mvn clean install
