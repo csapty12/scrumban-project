@@ -9,7 +9,8 @@ export default class Register extends Component {
       firstName: "",
       lastName: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
+      errors: {}
     };
   }
 
@@ -41,10 +42,11 @@ export default class Register extends Component {
     axios
       .post("/api/users/register", newUser)
       .then(json => console.log(JSON.stringify(json)))
-      .catch(json => console.log("Errr: " + JSON.stringify(json)));
+      .catch(json => this.setState({ errors: json.response.data }));
   };
 
   render() {
+    const { errors } = this.state;
     return (
       <div className="container py-5">
         <div className="row">
@@ -96,6 +98,7 @@ export default class Register extends Component {
                           required
                           onChange={this.handleChange}
                         />
+                        {errors.email && <div>{errors.email}</div>}
                       </div>
                       <div className="form-group">
                         <label htmlFor="password">Password</label>
@@ -107,6 +110,7 @@ export default class Register extends Component {
                           required
                           onChange={this.handleChange}
                         />
+                        {errors.password && <div>{errors.password}</div>}
                       </div>
                       <div className="form-group">
                         <label htmlFor="confirmPassword">
@@ -120,6 +124,9 @@ export default class Register extends Component {
                           required
                           onChange={this.handleChange}
                         />
+                        {errors.confirmPassword && (
+                          <div>{errors.confirmPassword}</div>
+                        )}
                       </div>
                       <button
                         type="submit"

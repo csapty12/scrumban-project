@@ -6,7 +6,8 @@ export default class Login extends Component {
     super(props);
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      errors: {}
     };
   }
 
@@ -29,9 +30,14 @@ export default class Login extends Component {
     axios
       .post("/api/users/login", existingUser)
       .then(json => console.log(JSON.stringify(json)))
-      .catch(json => console.log("Errr: " + JSON.stringify(json)));
+      .catch(json =>
+        this.setState({
+          errors: json.response.data
+        })
+      );
   };
   render() {
+    const { errors } = this.state;
     return (
       <div className="container py-5">
         <div className="row">
@@ -73,6 +79,9 @@ export default class Login extends Component {
                           autoComplete="new-password"
                           onChange={this.handleChange}
                         />
+                        {Object.keys(errors).length !== 0 && (
+                          <div>Email address and password do not match</div>
+                        )}
                       </div>
                       <button
                         type="submit"
