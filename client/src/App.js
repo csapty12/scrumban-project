@@ -9,6 +9,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import ProjectDashboard from "./components/Project/ProjectDashboard/ProjectDashboard";
 import Landing from "./components/Layout/Landing";
+import Login from "./components/Layout/Login";
+import Register from "./components/Layout/Register";
 // import { Provider } from "react-redux";
 // import store from "./Store";
 
@@ -19,8 +21,11 @@ class App extends Component {
       <Router>
         <div className="App">
           <Navbar />
-          <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/" component={Landing} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Register} />
+
+          <Route exact path="/dashboard" component={Dashboard} />
           <Route
             exact
             path="/dashboard/:projectIdentifier"

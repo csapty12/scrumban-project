@@ -4,14 +4,16 @@ import "./landing.css";
 export default class Landing extends Component {
   render() {
     return (
-      <div class="container text-center">
-        <h1 class="mt-5 text-white font-weight-light">Tellban</h1>
-        <p class="lead text-white-50">Your Personal Project Management Tool</p>
+      <div className="container text-center">
+        <h1 className="mt-5 text-white font-weight-light">Tellban</h1>
+        <p className="lead text-white-50">
+          Your Personal Project Management Tool
+        </p>
         <hr />
-        <button type="button" class="btn btn-primary">
+        <button type="button" className="btn btn-primary">
           Login
         </button>
-        <button type="button" class="btn btn-success">
+        <button type="button" className="btn btn-success">
           Register
         </button>
       </div>
