@@ -60,12 +60,12 @@ jobs:
           command: cd server && mvn clean install
 
       - attach_workspace:
-          at: /tmp/workspace
+          at: /repo/workspace
 
       - run:
           name: test workspace
           command: |
-            if [[ `cat /tmp/workspace/echo-output` == "Hello, world!" ]]; then
+            if [[ `cat /repo/workspace/echo-output` == "Hello, world!" ]]; then
               echo "It worked!";
             else
               echo "Nope!"; exit 1
