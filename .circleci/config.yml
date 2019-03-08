@@ -26,7 +26,7 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: client/build
-      - run: ls ~/repo/workspace/client/build
+      - run: ls ~/repo/client/build
 
   build-backend:
     docker:
