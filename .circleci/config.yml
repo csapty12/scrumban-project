@@ -25,12 +25,12 @@ jobs:
 
       - run: mkdir -p workspace && ls -la
 
-      # - persist_to_workspace:
-      #     root: workspace
-      #     paths: /home/circleci/repo/client/build
-      # - run:
-      #     name: verify build has been persisted
-      #     command: ls -la /workspace/client/build
+      - persist_to_workspace:
+          root: workspace
+          paths: ../client/build
+      - run:
+          name: verify build has been persisted
+          command: ls -la /workspace/client/build
 
   build-backend:
     docker:
