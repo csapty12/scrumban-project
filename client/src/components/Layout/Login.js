@@ -1,6 +1,36 @@
 import React, { Component } from "react";
+import axios from "axios";
 
 export default class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      password: ""
+    };
+  }
+
+  handleChange = event => {
+    console.log("pass: " + event.target.value);
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    const { email, password } = this.state;
+    const existingUser = {
+      email: email,
+      password: password
+    };
+
+    console.log("new user: " + JSON.stringify(existingUser));
+    axios
+      .post("/api/users/login", existingUser)
+      .then(json => console.log(JSON.stringify(json)))
+      .catch(json => console.log("Errr: " + JSON.stringify(json)));
+  };
   render() {
     return (
       <div className="container py-5">
@@ -18,45 +48,31 @@ export default class Login extends Component {
                       autoComplete="off"
                       id="formLogin"
                       noValidate=""
+                      onSubmit={this.handleSubmit}
                       method="POST"
                     >
                       <div className="form-group">
-                        <label htmlFor="uname1">Username</label>
+                        <label htmlFor="email">Email Address</label>
                         <input
                           type="text"
                           className="form-control form-control-lg rounded-0"
-                          name="uname1"
-                          id="uname1"
-                          required=""
+                          name="email"
+                          id="email"
+                          required
+                          onChange={this.handleChange}
                         />
-                        <div className="invalid-feedback">
-                          Oops, you missed this one.
-                        </div>
                       </div>
                       <div className="form-group">
                         <label>Password</label>
                         <input
                           type="password"
                           className="form-control form-control-lg rounded-0"
-                          id="pwd1"
-                          required=""
+                          name="password"
+                          id="password"
+                          required
                           autoComplete="new-password"
+                          onChange={this.handleChange}
                         />
-                        <div className="invalid-feedback">
-                          Enter your password too!
-                        </div>
-                      </div>
-                      <div>
-                        <label className="custom-control custom-checkbox">
-                          <input
-                            type="checkbox"
-                            className="custom-control-input"
-                          />
-                          <span className="custom-control-indicator" />
-                          <span className="custom-control-description small text-dark">
-                            Remember me on this computer
-                          </span>
-                        </label>
                       </div>
                       <button
                         type="submit"
