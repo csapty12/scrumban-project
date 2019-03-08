@@ -10,7 +10,7 @@ export default class Register extends Component {
               <div className="col-md-6 mx-auto">
                 <div className="card rounded-0">
                   <div className="card-header">
-                    <h3 className="mb-0">Register ALEX CARDELL</h3>
+                    <h3 className="mb-0">Register</h3>
                   </div>
                   <div className="card-body">
                     <form

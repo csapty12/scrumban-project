@@ -54,7 +54,7 @@ public class UserController {
             return errorMap;
         }
         User newUser = userService.saveUser(user);
-        log.info("new user: " + newUser.getUsername() + " has been created");
+        log.info("new user: " + newUser.getUsername() + " created");
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
