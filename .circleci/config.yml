@@ -19,6 +19,9 @@ jobs:
       - run:
           name: Setup Dependencies
           command: cd client && yarn install
+      - run:
+          name: Build js files
+          command: yarn install
 
   build-backend:
     docker:
