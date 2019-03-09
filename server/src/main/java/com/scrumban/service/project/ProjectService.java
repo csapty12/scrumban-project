@@ -58,6 +58,8 @@ public class ProjectService {
         if(user.isPresent()){
             Optional<ProjectEntity> foundProjectEntity = tryToFindProject(projectEntity.getProjectIdentifier(), userEmail);
             if (foundProjectEntity.isPresent()) {
+                projectEntity.setProjectLeader(foundProjectEntity.get().getProjectLeader());
+                projectEntity.setUser(foundProjectEntity.get().getUser());
                 return projectRepository.save(projectEntity);
             }
             throw new ProjectIdentifierException("projectEntity ID: " + projectEntity.getProjectIdentifier() + " not found!");
