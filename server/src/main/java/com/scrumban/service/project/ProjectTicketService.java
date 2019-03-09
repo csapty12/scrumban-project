@@ -131,7 +131,10 @@ public class ProjectTicketService {
             projectSwimLaneTickets.forEach(ticket ->
                     updateTicketPositionInSwimLane(swimLane, ticket));
         }
-        throw new UsernameNotFoundException("User not found");
+        else{
+            throw new UsernameNotFoundException("User not found");
+        }
+
     }
 
     @Transactional
