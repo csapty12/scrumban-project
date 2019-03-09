@@ -18,6 +18,7 @@ export default class InnerList extends Component {
         removeTicket={this.props.removeTicket}
         swimLaneId={this.props.swimLaneId}
         handleChange={this.props.onChange}
+        projectIdentifier={this.props.projectIdentifier}
       />
     ));
   }

@@ -7,6 +7,7 @@ import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import TicketDialog from "./TicketDialog";
 import DeleteButton from "./DeleteButton";
+import axios from "axios";
 
 const styles = theme => ({
   cards: {
@@ -38,7 +39,8 @@ class Ticket extends Component {
       summary: ticket.summary,
       acceptanceCriteria: ticket.acceptanceCriteria,
       complexity: ticket.complexity,
-      priority: ticket.priority
+      priority: ticket.priority,
+      swimlaneId: this.props.swimLaneId
     };
   }
   handleChange = event => {
@@ -84,8 +86,23 @@ class Ticket extends Component {
     });
   };
 
+  handleUpdateTicket = ticket => {
+    ticket["ticketNumberPosition"] = this.props.ticket.ticketNumberPosition;
+    axios.patch(
+      `/dashboard/${this.props.projectIdentifier}/${this.props.swimLaneId}/${
+        ticket.id
+      }`,
+      ticket
+    );
+  };
+
   openProjectDetailsDialog = ticket => {
-    return <TicketDialog ticket={ticket} />;
+    return (
+      <TicketDialog
+        ticket={ticket}
+        handleUpdateTicket={this.handleUpdateTicket}
+      />
+    );
   };
 
   render() {

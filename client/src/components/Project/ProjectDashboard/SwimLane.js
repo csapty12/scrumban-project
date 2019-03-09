@@ -85,6 +85,7 @@ class SwimLane extends Component {
                   tickets={this.props.tickets}
                   removeTicket={this.props.removeTicket}
                   swimLaneId={this.props.swimLane.title}
+                  projectIdentifier={this.props.projectIdentifier}
                   onChange={this.handleChange}
                 />
                 {provided.placeholder}

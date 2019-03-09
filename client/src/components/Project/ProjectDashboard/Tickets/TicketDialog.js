@@ -8,7 +8,8 @@ import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import Ticket from "../../../../model/Ticket";
+import axios from "axios";
+
 const styles = theme => ({
   appBar: {
     position: "relative",
@@ -31,7 +32,10 @@ class TicketDialog extends Component {
       openTicketDetails: false,
       isDragDisabled: false,
       isDropDownActive: false,
-      ticket: new Ticket()
+      summary: this.props.ticket.summary || "",
+      acceptanceCriteria: this.props.ticket.acceptanceCriteria || "",
+      complexity: this.props.ticket.complexity || "",
+      priority: this.props.ticket.priority || ""
     };
   }
   handleEditTicket = () => {
@@ -63,12 +67,6 @@ class TicketDialog extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-
-    let ticket = new Ticket();
-    ticket.summary = this.state.summary;
-    this.setState({
-      ticket: ticket
-    });
     const updatedTicket = {
       id: this.props.ticket.id,
       summary: this.state.summary,
@@ -76,8 +74,14 @@ class TicketDialog extends Component {
       complexity: this.state.complexity,
       priority: this.props.ticket.priority
     };
-
-    console.log("updated ticket: " + JSON.stringify(updatedTicket));
+    this.props.handleUpdateTicket(updatedTicket);
+    // console.log("updated ticket: " + JSON.stringify(updatedTicket));
+    // console.log(
+    //   `/dashboard/${this.props.ticket.projectIdentifier}/${
+    //     this.props.ticket.swimlane
+    //   }/${updatedTicket.id}`
+    // );
+    // axios.patch(`/dashboard/${this.props.ticket.projectIdentifier}`)
   };
 
   render() {

@@ -136,6 +136,26 @@ public class ProjectDashboardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    @PatchMapping("/{projectIdentifier}/{swimLaneId}/{id}")
+    public  ResponseEntity<?> updateTicketInformation(@PathVariable String projectIdentifier,
+                                                      @PathVariable String swimLaneId,
+                                                      @PathVariable Long id,
+                                                      @Valid @RequestBody ProjectTicket projectTicket,
+                                                      BindingResult bindingResult, Authentication authentication
+                                                      ){
+        ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
+        if (validationErrors != null) return validationErrors;
+
+        User principal = (User) authentication.getPrincipal();
+        System.out.println("ticket postion: " + projectTicket.getTicketNumberPosition());
+        projectTicketService.updateTicketInformation(projectTicket, projectIdentifier,  swimLaneId, principal.getEmail());
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+
+
     private ResponseEntity<?> validateIncomingRequest(BindingResult bindingResult) {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
         if (errorMap != null) {
