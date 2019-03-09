@@ -1,12 +1,15 @@
 //this is what the navbar will look like
 
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
+import store from "../../store";
+import { setJwt } from "../../security/SetJwt";
+import { SET_CURRENT_USER } from "../../actions/Types";
 
 const styles = theme => ({
   navbar: {
@@ -22,7 +25,17 @@ const styles = theme => ({
   }
 });
 class Navbar extends Component {
+  logoutUser = event => {
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("activeProject");
+    setJwt(false);
+    store.dispatch({
+      type: SET_CURRENT_USER,
+      payload: {}
+    });
+  };
   render() {
+    const { validToken, user } = store.getState().security;
     const { classes } = this.props;
     return (
       <div>
@@ -31,16 +44,28 @@ class Navbar extends Component {
             <Typography variant="h6" color="inherit" className={classes.grow}>
               TrellBan
             </Typography>
-
-            <Link to="/dashboard">
-              <Button color="inherit">Dashboard</Button>
-            </Link>
-            <Link to="/login">
-              <Button color="inherit">Login</Button>
-            </Link>
-            <Link to="/register">
-              <Button color="inherit">Register</Button>
-            </Link>
+            {validToken && Object.entries(user).length !== 0 && (
+              <Fragment>
+                <Link to="/dashboard">
+                  <Button color="inherit">{user.firstName}'s Dashboard</Button>
+                </Link>
+                <Link to="/">
+                  <Button color="inherit" onClick={() => this.logoutUser()}>
+                    Logout
+                  </Button>
+                </Link>
+              </Fragment>
+            )}
+            {Object.entries(user).length === 0 && (
+              <Fragment>
+                <Link to="/login">
+                  <Button color="inherit">Login</Button>
+                </Link>
+                <Link to="/register">
+                  <Button color="inherit">Register</Button>
+                </Link>
+              </Fragment>
+            )}
           </Toolbar>
         </AppBar>
       </div>
