@@ -103,7 +103,7 @@ public class ProjectTicketService {
             Optional<ProjectEntity> project = projectService.tryToFindProject(projectTicket.getProjectIdentifier(),userEmail );
             if(project.get().getUser().getEmail().equals(user.get().getEmail()))
 
-               log.info("deleting ticket: " = projectTicket.getId());
+               log.info("deleting ticket: " + projectTicket.getId());
                 projectTicketRepository.deleteProjectTicket(projectTicket.getId());
 
         }
