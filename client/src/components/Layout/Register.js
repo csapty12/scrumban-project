@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+import store from "../../store";
 
 export default class Register extends Component {
   constructor(props) {
@@ -12,8 +13,19 @@ export default class Register extends Component {
       password: "",
       confirmPassword: "",
       errors: {},
-      redirectToLogin: false
+      redirectToLogin: false,
+      redirectToDashboard: false
     };
+  }
+
+  setRedirectToDashboard = () => {
+    this.setState({ redirectToDashboard: true });
+  };
+
+  componentDidMount() {
+    if (store.getState().security.validToken) {
+      this.setRedirectToDashboard();
+    }
   }
 
   handleChange = event => {
@@ -64,6 +76,7 @@ export default class Register extends Component {
     return (
       <div className="container py-5">
         {this.state.redirectToLogin && <Redirect to="/login" />}
+        {this.state.redirectToDashboard && <Redirect to="/dashboard" />}
         <div className="row">
           <div className="col-md-12">
             <div className="row">

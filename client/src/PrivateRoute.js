@@ -1,12 +1,13 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
+import store from "./store";
 
-const PrivateRoute = ({ component: Component, security, ...otherProps }) => (
+const PrivateRoute = ({ component: Component, ...otherProps }) => (
   <Route
     {...otherProps}
     render={props =>
-      security === true ? (
-        <Component {...otherProps} />
+      store.getState().security.validToken === true ? (
+        <Component {...props} />
       ) : (
         <Redirect to="/login" />
       )

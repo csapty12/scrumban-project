@@ -33,6 +33,7 @@ class Navbar extends Component {
       type: SET_CURRENT_USER,
       payload: {}
     });
+    window.location.href = "/";
   };
   render() {
     const { validToken, user } = store.getState().security;

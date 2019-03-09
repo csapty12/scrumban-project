@@ -6,7 +6,7 @@ import Navbar from "./components/Layout/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { HashRouter as Router, Route } from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import ProjectDashboard from "./components/Project/ProjectDashboard/ProjectDashboard";
 import Landing from "./components/Layout/Landing";
 import Login from "./components/Layout/Login";
@@ -51,18 +51,20 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
 
-            <PrivateRoute
-              exact
-              path="/dashboard"
-              component={Dashboard}
-              security={true}
-            />
-            <PrivateRoute
-              exact
-              path="/dashboard/:projectIdentifier"
-              component={ProjectDashboard}
-              security={true}
-            />
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/dashboard"
+                component={Dashboard}
+                security={true}
+              />
+              <PrivateRoute
+                exact
+                path="/dashboard/:projectIdentifier"
+                component={ProjectDashboard}
+                security={true}
+              />
+            </Switch>
           </div>
         </Router>
       </Provider>

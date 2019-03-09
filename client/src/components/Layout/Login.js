@@ -17,6 +17,12 @@ export default class Login extends Component {
     };
   }
 
+  componentDidMount() {
+    if (store.getState().security.validToken) {
+      this.setRedirectToDashboard();
+    }
+  }
+
   setRedirectToDashboard = () => {
     this.setState({ redirectToDashboard: true });
   };
