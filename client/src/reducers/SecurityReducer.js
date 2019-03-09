@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER } from "../actions/Types";
+import { SET_CURRENT_USER, SET_ACTIVE_PROJECT } from "../actions/Types";
 
 const initialState = {
   user: {},
@@ -12,6 +12,10 @@ const isTokenValid = payload => {
   return false;
 };
 
+const getActiveProject = actionpayload => {
+  return actionpayload.activeProject;
+};
+
 export default function(state = initialState, action) {
   switch (action.type) {
     case SET_CURRENT_USER:
@@ -19,6 +23,11 @@ export default function(state = initialState, action) {
         ...state,
         validToken: isTokenValid(action.payload),
         user: action.payload
+      };
+    case SET_ACTIVE_PROJECT:
+      return {
+        ...state,
+        activeProject: getActiveProject(action.payload)
       };
 
     default:

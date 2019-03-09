@@ -5,7 +5,7 @@ const PrivateRoute = ({ component: Component, security, ...otherProps }) => (
   <Route
     {...otherProps}
     render={props =>
-      security.validToken === true ? (
+      security === true ? (
         <Component {...otherProps} />
       ) : (
         <Redirect to="/login" />

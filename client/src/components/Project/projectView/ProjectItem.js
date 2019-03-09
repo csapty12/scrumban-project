@@ -8,9 +8,11 @@ import Button from "@material-ui/core/Button";
 import CardActions from "@material-ui/core/CardActions";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Link } from "react-router-dom";
 import ProjectDialog from "./ProjectDialog";
 import DeleteItem from "./DeleteItem";
+import store from "../../../store";
+import { SET_ACTIVE_PROJECT } from "../../../actions/Types";
+import { Link } from "react-router-dom";
 
 const styles = theme => ({});
 
@@ -55,6 +57,15 @@ class ProjectItem extends Component {
 
   updateProjectInfo = projectInfo => {
     this.setState({ project: projectInfo });
+  };
+
+  activateProject = projectIdentifier => {
+    console.log("am in here, with projectID: " + projectIdentifier);
+    store.dispatch({
+      type: SET_ACTIVE_PROJECT,
+      payload: { activeProject: projectIdentifier }
+    });
+    return;
   };
 
   render() {
@@ -119,7 +130,11 @@ class ProjectItem extends Component {
           />
           <CardActions>
             <Link to={`/dashboard/${project.projectIdentifier}`}>
-              <Button size="small" color="primary">
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => this.activateProject(project.projectIdentifier)}
+              >
                 Dashboard
               </Button>
             </Link>

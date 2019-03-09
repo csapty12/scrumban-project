@@ -15,6 +15,30 @@ import Register from "./components/Layout/Register";
 import PrivateRoute from "./PrivateRoute";
 import { Provider } from "react-redux";
 import store from "./store";
+import jwt_decode from "jwt-decode";
+import { setJwt } from "./security/SetJwt";
+import { SET_CURRENT_USER } from "./actions/Types";
+
+const userJwt = localStorage.getItem("jwt");
+if (userJwt) {
+  setJwt(userJwt);
+  const decodedToken = jwt_decode(userJwt);
+  store.dispatch({
+    type: SET_CURRENT_USER,
+    payload: decodedToken
+  });
+
+  const currentTime = Date.now() / 1000;
+  if (decodedToken.exp < currentTime) {
+    localStorage.removeItem("jwt");
+    setJwt(false);
+    store.dispatch({
+      type: SET_CURRENT_USER,
+      payload: {}
+    });
+    window.location.href = "/";
+  }
+}
 
 class App extends Component {
   render() {
@@ -37,6 +61,7 @@ class App extends Component {
               exact
               path="/dashboard/:projectIdentifier"
               component={ProjectDashboard}
+              security={true}
             />
           </div>
         </Router>

@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import "./projectDashboard.css";
 import "font-awesome/css/font-awesome.min.css";
 import TicketBoard from "./TicketBoard";
+import store from "../../../store";
 
 class ProjectDashboard extends Component {
   render() {
-    const { projectIdentifier } = this.props.match.params;
+    const { activeProject } = store.getState().security;
+
+    console.log("my project ID: " + JSON.stringify(store.getState()));
     return (
       <div className="project">
         <div className="container">
@@ -16,7 +19,7 @@ class ProjectDashboard extends Component {
             </div>
           </div>
         </div>
-        <TicketBoard projectIdentifier={projectIdentifier} />
+        {<TicketBoard projectIdentifier={activeProject} />}
       </div>
     );
   }

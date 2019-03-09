@@ -4,6 +4,7 @@ import { setJwt } from "../../security/SetJwt";
 import jwt_decode from "jwt-decode";
 import store from "../../store";
 import { SET_CURRENT_USER } from "../../actions/Types";
+import { Redirect } from "react-router-dom";
 
 export default class Login extends Component {
   constructor(props) {
@@ -11,9 +12,14 @@ export default class Login extends Component {
     this.state = {
       email: "",
       password: "",
-      errors: {}
+      errors: {},
+      redirectToDashboard: false
     };
   }
+
+  setRedirectToDashboard = () => {
+    this.setState({ redirectToDashboard: true });
+  };
 
   handleChange = event => {
     console.log("pass: " + event.target.value);
@@ -34,7 +40,6 @@ export default class Login extends Component {
     axios
       .post("/api/users/login", existingUser)
       .then(json => {
-        console.log(JSON.stringify(json));
         const { token } = json.data;
         localStorage.setItem("jwt", token);
         setJwt(token);
@@ -45,7 +50,9 @@ export default class Login extends Component {
           type: SET_CURRENT_USER,
           payload: decode
         });
+        this.setRedirectToDashboard();
       })
+
       .catch(json =>
         this.setState({
           errors: json.response.data
@@ -56,6 +63,7 @@ export default class Login extends Component {
     const { errors } = this.state;
     return (
       <div className="container py-5">
+        {this.state.redirectToDashboard && <Redirect to="/dashboard" />}
         <div className="row">
           <div className="col-md-12">
             <div className="row">

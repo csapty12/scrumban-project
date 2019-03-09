@@ -45,8 +45,9 @@ class TicketBoard extends Component {
   }
 
   componentDidMount() {
+    console.log("my projet: " + this.state.projectIdentifier);
     axios
-      .get(`http://localhost:8080/dashboard/${this.state.projectIdentifier}`)
+      .get(`/dashboard/${this.state.projectIdentifier}`)
       .then(json => {
         this.setState({
           projectTickets: json.data.tickets,
@@ -70,7 +71,7 @@ class TicketBoard extends Component {
     const { projectIdentifier, id } = ticket;
 
     axios
-      .delete(`http://localhost:8080/dashboard/${projectIdentifier}/${id}`, {
+      .delete(`/dashboard/${projectIdentifier}/${id}`, {
         data: ticket
       })
       .then(() => {
@@ -117,10 +118,7 @@ class TicketBoard extends Component {
       name: this.state.name
     };
     axios
-      .post(
-        `http://localhost:8080/dashboard/${this.state.projectIdentifier}`,
-        newSwimlane
-      )
+      .post(`/dashboard/${this.state.projectIdentifier}`, newSwimlane)
       .then(json => {
         this.setState({
           swimLanes: json.data.swimLanes,
