@@ -2,14 +2,9 @@ import React, { Component } from "react";
 import "./projectDashboard.css";
 import "font-awesome/css/font-awesome.min.css";
 import TicketBoard from "./TicketBoard";
-import store from "../../../store";
 
 class ProjectDashboard extends Component {
   render() {
-    // const activeProject = localStorage.getItem("activeProject");
-
-    // console.log("my project ID: " + JSON.stringify(store.getState()));
-
     const activeProject = this.props.match.params.projectIdentifier;
     return (
       <div className="project">
