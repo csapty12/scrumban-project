@@ -28,7 +28,6 @@ export default class Login extends Component {
   };
 
   handleChange = event => {
-    console.log("pass: " + event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -42,7 +41,6 @@ export default class Login extends Component {
       password: password
     };
 
-    console.log("new user: " + JSON.stringify(existingUser));
     axios
       .post("/api/users/login", existingUser)
       .then(json => {
@@ -50,7 +48,6 @@ export default class Login extends Component {
         localStorage.setItem("jwt", token);
         setJwt(token);
         const decode = jwt_decode(token);
-        console.log("decoded : " + JSON.stringify(decode));
 
         store.dispatch({
           type: SET_CURRENT_USER,

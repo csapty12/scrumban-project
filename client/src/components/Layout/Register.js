@@ -29,7 +29,6 @@ export default class Register extends Component {
   }
 
   handleChange = event => {
-    // console.log(event.target.value);
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -58,15 +57,12 @@ export default class Register extends Component {
       confirmPassword: confirmPassword
     };
 
-    console.log("new user: " + JSON.stringify(newUser));
     axios
       .post("/api/users/register", newUser)
       .then(json => {
-        console.log("json here: " + JSON.stringify(json));
         this.setRedirect();
       })
       .catch(json => {
-        console.log("json failed: " + JSON.stringify(json.response.data));
         this.setState({ errors: json.response.data });
       });
   };
