@@ -178,7 +178,9 @@ public class ProjectTicketService {
                 });
             });
         }
-        throw new UsernameNotFoundException("User not found");
+        else {
+            throw new UsernameNotFoundException("User not found");
+        }
 
     }
 
