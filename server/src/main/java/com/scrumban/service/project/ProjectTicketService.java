@@ -11,6 +11,7 @@ import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
 import com.scrumban.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Service
+@Slf4j
 public class ProjectTicketService {
 
     private ProjectTicketRepository projectTicketRepository;
@@ -101,7 +103,7 @@ public class ProjectTicketService {
             Optional<ProjectEntity> project = projectService.tryToFindProject(projectTicket.getProjectIdentifier(),userEmail );
             if(project.get().getUser().getEmail().equals(user.get().getEmail()))
 
-                System.out.println("ticket id " + projectTicket.getId());
+               log.info("deleting ticket: " = projectTicket.getId());
                 projectTicketRepository.deleteProjectTicket(projectTicket.getId());
 
         }
