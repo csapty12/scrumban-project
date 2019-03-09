@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./landing.css";
 import store from "../../store";
 import { Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default class Landing extends Component {
   constructor(props) {
@@ -29,12 +30,16 @@ export default class Landing extends Component {
           Your Personal Project Management Tool
         </p>
         <hr />
-        <button type="button" className="btn btn-primary">
-          Login
-        </button>
-        <button type="button" className="btn btn-success">
-          Register
-        </button>
+        <Link to="/login">
+          <button type="button" className="btn btn-primary">
+            Login
+          </button>
+        </Link>
+        <Link to="/login">
+          <button type="button" className="btn btn-success">
+            Register
+          </button>
+        </Link>
       </div>
     );
   }

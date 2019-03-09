@@ -64,6 +64,7 @@ public class UserController {
         if (errorMap != null) {
             return errorMap;
         }
+        log.info("attempting to authenticate user");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );

@@ -136,7 +136,6 @@ public class ProjectDashboardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     @PatchMapping("/{projectIdentifier}/{swimLaneId}/{id}")
     public  ResponseEntity<?> updateTicketInformation(@PathVariable String projectIdentifier,
                                                       @PathVariable String swimLaneId,
