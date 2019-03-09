@@ -6,9 +6,11 @@ import store from "../../../store";
 
 class ProjectDashboard extends Component {
   render() {
-    const activeProject = localStorage.getItem("activeProject");
+    // const activeProject = localStorage.getItem("activeProject");
 
-    console.log("my project ID: " + JSON.stringify(store.getState()));
+    // console.log("my project ID: " + JSON.stringify(store.getState()));
+
+    const activeProject = this.props.match.params.projectIdentifier;
     return (
       <div className="project">
         <div className="container">

@@ -67,11 +67,7 @@ class TicketBoard extends Component {
 
   handleTicketDelete = ticket => {
     const { projectTickets, swimLanes } = this.state;
-    // const allTickets = projectTickets;
     const { projectIdentifier, id } = ticket;
-
-    console.log("projectIdentifier: " + projectIdentifier);
-
     axios
       .delete(`/dashboard/${projectIdentifier}/${id}`, {
         data: ticket
