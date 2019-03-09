@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { setJwt } from "../../security/SetJwt";
+import jwt_decode from "jwt-decode";
+import store from "../../store";
+import { SET_CURRENT_USER } from "../../actions/Types";
 
 export default class Login extends Component {
   constructor(props) {
@@ -29,7 +33,19 @@ export default class Login extends Component {
     console.log("new user: " + JSON.stringify(existingUser));
     axios
       .post("/api/users/login", existingUser)
-      .then(json => console.log(JSON.stringify(json)))
+      .then(json => {
+        console.log(JSON.stringify(json));
+        const { token } = json.data;
+        localStorage.setItem("jwt", token);
+        setJwt(token);
+        const decode = jwt_decode(token);
+        console.log("decoded : " + JSON.stringify(decode));
+
+        store.dispatch({
+          type: SET_CURRENT_USER,
+          payload: decode
+        });
+      })
       .catch(json =>
         this.setState({
           errors: json.response.data

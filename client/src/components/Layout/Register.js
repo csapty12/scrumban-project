@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 export default class Register extends Component {
   constructor(props) {
@@ -10,7 +11,8 @@ export default class Register extends Component {
       lastName: "",
       password: "",
       confirmPassword: "",
-      errors: {}
+      errors: {},
+      redirectToLogin: false
     };
   }
 
@@ -18,6 +20,12 @@ export default class Register extends Component {
     // console.log(event.target.value);
     this.setState({
       [event.target.name]: event.target.value
+    });
+  };
+
+  setRedirect = () => {
+    this.setState({
+      redirectToLogin: true
     });
   };
 
@@ -41,14 +49,21 @@ export default class Register extends Component {
     console.log("new user: " + JSON.stringify(newUser));
     axios
       .post("/api/users/register", newUser)
-      .then(json => console.log(JSON.stringify(json)))
-      .catch(json => this.setState({ errors: json.response.data }));
+      .then(json => {
+        console.log("json here: " + JSON.stringify(json));
+        this.setRedirect();
+      })
+      .catch(json => {
+        console.log("json failed: " + JSON.stringify(json.response.data));
+        this.setState({ errors: json.response.data });
+      });
   };
 
   render() {
     const { errors } = this.state;
     return (
       <div className="container py-5">
+        {this.state.redirectToLogin && <Redirect to="/login" />}
         <div className="row">
           <div className="col-md-12">
             <div className="row">
