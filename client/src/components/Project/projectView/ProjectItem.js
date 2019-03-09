@@ -65,6 +65,8 @@ class ProjectItem extends Component {
       type: SET_ACTIVE_PROJECT,
       payload: { activeProject: projectIdentifier }
     });
+    const serializedState = projectIdentifier;
+    localStorage.setItem("activeProject", serializedState);
     return;
   };
 

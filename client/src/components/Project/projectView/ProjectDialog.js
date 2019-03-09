@@ -75,7 +75,7 @@ class ProjectDialog extends Component {
 
   updateProjectInformation(projectInfo) {
     axios
-      .patch("http://localhost:8080/api/project", projectInfo)
+      .patch("/api/project", projectInfo)
       .then(json => {
         this.props.updateProjectInfo(json.data);
         this.props.onClose();
@@ -94,7 +94,7 @@ class ProjectDialog extends Component {
 
   saveNewProject(projectInfo) {
     axios
-      .post("http://localhost:8080/api/project", projectInfo)
+      .post("/api/project", projectInfo)
       .then(json => {
         this.props.updateAllProjects([...this.props.allProjects, json.data]);
       })

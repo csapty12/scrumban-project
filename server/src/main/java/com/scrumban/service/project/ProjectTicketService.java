@@ -96,9 +96,14 @@ public class ProjectTicketService {
 
     public void removeTicketFromProject(ProjectTicket projectTicket, String userEmail) {
         Optional<User> user = userRepository.findByEmail(userEmail);
-        if(user.isPresent() && projectTicket.getProject().getUser().getId().equals(user.get().getId())){
-            System.out.println("ticket id " + projectTicket.getId());
-            projectTicketRepository.deleteProjectTicket(projectTicket.getId());
+
+        if(user.isPresent()){
+            Optional<ProjectEntity> project = projectService.tryToFindProject(projectTicket.getProjectIdentifier(),userEmail );
+            if(project.get().getUser().getEmail().equals(user.get().getEmail()))
+
+                System.out.println("ticket id " + projectTicket.getId());
+                projectTicketRepository.deleteProjectTicket(projectTicket.getId());
+
         }
     }
 

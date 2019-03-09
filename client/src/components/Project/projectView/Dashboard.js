@@ -40,7 +40,7 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-    axios.get("http://localhost:8080/api/project").then(json => {
+    axios.get("/api/project").then(json => {
       this.setState({
         allProjects: json.data
       });
@@ -51,14 +51,12 @@ class Dashboard extends Component {
     const currentProjects = this.state.allProjects;
     const { projectIdentifier } = project;
 
-    axios
-      .delete(`http://localhost:8080/api/project/${projectIdentifier}`)
-      .then(() => {
-        let filteredProjects = currentProjects.filter(
-          item => item.projectIdentifier !== projectIdentifier
-        );
-        this.setState({ allProjects: filteredProjects });
-      });
+    axios.delete(`/api/project/${projectIdentifier}`).then(() => {
+      let filteredProjects = currentProjects.filter(
+        item => item.projectIdentifier !== projectIdentifier
+      );
+      this.setState({ allProjects: filteredProjects });
+    });
   };
 
   updateAllProjects = state => {

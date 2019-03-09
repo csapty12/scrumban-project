@@ -37,7 +37,7 @@ class TicketBoard extends Component {
       projectTickets: [],
       swimLanes: [],
       swimLaneOrder: [],
-      projectIdentifier: props.projectIdentifier,
+      projectIdentifier: this.props.projectIdentifier,
       errors: {},
       open: false,
       name: ""
@@ -69,6 +69,8 @@ class TicketBoard extends Component {
     const { projectTickets, swimLanes } = this.state;
     // const allTickets = projectTickets;
     const { projectIdentifier, id } = ticket;
+
+    console.log("projectIdentifier: " + projectIdentifier);
 
     axios
       .delete(`/dashboard/${projectIdentifier}/${id}`, {
@@ -136,12 +138,7 @@ class TicketBoard extends Component {
 
   handleAddTicket = ticket => {
     axios
-      .post(
-        `http://localhost:8080/dashboard/${ticket.projectIdentifier}/${
-          ticket.swimLane
-        }`,
-        ticket
-      )
+      .post(`/dashboard/${ticket.projectIdentifier}/${ticket.swimLane}`, ticket)
       .then(json => {
         let newProjectTickets = [...this.state.projectTickets];
         if (newProjectTickets.length === 0) {
@@ -272,9 +269,7 @@ class TicketBoard extends Component {
 
   updateSwimLaneIdOrder = reorderedTicketIds => {
     axios.patch(
-      `http://localhost:8080/dashboard/${this.state.projectIdentifier}/${
-        reorderedTicketIds.title
-      }`,
+      `/dashboard/${this.state.projectIdentifier}/${reorderedTicketIds.title}`,
       reorderedTicketIds
     );
   };
@@ -287,10 +282,7 @@ class TicketBoard extends Component {
       updatedStartSwimLane,
       updatedFinishSwimLane
     );
-    axios.patch(
-      `http://localhost:8080/dashboard/${this.state.projectIdentifier}`,
-      udpatedSwimLanes
-    );
+    axios.patch(`/dashboard/${this.state.projectIdentifier}`, udpatedSwimLanes);
   };
 
   render() {
