@@ -3,6 +3,7 @@ import "./landing.css";
 import store from "../../store";
 import { Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
 
 export default class Landing extends Component {
   constructor(props) {
@@ -20,7 +21,6 @@ export default class Landing extends Component {
       this.setRedirectToDashboard();
     }
   }
-
   render() {
     return (
       <div className="container text-center">
@@ -31,14 +31,24 @@ export default class Landing extends Component {
         </p>
         <hr />
         <Link to="/login">
-          <button type="button" className="btn btn-primary">
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            style={{ margin: 10 }}
+          >
             Login
-          </button>
+          </Button>
         </Link>
-        <Link to="/login">
-          <button type="button" className="btn btn-success">
+        <Link to="/register">
+          <Button
+            type="button"
+            variant="contained"
+            color="secondary"
+            style={{ margin: 10 }}
+          >
             Register
-          </button>
+          </Button>
         </Link>
       </div>
     );

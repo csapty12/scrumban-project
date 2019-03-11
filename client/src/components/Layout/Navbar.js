@@ -13,15 +13,21 @@ import { SET_CURRENT_USER } from "../../actions/Types";
 
 const styles = theme => ({
   navbar: {
-    background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+    background: "linear-gradient(to right, #0062e6, #33aeff)",
     border: 0,
-    borderRadius: 3,
-    boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
     color: "white",
-    padding: "0 30px"
+    padding: "0 30px",
+    boxShadow: "none"
+  },
+  navbarText: {
+    color: "#fff",
+    "&:hover": {
+      textDecoration: "none"
+    }
   },
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
+    color: "#fff"
   }
 });
 class Navbar extends Component {
@@ -42,16 +48,18 @@ class Navbar extends Component {
       <div>
         <AppBar position="static" className={classes.navbar}>
           <Toolbar>
-            <Typography variant="h6" color="inherit" className={classes.grow}>
-              TrellBan
+            <Typography variant="h6" className={classes.grow}>
+              <Link to="/" className={classes.navbarText}>
+                TrellBan
+              </Link>
             </Typography>
             {validToken && Object.entries(user).length !== 0 && (
               <Fragment>
                 <Link to="/dashboard">
-                  <Button color="inherit">{user.firstName}'s Dashboard</Button>
+                  <Button color="primary">{user.firstName}'s Dashboard</Button>
                 </Link>
                 <Link to="/">
-                  <Button color="inherit" onClick={() => this.logoutUser()}>
+                  <Button color="primary" onClick={() => this.logoutUser()}>
                     Logout
                   </Button>
                 </Link>
@@ -60,10 +68,22 @@ class Navbar extends Component {
             {Object.entries(user).length === 0 && (
               <Fragment>
                 <Link to="/login">
-                  <Button color="inherit">Login</Button>
+                  <Button
+                    variant="text"
+                    disableRipple
+                    className={classes.navbarText}
+                  >
+                    Login
+                  </Button>
                 </Link>
                 <Link to="/register">
-                  <Button color="inherit">Register</Button>
+                  <Button
+                    variant="text"
+                    disableRipple
+                    className={classes.navbarText}
+                  >
+                    Register
+                  </Button>
                 </Link>
               </Fragment>
             )}
