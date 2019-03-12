@@ -2,6 +2,7 @@
 
 # The Idea
 To create my own custom version of trello, for personal projects. 
+To view the current live state -> https://trellban.herokuapp.com
 
 # The Purpose
 
@@ -23,11 +24,16 @@ It will consist of features including:
 
 The front end will have a similar look to Jira, created using React.js component, and Redux.js to store application state such as JWT's.
 
-# How To Use:
+# How To Use Locally:
+## Dependencies:
+- Docker
+- yarn
+- Java
+- Maven 
 
 - To use the frontend:
-  - use npm install to get all node dependencies
-  - use npm start to start up the front end. This will automatically open localhost:3000
+  - use yarn install to get all node dependencies
+  - use yarn start to start up the front end. This will automatically open localhost:3000
   
 - To use the backend:
   - use mvn clean install spring-boot:run to start the backend service. 
