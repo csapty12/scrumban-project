@@ -97,7 +97,7 @@ public class ProjectTicketService {
 
     public LinkedHashMap<String, ProjectTicket> updateTicketInformation(ProjectTicket projectTicket, String projectIdentifier,  String swimLaneName, String userEmail) {
         Optional<User> user = userRepository.findByEmail(userEmail);
-        Optional<ProjectEntity> projectEntity = projectService.tryToFindProject(projectIdentifier, userEmail);
+        Optional<ProjectEntity> projectEntity = projectService.getProject(projectIdentifier, userEmail);
 
         if (user.isPresent()) {
             Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
@@ -123,7 +123,7 @@ public class ProjectTicketService {
         Optional<User> user = userRepository.findByEmail(userEmail);
 
         if (user.isPresent()) {
-            Optional<ProjectEntity> project = projectService.tryToFindProject(projectTicket.getProjectIdentifier(), userEmail);
+            Optional<ProjectEntity> project = projectService.getProject(projectTicket.getProjectIdentifier(), userEmail);
             if (project.get().getUser().getEmail().equals(user.get().getEmail()))
 
                 log.info("deleting ticket: " + projectTicket.getId());
@@ -135,7 +135,7 @@ public class ProjectTicketService {
     public void updateTicketOrderForSwimLane(String projectIdentifier, SwimLane swimLane, String userEmail) {
         Optional<User> user = userRepository.findByEmail(userEmail);
         if (user.isPresent()) {
-            Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier, userEmail);
+            Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, userEmail);
             if (!project.isPresent()) {
                 throw new ProjectIdentifierException(format("Project with Id: %s not found.", projectIdentifier));
             }
@@ -163,7 +163,7 @@ public class ProjectTicketService {
     public void updateTicketSwimLane(String projectIdentifier, List<SwimLane> swimLanes, String userEmail) {
         Optional<User> user = userRepository.findByEmail(userEmail);
         if (user.isPresent()) {
-            Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier, userEmail);
+            Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, userEmail);
             if (!project.isPresent()) {
                 throw new ProjectIdentifierException(format("Project with Id: %s not found.", projectIdentifier));
             }

@@ -70,7 +70,7 @@ class ProjectDialog extends Component {
   slugifyProjectName(projectName) {
     const splitString = projectName.split(" ");
     const projectIdentifierSlug = splitString.join("-");
-    return projectIdentifierSlug;
+    return projectIdentifierSlug.toUpperCase();
   }
 
   updateProjectInformation(projectInfo) {

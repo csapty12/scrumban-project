@@ -45,7 +45,7 @@ public class ProjectDashboardController {
     @GetMapping(value = "/{projectIdentifier}", produces =  MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier, Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
-        Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier, principal.getEmail());
+        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal.getEmail());
         if (project.isPresent()) {
             Tickets allTicketsForProject = projectTicketService.getProjectDashboard(project.get(), principal.getEmail());
             return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
@@ -65,7 +65,7 @@ public class ProjectDashboardController {
             return errorMap;
         }
         User principal = (User) authentication.getPrincipal();
-        Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier, principal.getEmail());
+        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal.getEmail());
         if (project.isPresent()) {
             swimLaneService.addSwimLaneToProject(project.get(), swimLaneEntity, principal.getEmail());
             Tickets allTicketsForProject = projectTicketService.getProjectDashboard(project.get(), principal.getEmail());
@@ -86,7 +86,7 @@ public class ProjectDashboardController {
         if (validationErrors != null) return validationErrors;
 
         User principal = (User) authentication.getPrincipal();
-        Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier, principal.getEmail());
+        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal.getEmail());
         if(project.isPresent()){
             LinkedHashMap<String, ProjectTicket> newTicket = projectTicketService.addProjectTicketToProject(project.get(),
                     swimLaneId, projectTicket, principal.getEmail());

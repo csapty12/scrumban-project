@@ -5,6 +5,7 @@ import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.service.ValidationErrorService;
 import com.scrumban.service.project.ProjectService;
+import com.scrumban.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,12 @@ public class ProjectController {
 
     private ProjectService projectService;
     private ValidationErrorService validationErrorService;
+    private UserService userService;
 
-    public ProjectController(ProjectService projectService, ValidationErrorService validationErrorService) {
+    public ProjectController(ProjectService projectService, ValidationErrorService validationErrorService, UserService userService) {
         this.projectService = projectService;
         this.validationErrorService = validationErrorService;
+        this.userService = userService;
     }
 
     @PostMapping
@@ -34,18 +37,19 @@ public class ProjectController {
 
         ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
         if (validationErrors != null) return validationErrors;
-        User principal = (User) authentication.getPrincipal();
+
+        User principal = getUser(authentication);
+
         ProjectEntity newProject = projectService.saveProject(projectEntity, principal.getEmail());
         return new ResponseEntity<>(newProject, HttpStatus.OK);
     }
 
-
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getProjectByProjectIdentifier(@PathVariable String projectIdentifier, Authentication authentication) {
-        User principal = (User) authentication.getPrincipal();
+        User principal = getUser(authentication);
 
         projectIdentifier = projectIdentifier.toUpperCase();
-        Optional<ProjectEntity> project = projectService.tryToFindProject(projectIdentifier, principal.getEmail());
+        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal.getEmail());
 
         if (project.isPresent()) { return new ResponseEntity<>(project, HttpStatus.OK); }
 
@@ -54,7 +58,7 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<?> getAllProjects(Authentication authentication) {
-        User principal = (User) authentication.getPrincipal();
+        User principal = getUser(authentication);
         Iterable<ProjectEntity> allProjects = projectService.findAllProjects(principal.getEmail());
 
         return new ResponseEntity<>(allProjects, HttpStatus.OK);
@@ -64,7 +68,7 @@ public class ProjectController {
     public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, Authentication authentication,  BindingResult bindingResult) {
         ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
         if (validationErrors != null) return validationErrors;
-        User principal = (User) authentication.getPrincipal();
+        User principal = getUser(authentication);
         ProjectEntity updatedProject = projectService.updateProject(projectEntity, principal.getEmail());
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
@@ -72,7 +76,7 @@ public class ProjectController {
     @DeleteMapping("/{projectIdentifier}")
     public ResponseEntity<?> deleteProject(@PathVariable String projectIdentifier, Authentication authentication) {
         projectIdentifier = projectIdentifier.toUpperCase();
-        User principal = (User) authentication.getPrincipal();
+        User principal = getUser(authentication);
         projectService.deleteProject(projectIdentifier, principal.getEmail());
         return new ResponseEntity<>("Project deleted", HttpStatus.OK);
     }
@@ -85,4 +89,9 @@ public class ProjectController {
         }
         return null;
     }
+
+    private User getUser(Authentication authentication) {
+        return userService.getUser(authentication);
+    }
+
 }

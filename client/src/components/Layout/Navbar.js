@@ -56,10 +56,21 @@ class Navbar extends Component {
             {validToken && Object.entries(user).length !== 0 && (
               <Fragment>
                 <Link to="/dashboard">
-                  <Button color="primary">{user.firstName}'s Dashboard</Button>
+                  <Button
+                    variant="text"
+                    disableRipple
+                    className={classes.navbarText}
+                  >
+                    {user.firstName}'s Dashboard
+                  </Button>
                 </Link>
                 <Link to="/">
-                  <Button color="primary" onClick={() => this.logoutUser()}>
+                  <Button
+                    variant="text"
+                    disableRipple
+                    className={classes.navbarText}
+                    onClick={() => this.logoutUser()}
+                  >
                     Logout
                   </Button>
                 </Link>
