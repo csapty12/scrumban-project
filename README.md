@@ -30,6 +30,6 @@ The front end will have a similar look to Jira, created using React.js component
   - use npm start to start up the front end. This will automatically open localhost:3000
   
 - To use the backend:
-  - use mvn spring-boot:run to start the backend service. 
-  - currently, you can fire queries to the backend, whcih are saved to an H2 db, however this will beacome a dockerised MySQL db soon.
+  - use mvn clean install spring-boot:run to start the backend service. 
+  - currently, you can fire queries to the backend, is a dockerised MySQL db soon.
 - please ensure that you start both if you want to have both backend and frontend functionality! :)
