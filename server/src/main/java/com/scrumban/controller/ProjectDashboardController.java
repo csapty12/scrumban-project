@@ -1,8 +1,8 @@
 package com.scrumban.controller;
 
 import com.scrumban.exception.ProjectNotFoundException;
-import com.scrumban.model.ProjectDashboard;
-import com.scrumban.model.SwimLane;
+import com.scrumban.model.domain.ProjectDashboard;
+import com.scrumban.model.domain.SwimLane;
 import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;

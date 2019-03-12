@@ -3,9 +3,9 @@ package com.scrumban.service.project;
 import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.exception.ProjectSwimLaneNotFoundException;
-import com.scrumban.model.ProjectDashboard;
-import com.scrumban.model.ProjectDashboardSwimLane;
-import com.scrumban.model.SwimLane;
+import com.scrumban.model.domain.ProjectDashboard;
+import com.scrumban.model.domain.ProjectDashboardSwimLane;
+import com.scrumban.model.domain.SwimLane;
 import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
@@ -13,9 +13,7 @@ import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
 import com.scrumban.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -142,7 +140,10 @@ public class ProjectTicketService {
                 log.info("deleting ticket: " + projectTicket.getId());
             projectTicketRepository.deleteProjectTicket(projectTicket.getId());
         }
-        throw new ProjectNotFoundException("Project with project ID: " + projectTicket.getProjectIdentifier() + "not found");
+        else{
+            throw new ProjectNotFoundException("Project with project ID: " + projectTicket.getProjectIdentifier() + "not found");
+        }
+
 
     }
 

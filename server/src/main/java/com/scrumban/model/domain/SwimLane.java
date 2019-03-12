@@ -1,4 +1,4 @@
-package com.scrumban.model;
+package com.scrumban.model.domain;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -2,19 +2,19 @@ package com.scrumban.service.project;
 
 import com.scrumban.exception.DuplicateProjectSwimLaneException;
 import com.scrumban.exception.ProjectNotFoundException;
-import com.scrumban.model.SwimLane;
+import com.scrumban.model.domain.SwimLane;
 import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.SwimLaneRepository;
-import com.scrumban.repository.UserRepository;
 import com.scrumban.service.user.UserService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@EqualsAndHashCode
 public class SwimLaneService {
 
     private ProjectService projectService;

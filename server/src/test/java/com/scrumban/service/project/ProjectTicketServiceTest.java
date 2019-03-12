@@ -1,11 +1,9 @@
 package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectNotFoundException;
-import com.scrumban.model.ProjectDashboard;
+import com.scrumban.model.domain.ProjectDashboard;
 import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
-import com.scrumban.model.project.entity.ProjectTicket;
-import com.scrumban.repository.ProjectRepository;
 import com.scrumban.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

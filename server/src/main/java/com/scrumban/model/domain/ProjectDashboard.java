@@ -1,5 +1,6 @@
-package com.scrumban.model;
+package com.scrumban.model.domain;
 
+import com.scrumban.model.domain.ProjectDashboardSwimLane;
 import com.scrumban.model.project.entity.ProjectTicket;
 import lombok.Data;
 import lombok.Getter;
