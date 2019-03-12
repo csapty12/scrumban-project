@@ -49,7 +49,8 @@ public class ProjectController {
         User principal = getUser(authentication);
 
         projectIdentifier = projectIdentifier.toUpperCase();
-        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal.getEmail());
+        User user = userService.getUser(principal.getEmail());
+        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, user);
 
         if (project.isPresent()) { return new ResponseEntity<>(project, HttpStatus.OK); }
 

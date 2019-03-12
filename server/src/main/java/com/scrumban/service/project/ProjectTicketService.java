@@ -1,25 +1,25 @@
 package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectIdentifierException;
+import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.exception.ProjectSwimLaneNotFoundException;
-import com.scrumban.model.ProjectDashboardColumn;
+import com.scrumban.model.ProjectDashboard;
+import com.scrumban.model.ProjectDashboardSwimLane;
 import com.scrumban.model.SwimLane;
-import com.scrumban.model.Tickets;
 import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
-import com.scrumban.repository.UserRepository;
+import com.scrumban.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.lang.String.format;
 
 @Service
 @Slf4j
@@ -28,50 +28,38 @@ public class ProjectTicketService {
     private ProjectTicketRepository projectTicketRepository;
     private ProjectService projectService;
     private SwimLaneService swimLaneService;
-    private UserRepository userRepository;
+    private UserService userService;
 
-    public ProjectTicketService(ProjectTicketRepository projectTicketRepository, ProjectService projectService, SwimLaneService swimLaneService, UserRepository userRepository) {
+    public ProjectTicketService(ProjectTicketRepository projectTicketRepository, ProjectService projectService, SwimLaneService swimLaneService, UserService userService) {
         this.projectTicketRepository = projectTicketRepository;
         this.projectService = projectService;
         this.swimLaneService = swimLaneService;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    public Tickets getProjectDashboard(ProjectEntity project, String userEmail) {
-        Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent() && (project.getUser().getId().equals(user.get().getId()))) {
-            List<ProjectTicket> allProjectTickets = project.getProjectTickets();
-            Tickets tickets = new Tickets();
-            List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
-            tickets.setTickets(allTickets);
-            List<Map<String, ProjectDashboardColumn>> swimLanesAndTicketReferences = addSwimLaneWithTickets(project);
-            tickets.setSwimLanes(swimLanesAndTicketReferences);
-            List<String> swimLaneOrder = new ArrayList<>();
-            swimLanesAndTicketReferences.forEach(column -> {
-                for (String key : column.keySet()) {
-                    swimLaneOrder.add(key);
-                }
-            });
-            tickets.setSwimLaneOrder(swimLaneOrder);
-
-            return tickets;
+    public ProjectDashboard getProjectDashboard(String projectIdentifier, String userEmail) {
+        User user = userService.getUser(userEmail);
+        Optional<ProjectEntity> projectEntity = projectService.getProject(projectIdentifier, user);
+        if (projectEntity.isPresent()) {
+            ProjectEntity project = projectEntity.get();
+            return setupProjectDashboard(project);
         }
-        throw new UsernameNotFoundException("User not associated with project");
-
-
+        throw new ProjectNotFoundException("Project with ID: " + projectIdentifier + " not found");
     }
+
 
     public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(ProjectEntity projectEntity,
                                                                           String swimLaneName,
                                                                           ProjectTicket projectTicket,
                                                                           String userEmail) {
-        Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent() && (projectEntity.getUser().getId().equals(user.get().getId()))) {
-            Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
-            if (!swimLaneEntity.isPresent()) {
-                throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
-            }
 
+        Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
+        if (!swimLaneEntity.isPresent()) {
+            throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
+        }
+
+        User user = userService.getUser(userEmail);
+        if (projectService.isUserAssociatedWithProject(user, projectEntity)) {
             int currentTicketNumber = projectEntity.getCurrentTicketNumber();
             int incrementValue = 1;
             String acronym = getAcronymFromProjectIdentifier(projectEntity.getProjectIdentifier());
@@ -79,32 +67,58 @@ public class ProjectTicketService {
             String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
             projectTicket.setProjectSequence(projectSequence);
 
-
             projectTicket.setProject(projectEntity);
             projectTicket.setSwimLaneEntity(swimLaneEntity.get());
             projectTicket.setProjectIdentifier(projectEntity.getProjectIdentifier());
             projectTicketRepository.save(projectTicket);
-
             LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
             singleProjectTicket.put(projectSequence, projectTicket);
-
             return singleProjectTicket;
         }
-        throw new UsernameNotFoundException("User not found");
-
-
+        throw new ProjectNotFoundException("Project with ID: " + projectEntity.getProjectIdentifier() + " not found");
     }
 
-    public LinkedHashMap<String, ProjectTicket> updateTicketInformation(ProjectTicket projectTicket, String projectIdentifier,  String swimLaneName, String userEmail) {
-        Optional<User> user = userRepository.findByEmail(userEmail);
-        Optional<ProjectEntity> projectEntity = projectService.getProject(projectIdentifier, userEmail);
+//    public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(ProjectEntity projectEntity,
+//                                                                          String swimLaneName,
+//                                                                          ProjectTicket projectTicket,
+//                                                                          String userEmail) {
+//        User user = userService.getUser(userEmail);
+//        if (projectEntity.getUser().getId().equals(user.getId())) {
+//            Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
+//            if (!swimLaneEntity.isPresent()) {
+//                throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
+//            }
+//
+//            int currentTicketNumber = projectEntity.getCurrentTicketNumber();
+//            int incrementValue = 1;
+//            String acronym = getAcronymFromProjectIdentifier(projectEntity.getProjectIdentifier());
+//            int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
+//            String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
+//            projectTicket.setProjectSequence(projectSequence);
+//
+//            projectTicket.setProject(projectEntity);
+//            projectTicket.setSwimLaneEntity(swimLaneEntity.get());
+//            projectTicket.setProjectIdentifier(projectEntity.getProjectIdentifier());
+//            projectTicketRepository.save(projectTicket);
+//
+//            LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
+//            singleProjectTicket.put(projectSequence, projectTicket);
+//
+//            return singleProjectTicket;
+//        }
+//        throw new UsernameNotFoundException("User not found");
+//    }
 
-        if (user.isPresent()) {
-            Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
-            if (!swimLaneEntity.isPresent()) {
-                throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
-            }
+    public LinkedHashMap<String, ProjectTicket> updateTicketInformation(ProjectTicket projectTicket, String projectIdentifier, String swimLaneName, String userEmail) {
+        User user = userService.getUser(userEmail);
+        Optional<ProjectEntity> projectEntity = projectService.getProject(projectIdentifier, user);
 
+        Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
+        if (!swimLaneEntity.isPresent()) {
+            throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
+        }
+
+        if (projectEntity.isPresent()) {
             projectTicket.setProject(projectEntity.get());
             projectTicket.setTicketNumberPosition(projectTicket.getTicketNumberPosition());
             projectTicket.setSwimLaneEntity(swimLaneEntity.get());
@@ -112,100 +126,90 @@ public class ProjectTicketService {
 
             projectTicketRepository.save(projectTicket);
 
+            LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
+            return singleProjectTicket;
         }
-        LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
-        return singleProjectTicket;
-
+        throw new ProjectNotFoundException("Project with project ID: " + projectIdentifier + "not found");
     }
 
 
     public void removeTicketFromProject(ProjectTicket projectTicket, String userEmail) {
-        Optional<User> user = userRepository.findByEmail(userEmail);
+        User user = userService.getUser(userEmail);
 
-        if (user.isPresent()) {
-            Optional<ProjectEntity> project = projectService.getProject(projectTicket.getProjectIdentifier(), userEmail);
-            if (project.get().getUser().getEmail().equals(user.get().getEmail()))
-
+        Optional<ProjectEntity> project = projectService.getProject(projectTicket.getProjectIdentifier(), user);
+        if (project.isPresent()) {
+            if (project.get().getUser().getEmail().equals(user.getEmail()))
                 log.info("deleting ticket: " + projectTicket.getId());
             projectTicketRepository.deleteProjectTicket(projectTicket.getId());
-
         }
+        throw new ProjectNotFoundException("Project with project ID: " + projectTicket.getProjectIdentifier() + "not found");
+
     }
 
     public void updateTicketOrderForSwimLane(String projectIdentifier, SwimLane swimLane, String userEmail) {
-        Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent()) {
-            Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, userEmail);
-            if (!project.isPresent()) {
-                throw new ProjectIdentifierException(format("Project with Id: %s not found.", projectIdentifier));
-            }
-            List<SwimLaneEntity> singleSwimLane = project.get().getSwimLaneEntities()
-                    .stream()
-                    .filter(swimLaneEntity -> swimLaneEntity.getName().equals(swimLane.getTitle())).collect(Collectors.toList());
+        User user = userService.getUser(userEmail);
 
-
-            List<ProjectTicket> projectSwimLaneTickets = singleSwimLane.get(0)
-                    .getProjectTickets()
-                    .stream()
-                    .filter(ticket -> ticket.getProject().getProjectIdentifier()
-                            .equals(projectIdentifier)).collect(Collectors.toList()
-                    );
-
-            projectSwimLaneTickets.forEach(ticket ->
-                    updateTicketPositionInSwimLane(swimLane, ticket));
-        } else {
-            throw new UsernameNotFoundException("User not found");
+        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, user);
+        if (!project.isPresent()) {
+            throw new ProjectIdentifierException(String.format("Project with Id: %s not found.", projectIdentifier));
         }
+        List<SwimLaneEntity> singleSwimLane = project.get().getSwimLaneEntities()
+                .stream()
+                .filter(swimLaneEntity -> swimLaneEntity.getName().equals(swimLane.getTitle())).collect(Collectors.toList());
 
+
+        List<ProjectTicket> projectSwimLaneTickets = singleSwimLane.get(0)
+                .getProjectTickets()
+                .stream()
+                .filter(ticket -> ticket.getProject().getProjectIdentifier()
+                        .equals(projectIdentifier)).collect(Collectors.toList()
+                );
+
+        projectSwimLaneTickets.forEach(ticket ->
+                updateTicketPositionInSwimLane(swimLane, ticket));
     }
+
 
     @Transactional
     public void updateTicketSwimLane(String projectIdentifier, List<SwimLane> swimLanes, String userEmail) {
-        Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent()) {
-            Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, userEmail);
-            if (!project.isPresent()) {
-                throw new ProjectIdentifierException(format("Project with Id: %s not found.", projectIdentifier));
-            }
+        User user = userService.getUser(userEmail);
 
-            swimLanes.forEach(swimLane -> {
-                List<String> ticketIds = swimLane.getTicketIds();
-                Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLane.getTitle());
-                ticketIds.forEach(ticketId -> {
-                    ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticketId);
-                    projectTicket.setSwimLaneEntity(swimLaneEntity.get());
-                    projectTicketRepository.save(projectTicket);
-                });
+        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, user);
+        if (!project.isPresent()) {
+            throw new ProjectIdentifierException(String.format("Project with Id: %s not found.", projectIdentifier));
+        }
+
+        swimLanes.forEach(swimLane -> {
+            List<String> ticketIds = swimLane.getTicketIds();
+            Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLane.getTitle());
+            ticketIds.forEach(ticketId -> {
+                ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticketId);
+                projectTicket.setSwimLaneEntity(swimLaneEntity.get());
+                projectTicketRepository.save(projectTicket);
             });
-        }
-        else {
-            throw new UsernameNotFoundException("User not found");
-        }
-
+        });
     }
 
     public void updateTicketPositionInNewSwimLane(List<SwimLane> swimLanes, String userEmail) {
-        Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent()) {
-            swimLanes.get(0).getTicketIds().forEach(ticket -> {
-                ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticket);
-                if (projectTicket.getProject().getUser().getId().equals(user.get().getId())) {
-                    updateTicketPositionInSwimLane(swimLanes.get(0), projectTicket);
-                }
-            });
-            swimLanes.get(1).getTicketIds().forEach(ticket -> {
-                ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticket);
-                if (projectTicket.getProject().getUser().getId().equals(user.get().getId())) {
-                    updateTicketPositionInSwimLane(swimLanes.get(1), projectTicket);
-                }
-            });
-        }
+        User user = userService.getUser(userEmail);
 
-
+        swimLanes.get(0).getTicketIds().forEach(ticket -> {
+            ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticket);
+            if (projectTicket.getProject().getUser().getId().equals(user.getId())) {
+                updateTicketPositionInSwimLane(swimLanes.get(0), projectTicket);
+            }
+        });
+        swimLanes.get(1).getTicketIds().forEach(ticket -> {
+            ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticket);
+            if (projectTicket.getProject().getUser().getId().equals(user.getId())) {
+                updateTicketPositionInSwimLane(swimLanes.get(1), projectTicket);
+            }
+        });
     }
 
-    private ProjectDashboardColumn createColumnAndInsertTasks(String columnName, List<ProjectTicket> allProjectTickets) {
-        return ProjectDashboardColumn
+
+    private ProjectDashboardSwimLane createSwimLaneAndInsertTasks(String columnName, List<ProjectTicket> allProjectTickets) {
+        return ProjectDashboardSwimLane
                 .builder()
                 .title(columnName)
                 .ticketIds(getTicketIds(allProjectTickets, columnName)).build();
@@ -250,27 +254,46 @@ public class ProjectTicketService {
         return initials.toUpperCase();
     }
 
-    private List<Map<String, ProjectDashboardColumn>> addSwimLaneWithTickets(ProjectEntity projectEntity) {
-
-        List<String> columnNames = new ArrayList<>();
-
-        projectEntity.getSwimLaneEntities().forEach(column -> {
-
-            columnNames.add(column.getName());
-        });
-
+    private List<Map<String, ProjectDashboardSwimLane>> addSwimLaneWithTickets(ProjectEntity projectEntity) {
+        List<String> swimLaneNames = new ArrayList<>();
+        getProjectSwimLanes(projectEntity, swimLaneNames);
 
         List<ProjectTicket> allProjectTickets = projectEntity.getProjectTickets();
-
-
-        List<Map<String, ProjectDashboardColumn>> listOfColumns = new ArrayList<>();
-        for (String columnName : columnNames) {
-            Map<String, ProjectDashboardColumn> projectDashboardColumn = new HashMap<>();
-            projectDashboardColumn.put(columnName, createColumnAndInsertTasks(columnName, allProjectTickets));
-            listOfColumns.add(projectDashboardColumn);
-        }
+        List<Map<String, ProjectDashboardSwimLane>> listOfColumns = new ArrayList<>();
+        insertTicketsIntoSwimLanes(swimLaneNames, allProjectTickets, listOfColumns);
         return listOfColumns;
+    }
 
+    private void insertTicketsIntoSwimLanes(List<String> swimLaneNames, List<ProjectTicket> allProjectTickets, List<Map<String, ProjectDashboardSwimLane>> swimLanes) {
+        swimLaneNames.forEach(swimLaneName -> {
+            Map<String, ProjectDashboardSwimLane> projectDashboardSwimLanes = new HashMap<>();
+            projectDashboardSwimLanes.put(swimLaneName, createSwimLaneAndInsertTasks(swimLaneName, allProjectTickets));
+            swimLanes.add(projectDashboardSwimLanes);
+        });
+    }
+
+    private void getProjectSwimLanes(ProjectEntity projectEntity, List<String> swimLaneNames) {
+        projectEntity.getSwimLaneEntities().forEach(swimLane -> {
+            swimLaneNames.add(swimLane.getName());
+        });
+    }
+
+    private ProjectDashboard setupProjectDashboard(ProjectEntity project) {
+        List<ProjectTicket> allProjectTickets = project.getProjectTickets();
+        ProjectDashboard projectDashboard = new ProjectDashboard();
+
+        List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
+        projectDashboard.setTickets(allTickets);
+        List<Map<String, ProjectDashboardSwimLane>> swimLanesAndTicketReferences = addSwimLaneWithTickets(project);
+        projectDashboard.setSwimLanes(swimLanesAndTicketReferences);
+        List<String> swimLaneOrder = new ArrayList<>();
+        swimLanesAndTicketReferences.forEach(column -> {
+            for (String key : column.keySet()) {
+                swimLaneOrder.add(key);
+            }
+        });
+        projectDashboard.setSwimLaneOrder(swimLaneOrder);
+        return projectDashboard;
     }
 
 

@@ -14,9 +14,9 @@ import java.util.Map;
 @Setter
 @Data
 @ToString
-public class Tickets {
+public class ProjectDashboard {
     private List<LinkedHashMap<String, ProjectTicket>> tickets;
-    private List<Map<String, ProjectDashboardColumn>> swimLanes;
+    private List<Map<String, ProjectDashboardSwimLane>> swimLanes;
     private List<String> swimLaneOrder;
 
 }
