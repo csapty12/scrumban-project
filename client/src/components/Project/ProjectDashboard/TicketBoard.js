@@ -118,9 +118,11 @@ class TicketBoard extends Component {
     axios
       .post(`/dashboard/${this.state.projectIdentifier}`, newSwimlane)
       .then(json => {
+        console.log("json response: " + JSON.stringify(json.data));
+        console.log(Object.keys(json.data));
         this.setState({
-          swimLanes: json.data.swimLanes,
-          swimLaneOrder: json.data.swimLaneOrder
+          swimLanes: [...this.state.swimLanes, json.data],
+          swimLaneOrder: [...this.state.swimLaneOrder, Object.keys(json.data)]
         });
       })
       .then(() => this.handleClose())

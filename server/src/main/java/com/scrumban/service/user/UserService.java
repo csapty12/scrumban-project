@@ -6,9 +6,12 @@ import com.scrumban.repository.UserRepository;
 import com.scrumban.validator.UserValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -44,5 +47,13 @@ public class UserService {
 
     public User getUser(Authentication authentication) {
         return (User) authentication.getPrincipal();
+    }
+
+    public User getUser(String userEmail) {
+        Optional<User> user = userRepository.findByEmail(userEmail);
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("User not found.");
+        }
+        return user.get();
     }
 }

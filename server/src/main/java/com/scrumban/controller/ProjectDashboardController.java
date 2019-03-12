@@ -1,8 +1,8 @@
 package com.scrumban.controller;
 
 import com.scrumban.exception.ProjectNotFoundException;
+import com.scrumban.model.ProjectDashboard;
 import com.scrumban.model.SwimLane;
-import com.scrumban.model.Tickets;
 import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -42,15 +43,11 @@ public class ProjectDashboardController {
         this.projectService = projectService;
     }
 
-    @GetMapping(value = "/{projectIdentifier}", produces =  MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/{projectIdentifier}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier, Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
-        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal.getEmail());
-        if (project.isPresent()) {
-            Tickets allTicketsForProject = projectTicketService.getProjectDashboard(project.get(), principal.getEmail());
-            return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
-        }
-        throw new ProjectNotFoundException("No project found with identifier: " + projectIdentifier);
+        ProjectDashboard allProjectDashboardForProject = projectTicketService.getProjectDashboard(projectIdentifier, principal.getEmail());
+        return new ResponseEntity<>(allProjectDashboardForProject, HttpStatus.OK);
 
     }
 
@@ -65,13 +62,9 @@ public class ProjectDashboardController {
             return errorMap;
         }
         User principal = (User) authentication.getPrincipal();
-        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal.getEmail());
-        if (project.isPresent()) {
-            swimLaneService.addSwimLaneToProject(project.get(), swimLaneEntity, principal.getEmail());
-            Tickets allTicketsForProject = projectTicketService.getProjectDashboard(project.get(), principal.getEmail());
-            return new ResponseEntity<>(allTicketsForProject, HttpStatus.OK);
-        }
-        throw new ProjectNotFoundException("No project found with identifier: " + projectIdentifier);
+
+        Map<String, SwimLane> newSwimLane =  swimLaneService.addSwimLaneToProject(projectIdentifier, swimLaneEntity, principal.getEmail());
+        return new ResponseEntity<>(newSwimLane, HttpStatus.OK);
 
     }
 
@@ -86,7 +79,7 @@ public class ProjectDashboardController {
         if (validationErrors != null) return validationErrors;
 
         User principal = (User) authentication.getPrincipal();
-        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal.getEmail());
+        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal);
         if(project.isPresent()){
             LinkedHashMap<String, ProjectTicket> newTicket = projectTicketService.addProjectTicketToProject(project.get(),
                     swimLaneId, projectTicket, principal.getEmail());
@@ -152,7 +145,6 @@ public class ProjectDashboardController {
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
-
 
 
     private ResponseEntity<?> validateIncomingRequest(BindingResult bindingResult) {

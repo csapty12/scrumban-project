@@ -7,7 +7,7 @@ import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.repository.ProjectRepository;
 import com.scrumban.repository.ProjectTicketRepository;
-import com.scrumban.repository.UserRepository;
+import com.scrumban.service.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class ProjectServiceTest {
     private ProjectRepository projectRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Mock
     private ProjectTicketRepository projectTicketRepository;
@@ -56,7 +56,7 @@ class ProjectServiceTest {
             User user = createValidUser();
             ProjectEntity project = createProject();
 
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(project));
 
             assertThrows(ProjectIdentifierException.class, () -> projectService.saveProject(project, user.getEmail()));
@@ -68,7 +68,7 @@ class ProjectServiceTest {
             User user = createValidUser();
             ProjectEntity project = createProject();
 
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
             when(projectRepository.save(any())).thenReturn(project);
 
@@ -80,10 +80,9 @@ class ProjectServiceTest {
         @Test
         @DisplayName("Test when user does not exist, throw usernameNotFoundException")
         void userNotExistThrowException() {
-            User user = createInvalidUser();
             ProjectEntity project = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
-            assertThrows(UsernameNotFoundException.class, () -> projectService.saveProject(project, user.getEmail()));
+            when(userService.getUser(anyString())).thenThrow(UsernameNotFoundException.class);
+            assertThrows(UsernameNotFoundException.class, () -> projectService.saveProject(project, ""));
         }
 
     }
@@ -95,9 +94,8 @@ class ProjectServiceTest {
         @Test
         @DisplayName("Test when find all projects, throws UsernameNotFound excpetion")
         void testUserDoesNotExist() {
-            User user = createInvalidUser();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
-            assertThrows(UsernameNotFoundException.class, () -> projectService.findAllProjects(user.getEmail()));
+            when(userService.getUser(anyString())).thenThrow(UsernameNotFoundException.class);
+            assertThrows(UsernameNotFoundException.class, () -> projectService.findAllProjects(""));
         }
 
         @Test
@@ -105,7 +103,7 @@ class ProjectServiceTest {
         void testNoProjectsFound() {
             User user = createValidUser();
             when(projectRepository.findAllByUser(user)).thenReturn(new ArrayList<>());
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             assertThrows(ProjectNotFoundException.class, () -> projectService.findAllProjects(user.getEmail()));
         }
 
@@ -114,7 +112,7 @@ class ProjectServiceTest {
         void testAllProjectsFound() {
             User user = createValidUser();
             ProjectEntity projectEntity = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             List<ProjectEntity> listOfProjects = new ArrayList<>(asList(projectEntity));
             when(projectRepository.findAllByUser(user)).thenReturn(listOfProjects);
             Iterable<ProjectEntity> allProjects = projectService.findAllProjects(user.getEmail());
@@ -134,7 +132,7 @@ class ProjectServiceTest {
         void testUpdate() {
             User user = createValidUser();
             ProjectEntity projectEntity = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
             projectService.updateProject(projectEntity, user.getEmail());
             verify(projectRepository, times(1)).save(any());
@@ -143,18 +141,20 @@ class ProjectServiceTest {
         @Test
         @DisplayName("Test when update project, throws UsernameNotFound exception")
         void testUserDoesNotExist() {
-            User user = createInvalidUser();
+
             ProjectEntity projectEntity = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
-            assertThrows(UsernameNotFoundException.class, () -> projectService.updateProject(projectEntity, user.getEmail()));
+            when(userService.getUser(anyString())).thenThrow(UsernameNotFoundException.class);
+            assertThrows(UsernameNotFoundException.class, () -> projectService.updateProject(projectEntity, ""));
         }
 
         @Test
         @DisplayName("Test when update project, throws ProjectIdentifierException when project not associated with user")
         void testProjectNotFound() {
-            User user = createInvalidUser();
+            User user = new User();
+            user.setEmail("bob@bob.com");
+            user.setId(5L);
             ProjectEntity projectEntity = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
             assertThrows(ProjectIdentifierException.class, () -> projectService.updateProject(projectEntity, user.getEmail()));
         }
@@ -162,9 +162,11 @@ class ProjectServiceTest {
         @Test
         @DisplayName("Test when update project, throws ProjectNotFoundException when project not associated with user")
         void testProjectNotAssociatedWithUser() {
-            User user = createInvalidUser();
+            User user = new User();
+            user.setEmail("bob@bob.com");
+            user.setId(5L);
             ProjectEntity projectEntity = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
             assertThrows(ProjectNotFoundException.class, () -> projectService.updateProject(projectEntity, user.getEmail()));
         }
@@ -177,18 +179,20 @@ class ProjectServiceTest {
         @Test
         @DisplayName("Test when user does not exist, throw usernameNotFoundException")
         void userNotExistThrowException() {
-            User user = createInvalidUser();
+
             ProjectEntity project = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
-            assertThrows(UsernameNotFoundException.class, () -> projectService.deleteProject(project.getProjectIdentifier(), user.getEmail()));
+            when(userService.getUser(anyString())).thenThrow(UsernameNotFoundException.class);
+            assertThrows(UsernameNotFoundException.class, () -> projectService.deleteProject(project.getProjectIdentifier(), ""));
         }
 
         @Test
         @DisplayName("Test when delete project, throws ProjectIdentifierException when project not associated with user")
         void testProjectNotFound() {
-            User user = createInvalidUser();
+            User user = new User();
+            user.setEmail("bob@bob.com");
+            user.setId(5L);
             ProjectEntity projectEntity = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
             assertThrows(ProjectIdentifierException.class, () -> projectService.deleteProject(projectEntity.getProjectIdentifier(), user.getEmail()));
         }
@@ -196,9 +200,11 @@ class ProjectServiceTest {
         @Test
         @DisplayName("Test when delete project, throws ProjectNotFoundException when project not associated with user")
         void testProjectNotAssociatedWithUser() {
-            User user = createInvalidUser();
+            User user = new User();
+            user.setEmail("bob@bob.com");
+            user.setId(5L);
             ProjectEntity projectEntity = createProject();
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
             assertThrows(ProjectNotFoundException.class, () -> projectService.deleteProject(projectEntity.getProjectIdentifier(), user.getEmail()));
         }
@@ -209,16 +215,12 @@ class ProjectServiceTest {
             User user = createValidUser();
             ProjectEntity projectEntity = createProject();
 
-            when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+            when(userService.getUser(anyString())).thenReturn(user);
             when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
             projectService.deleteProject(projectEntity.getProjectIdentifier(), user.getEmail());
             verify(projectRepository, times(1)).delete(projectEntity);
 
         }
-    }
-
-    private User createInvalidUser() {
-        return new User();
     }
 
     private User createValidUser() {

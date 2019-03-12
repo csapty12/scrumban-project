@@ -8,7 +8,7 @@ import java.util.ArrayList;
 @Data
 @Builder
 @ToString
-public class ProjectDashboardColumn {
+public class ProjectDashboardSwimLane {
     private String title;
     private ArrayList<String> ticketIds;
 }
