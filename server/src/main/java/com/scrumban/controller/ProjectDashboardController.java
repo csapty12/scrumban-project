@@ -1,16 +1,14 @@
 package com.scrumban.controller;
 
-import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.domain.ProjectDashboard;
 import com.scrumban.model.domain.SwimLane;
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.model.project.entity.SwimLaneEntity;
-import com.scrumban.service.project.ProjectTicketService;
-import com.scrumban.service.project.SwimLaneService;
 import com.scrumban.service.ValidationErrorService;
 import com.scrumban.service.project.ProjectService;
+import com.scrumban.service.project.ProjectTicketService;
+import com.scrumban.service.project.SwimLaneService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +21,6 @@ import javax.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -56,14 +53,10 @@ public class ProjectDashboardController {
                                                   @Valid @RequestBody SwimLaneEntity swimLaneEntity,
                                                   BindingResult bindingResult, Authentication authentication) {
 
-        ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);
-        if (errorMap != null) {
-            System.out.println("error map: " + errorMap);
-            return errorMap;
-        }
+        ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
+        if (validationErrors != null) return validationErrors;
         User principal = (User) authentication.getPrincipal();
-
-        Map<String, SwimLane> newSwimLane =  swimLaneService.addSwimLaneToProject(projectIdentifier, swimLaneEntity, principal.getEmail());
+        Map<String, SwimLane> newSwimLane = swimLaneService.addSwimLaneToProject(projectIdentifier, swimLaneEntity, principal.getEmail());
         return new ResponseEntity<>(newSwimLane, HttpStatus.OK);
 
     }
@@ -79,14 +72,9 @@ public class ProjectDashboardController {
         if (validationErrors != null) return validationErrors;
 
         User principal = (User) authentication.getPrincipal();
-        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, principal);
-        if(project.isPresent()){
-            LinkedHashMap<String, ProjectTicket> newTicket = projectTicketService.addProjectTicketToProject(project.get(),
-                    swimLaneId, projectTicket, principal.getEmail());
-            return new ResponseEntity<>(newTicket, HttpStatus.OK);
-        }
-        throw new ProjectNotFoundException("No project found with identifier: " + projectIdentifier);
-
+        LinkedHashMap<String, ProjectTicket> newTicket = projectTicketService.addProjectTicketToProject(projectIdentifier,
+                swimLaneId, projectTicket, principal.getEmail());
+        return new ResponseEntity<>(newTicket, HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectIdentifier}/{id}")
@@ -130,18 +118,18 @@ public class ProjectDashboardController {
     }
 
     @PatchMapping("/{projectIdentifier}/{swimLaneId}/{id}")
-    public  ResponseEntity<?> updateTicketInformation(@PathVariable String projectIdentifier,
-                                                      @PathVariable String swimLaneId,
-                                                      @PathVariable Long id,
-                                                      @Valid @RequestBody ProjectTicket projectTicket,
-                                                      BindingResult bindingResult, Authentication authentication
-                                                      ){
+    public ResponseEntity<?> updateTicketInformation(@PathVariable String projectIdentifier,
+                                                     @PathVariable String swimLaneId,
+                                                     @PathVariable Long id,
+                                                     @Valid @RequestBody ProjectTicket projectTicket,
+                                                     BindingResult bindingResult, Authentication authentication
+    ) {
         ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
         if (validationErrors != null) return validationErrors;
 
         User principal = (User) authentication.getPrincipal();
         System.out.println("ticket postion: " + projectTicket.getTicketNumberPosition());
-        projectTicketService.updateTicketInformation(projectTicket, projectIdentifier,  swimLaneId, principal.getEmail());
+        projectTicketService.updateTicketInformation(projectTicket, projectIdentifier, swimLaneId, principal.getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
 
     }

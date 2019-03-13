@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-@EqualsAndHashCode
 public class SwimLaneService {
 
     private ProjectService projectService;
@@ -34,28 +33,32 @@ public class SwimLaneService {
         if (project.isPresent()) {
             Optional<SwimLaneEntity> foundSwimLane = swimLaneRepository.findByName(swimLaneEntity.getName());
             List<SwimLaneEntity> projectSwimLanes = project.get().getSwimLaneEntities();
-            if (!foundSwimLane.isPresent()) {
-                SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
-                projectSwimLanes.add(newSwimLaneEntity);
-            } else {
-
-                if (projectSwimLanes.contains(foundSwimLane.get())) {
-                    throw new DuplicateProjectSwimLaneException("Swim lane already exists in this project");
-                }
-                projectSwimLanes.add(foundSwimLane.get());
-            }
+            insertSwimLaneToProject(swimLaneEntity, foundSwimLane, projectSwimLanes);
             projectService.updateProject(project.get(), userEmail);
-            SwimLane newSwimLane = SwimLane.builder().title(swimLaneEntity.getName()).ticketIds(new ArrayList<>()).build();
-            Map<String, SwimLane> swimLaneMap = new HashMap<>();
-            swimLaneMap.put(swimLaneEntity.getName(), newSwimLane);
-            return swimLaneMap;
+            return  createNewSwimLaneObject(swimLaneEntity);
         }
         throw new ProjectNotFoundException("Project with ID: " + projectIdentifier + "not found");
     }
-
 
     public Optional<SwimLaneEntity> findSwimLaneByName(String swimLaneName) {
         return swimLaneRepository.findByName(swimLaneName);
     }
 
+    private void insertSwimLaneToProject(SwimLaneEntity swimLaneEntity, Optional<SwimLaneEntity> foundSwimLane, List<SwimLaneEntity> projectSwimLanes) {
+        if (!foundSwimLane.isPresent()) {
+            SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
+            projectSwimLanes.add(newSwimLaneEntity);
+        } else {
+            if (projectSwimLanes.contains(foundSwimLane.get())) {
+                throw new DuplicateProjectSwimLaneException("Swim lane already exists in this project");
+            }
+            projectSwimLanes.add(foundSwimLane.get());
+        }
+    }
+    private Map<String, SwimLane> createNewSwimLaneObject(SwimLaneEntity swimLaneEntity) {
+        SwimLane newSwimLane = SwimLane.builder().title(swimLaneEntity.getName()).ticketIds(new ArrayList<>()).build();
+        Map<String, SwimLane> swimLaneMap = new HashMap<>();
+        swimLaneMap.put(swimLaneEntity.getName(), newSwimLane);
+        return swimLaneMap;
+    }
 }

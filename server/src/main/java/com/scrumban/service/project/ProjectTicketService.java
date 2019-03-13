@@ -46,66 +46,36 @@ public class ProjectTicketService {
     }
 
 
-    public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(ProjectEntity projectEntity,
+    public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(String projectIdentifier,
                                                                           String swimLaneName,
                                                                           ProjectTicket projectTicket,
                                                                           String userEmail) {
 
-        Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
-        if (!swimLaneEntity.isPresent()) {
+        Optional<SwimLaneEntity> swimLane = swimLaneService.findSwimLaneByName(swimLaneName);
+        if (!swimLane.isPresent()) {
             throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
         }
-
         User user = userService.getUser(userEmail);
-        if (projectService.isUserAssociatedWithProject(user, projectEntity)) {
-            int currentTicketNumber = projectEntity.getCurrentTicketNumber();
-            int incrementValue = 1;
-            String acronym = getAcronymFromProjectIdentifier(projectEntity.getProjectIdentifier());
-            int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
-            String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
-            projectTicket.setProjectSequence(projectSequence);
-
-            projectTicket.setProject(projectEntity);
-            projectTicket.setSwimLaneEntity(swimLaneEntity.get());
-            projectTicket.setProjectIdentifier(projectEntity.getProjectIdentifier());
-            projectTicketRepository.save(projectTicket);
-            LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
-            singleProjectTicket.put(projectSequence, projectTicket);
-            return singleProjectTicket;
+        Optional<ProjectEntity> projectEntity = projectService.getProject(projectIdentifier, user);
+        if (!projectEntity.isPresent()) {
+            throw new ProjectNotFoundException("Project with ID: " + projectIdentifier + " not found");
         }
-        throw new ProjectNotFoundException("Project with ID: " + projectEntity.getProjectIdentifier() + " not found");
+
+        ProjectEntity existingProject = projectEntity.get();
+        int currentTicketNumber = existingProject.getCurrentTicketNumber();
+        int incrementValue = 1;
+        String projectSequence = createTicketIdentifier(existingProject, currentTicketNumber, incrementValue);
+        projectTicket.setProjectSequence(projectSequence);
+
+        projectTicket.setProject(existingProject);
+        projectTicket.setSwimLaneEntity(swimLane.get());
+        projectTicket.setProjectIdentifier(existingProject.getProjectIdentifier());
+        projectTicketRepository.save(projectTicket);
+        LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
+        singleProjectTicket.put(projectSequence, projectTicket);
+        return singleProjectTicket;
     }
 
-//    public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(ProjectEntity projectEntity,
-//                                                                          String swimLaneName,
-//                                                                          ProjectTicket projectTicket,
-//                                                                          String userEmail) {
-//        User user = userService.getUser(userEmail);
-//        if (projectEntity.getUser().getId().equals(user.getId())) {
-//            Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
-//            if (!swimLaneEntity.isPresent()) {
-//                throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
-//            }
-//
-//            int currentTicketNumber = projectEntity.getCurrentTicketNumber();
-//            int incrementValue = 1;
-//            String acronym = getAcronymFromProjectIdentifier(projectEntity.getProjectIdentifier());
-//            int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
-//            String projectSequence = acronym + "-" + newProjectTicketSequenceValue;
-//            projectTicket.setProjectSequence(projectSequence);
-//
-//            projectTicket.setProject(projectEntity);
-//            projectTicket.setSwimLaneEntity(swimLaneEntity.get());
-//            projectTicket.setProjectIdentifier(projectEntity.getProjectIdentifier());
-//            projectTicketRepository.save(projectTicket);
-//
-//            LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
-//            singleProjectTicket.put(projectSequence, projectTicket);
-//
-//            return singleProjectTicket;
-//        }
-//        throw new UsernameNotFoundException("User not found");
-//    }
 
     public LinkedHashMap<String, ProjectTicket> updateTicketInformation(ProjectTicket projectTicket, String projectIdentifier, String swimLaneName, String userEmail) {
         User user = userService.getUser(userEmail);
@@ -136,15 +106,11 @@ public class ProjectTicketService {
 
         Optional<ProjectEntity> project = projectService.getProject(projectTicket.getProjectIdentifier(), user);
         if (project.isPresent()) {
-            if (project.get().getUser().getEmail().equals(user.getEmail()))
-                log.info("deleting ticket: " + projectTicket.getId());
+            log.info("deleting ticket: " + projectTicket.getId());
             projectTicketRepository.deleteProjectTicket(projectTicket.getId());
-        }
-        else{
+        } else {
             throw new ProjectNotFoundException("Project with project ID: " + projectTicket.getProjectIdentifier() + "not found");
         }
-
-
     }
 
     public void updateTicketOrderForSwimLane(String projectIdentifier, SwimLane swimLane, String userEmail) {
@@ -295,6 +261,12 @@ public class ProjectTicketService {
         });
         projectDashboard.setSwimLaneOrder(swimLaneOrder);
         return projectDashboard;
+    }
+
+    private String createTicketIdentifier(ProjectEntity existingProject, int currentTicketNumber, int incrementValue) {
+        String acronym = getAcronymFromProjectIdentifier(existingProject.getProjectIdentifier());
+        int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
+        return acronym + "-" + newProjectTicketSequenceValue;
     }
 
 

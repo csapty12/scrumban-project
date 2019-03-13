@@ -18,9 +18,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.*;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,7 +43,7 @@ class SwimLaneServiceTest {
 
     @Test
     @DisplayName("test that new swimlane is added to project successfully")
-    void newSwimLane(){
+    void newSwimLane() {
         User user = createValidUser();
         ProjectEntity projectEntity = createProject();
         SwimLaneEntity swimLaneEntity = createSwimLaneEntity();
@@ -58,19 +57,19 @@ class SwimLaneServiceTest {
         Map<String, SwimLane> expectedAddNewSwimLaneToProject = new HashMap<>();
         SwimLane expectedSwimLane = SwimLane.builder().title("testSwimLane").ticketIds(new ArrayList<>()).build();
         expectedAddNewSwimLaneToProject.put("testSwimLane", expectedSwimLane);
-        assertThat(actualSwimLaneToProject, samePropertyValuesAs(expectedAddNewSwimLaneToProject));
+        assertThat(actualSwimLaneToProject, is(expectedAddNewSwimLaneToProject));
     }
 
     @Test
     @DisplayName("test user does not exist when trying to add new swimLane")
-    void userDoesNotExist(){
+    void userDoesNotExist() {
         when(userService.getUser(anyString())).thenThrow(UsernameNotFoundException.class);
         assertThrows(UsernameNotFoundException.class, () -> swimLaneService.addSwimLaneToProject("test", new SwimLaneEntity(), "test@test.com"));
     }
 
     @Test
     @DisplayName("test that ProjectNotFoundException thrown when add swimlane to project that does not exist")
-    void projectDoesNotExist(){
+    void projectDoesNotExist() {
         User user = createValidUser();
         when(userService.getUser(anyString())).thenReturn(user);
         when(projectService.getProject(anyString(), any())).thenReturn(Optional.empty());
@@ -79,15 +78,15 @@ class SwimLaneServiceTest {
 
     @Test
     @DisplayName("test that ProjectNotFoundException thrown when add swimlane to project that does not exist")
-    void swimLaneAlreadyExists(){
+    void swimLaneAlreadyExists() {
         User user = createValidUser();
         SwimLaneEntity swimLaneEntity = createSwimLaneEntity();
-        ProjectEntity projectEntityWithSwimLane = projectEntityWithSwimLane();
+        ProjectEntity projectEntityWithSwimLane = createProject();
 
         Set<ProjectEntity> setOfProjects = new HashSet<>();
         setOfProjects.add(projectEntityWithSwimLane);
         swimLaneEntity.setProjectEntities(setOfProjects);
-        projectEntityWithSwimLane.setSwimLaneEntities(asList(swimLaneEntity));
+        projectEntityWithSwimLane.setSwimLaneEntities(singletonList(swimLaneEntity));
 
         when(userService.getUser(anyString())).thenReturn(user);
         when(projectService.getProject(anyString(), any())).thenReturn(Optional.of(projectEntityWithSwimLane));
@@ -115,13 +114,6 @@ class SwimLaneServiceTest {
         assertThat(actualFoundSwimLane, is(Optional.empty()));
     }
 
-    private User createInvalidUser() {
-        User user = new User();
-        user.setEmail("bob@bob.com");
-        user.setId(5L);
-        return user;
-    }
-
     private User createValidUser() {
         User user = new User();
         user.setEmail("a@a.com");
@@ -145,8 +137,4 @@ class SwimLaneServiceTest {
         return project;
     }
 
-    private ProjectEntity projectEntityWithSwimLane() {
-        ProjectEntity project = createProject();
-        return project;
-    }
 }

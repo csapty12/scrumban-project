@@ -15,6 +15,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ProjectTicket {
 
     @Id

@@ -1,9 +1,6 @@
 package com.scrumban.model.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,6 +8,7 @@ import java.util.List;
 @Setter
 @ToString
 @Builder
+@EqualsAndHashCode
 public class SwimLane {
 
     private String title;
