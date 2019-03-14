@@ -8,7 +8,7 @@ import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
-import com.scrumban.service.user.UserService;
+import com.scrumban.validator.UserProjectValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,13 +27,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectTicketServiceTest {
 
     @Mock
-    private UserService userService;
+    private UserProjectValidator userProjectValidator;
 
     @Mock
     private ProjectService projectService;
@@ -58,7 +57,7 @@ class ProjectTicketServiceTest {
         @Test
         @DisplayName("when user does not exist, throw UsernameNotFoundException")
         void testUserDoesNotExist() {
-            when(userService.getUser(anyString())).thenThrow(UsernameNotFoundException.class);
+            when(userProjectValidator.getUserProject(any(), any())).thenThrow(UsernameNotFoundException.class);
             assertThrows(UsernameNotFoundException.class, () -> projectTicketService.getProjectDashboard("test", "test@test.com"));
         }
 
@@ -67,18 +66,7 @@ class ProjectTicketServiceTest {
         void testProjectNotFound() {
             User validUser = createValidUser("a@a.com", 1L);
             ProjectEntity project = createEmptyProject();
-            when(userService.getUser(anyString())).thenReturn(validUser);
-            when(projectService.getProject(any(), any())).thenReturn(Optional.empty());
-            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.getProjectDashboard(project.getProjectIdentifier(), validUser.getEmail()));
-        }
-
-        @Test
-        @DisplayName("when user exists, but is not associated with project, throw exception")
-        void userNotAssociatedWithProject() {
-            User validUser = createValidUser("bob@bob.com", 5L);
-            ProjectEntity project = createEmptyProject();
-            when(userService.getUser(anyString())).thenReturn(validUser);
-            when(projectService.getProject(any(), any())).thenThrow(ProjectNotFoundException.class);
+            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
             assertThrows(ProjectNotFoundException.class, () -> projectTicketService.getProjectDashboard(project.getProjectIdentifier(), validUser.getEmail()));
         }
 
@@ -87,8 +75,7 @@ class ProjectTicketServiceTest {
         void getFreshDashboard() {
             User validUser = createValidUser("a@a.com", 1L);
             ProjectEntity project = createEmptyProject();
-            when(userService.getUser(anyString())).thenReturn(validUser);
-            when(projectService.getProject(any(), any())).thenReturn(Optional.of(project));
+            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
             ProjectDashboard projectDashboard = projectTicketService.getProjectDashboard(project.getProjectIdentifier(), validUser.getEmail());
             assertThat(projectDashboard.getSwimLanes().size(), is(0));
             assertThat(projectDashboard.getTickets().size(), is(0));
@@ -120,7 +107,7 @@ class ProjectTicketServiceTest {
             ProjectTicket projectTicket = createProjectTicket();
 
             when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.of(builtSwimLane));
-            when(projectService.getProject(any(), any())).thenReturn(Optional.empty());
+            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
             assertThrows(ProjectNotFoundException.class, ()-> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com"));
         }
 
@@ -138,8 +125,7 @@ class ProjectTicketServiceTest {
             ProjectTicket projectTicket = createProjectTicket();
 
             when(swimLaneService.findSwimLaneByName(any())).thenReturn(Optional.of(builtSwimLane));
-            when(userService.getUser(anyString())).thenReturn(validUser);
-            when(projectService.getProject(any(), any())).thenReturn(Optional.of(project));
+            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
             when(projectTicketRepository.save(any())).thenReturn(projectTicket);
 
             LinkedHashMap<String, ProjectTicket> actualNewProjectTicket = projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com");
@@ -156,7 +142,7 @@ class ProjectTicketServiceTest {
         @Test
         @DisplayName("when user does not exist, throw UsernameNotFoundException")
         void testUserDoesNotExist() {
-            when(userService.getUser(anyString())).thenThrow(UsernameNotFoundException.class);
+            when(userProjectValidator.getUserProject(any(), any())).thenThrow(UsernameNotFoundException.class);
             ProjectTicket projectTicket = createProjectTicket();
             assertThrows(UsernameNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicket, "test@test.com"));
         }
@@ -164,10 +150,8 @@ class ProjectTicketServiceTest {
         @Test
         @DisplayName("when project does not exist, throw ProjectNotFoundException")
         void testProjectDoesNotExist() {
-            User validUser = createValidUser("a@a.com", 1L);
-            when(userService.getUser(anyString())).thenReturn(validUser);
             ProjectTicket projectTicket = createProjectTicket();
-            when(projectService.getProject(any(),any())).thenReturn(Optional.empty());
+            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
             assertThrows(ProjectNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicket, "test@test.com"));
         }
 
@@ -185,8 +169,7 @@ class ProjectTicketServiceTest {
             ProjectTicket projectTicket = createProjectTicket();
             projectTicket.setId(1L);
 
-            when(userService.getUser(anyString())).thenReturn(validUser);
-            when(projectService.getProject(any(), any())).thenReturn(Optional.of(project));
+            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
             projectTicketService.removeTicketFromProject(projectTicket, "a@a.com");
             verify(projectTicketRepository, times(1)).deleteProjectTicket(projectTicket.getId());
         }

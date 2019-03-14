@@ -113,7 +113,7 @@ public class ProjectDashboardController {
         User principal = (User) authentication.getPrincipal();
         projectTicketService.updateTicketSwimLane(projectIdentifier, swimLanes, principal.getEmail());
 
-        projectTicketService.updateTicketPositionInNewSwimLane(swimLanes, principal.getEmail());
+        projectTicketService.updateTicketPositionInNewSwimLane(projectIdentifier, swimLanes, principal.getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -27,6 +27,9 @@ const styles = theme => ({
   error: {
     color: "red",
     fontSize: 12
+  },
+  newButton: {
+    color: "#fff"
   }
 });
 
@@ -323,7 +326,7 @@ class TicketBoard extends Component {
               {!this.state.errors.projectError && (
                 <Button
                   variant="outlined"
-                  color="primary"
+                  className={classes.newButton}
                   onClick={this.handleClickOpen}
                   disableRipple
                 >

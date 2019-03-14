@@ -25,7 +25,7 @@ export default class Landing extends Component {
     return (
       <div className="container text-center">
         {this.state.redirectToDashboard && <Redirect to="/dashboard" />}
-        <h1 className="mt-5 text-white font-weight-light">Tellban</h1>
+        <h1 className="mt-5 text-white font-weight-light">Trellban</h1>
         <p className="lead text-white-50">
           Your Personal Project Management Tool
         </p>

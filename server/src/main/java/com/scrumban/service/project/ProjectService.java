@@ -63,12 +63,15 @@ public class ProjectService {
         User user = userService.getUser(userEmail);
 
         Optional<ProjectEntity> foundProjectEntity = getProject(projectEntity.getProjectIdentifier(), user);
-        if (foundProjectEntity.isPresent()) {
-            projectEntity.setProjectLeader(foundProjectEntity.get().getProjectLeader());
-            projectEntity.setUser(foundProjectEntity.get().getUser());
-            return projectRepository.save(projectEntity);
+        if (!foundProjectEntity.isPresent()) {
+            throw new ProjectIdentifierException("projectEntity ID: " + projectEntity.getProjectIdentifier() + " not found!");
         }
-        throw new ProjectIdentifierException("projectEntity ID: " + projectEntity.getProjectIdentifier() + " not found!");
+
+        projectEntity.setProjectLeader(foundProjectEntity.get().getProjectLeader());
+        projectEntity.setUser(foundProjectEntity.get().getUser());
+        return projectRepository.save(projectEntity);
+
+
     }
 
     public void deleteProject(String projectIdentifier, String userEmail) {
@@ -87,7 +90,7 @@ public class ProjectService {
         Optional<ProjectEntity> project = projectRepository.findProjectEntityByProjectIdentifier(projectIdentifier);
         if (project.isPresent()) {
             if (!isUserAssociatedWithProject(user, project.get())) {
-                throw new ProjectNotFoundException("Project with ID: " +projectIdentifier + "cannot be found.");
+                throw new ProjectNotFoundException("Project with ID: " + projectIdentifier + "cannot be found.");
             }
         }
         return project;

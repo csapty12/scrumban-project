@@ -48,7 +48,6 @@ public class ProjectController {
     public ResponseEntity<?> getProjectByProjectIdentifier(@PathVariable String projectIdentifier, Authentication authentication) {
         User principal = getUser(authentication);
 
-        projectIdentifier = projectIdentifier.toUpperCase();
         User user = userService.getUser(principal.getEmail());
         Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, user);
 

@@ -8,7 +8,7 @@ import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.SwimLaneRepository;
 import com.scrumban.service.user.UserService;
-import lombok.EqualsAndHashCode;
+import com.scrumban.validator.UserProjectValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,27 +18,23 @@ public class SwimLaneService {
 
     private ProjectService projectService;
     private SwimLaneRepository swimLaneRepository;
-    private UserService userService;
+    private UserProjectValidator userProjectValidator;
 
-    public SwimLaneService(ProjectService projectService, SwimLaneRepository swimLaneRepository, UserService userService) {
+    public SwimLaneService(ProjectService projectService, SwimLaneRepository swimLaneRepository, UserProjectValidator userProjectValidator) {
         this.projectService = projectService;
         this.swimLaneRepository = swimLaneRepository;
-        this.userService = userService;
+        this.userProjectValidator = userProjectValidator;
     }
 
     public Map<String, SwimLane> addSwimLaneToProject(String projectIdentifier, SwimLaneEntity swimLaneEntity, String userEmail) {
-        User user = userService.getUser(userEmail);
-        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, user);
-
-        if (project.isPresent()) {
-            Optional<SwimLaneEntity> foundSwimLane = swimLaneRepository.findByName(swimLaneEntity.getName());
-            List<SwimLaneEntity> projectSwimLanes = project.get().getSwimLaneEntities();
-            insertSwimLaneToProject(swimLaneEntity, foundSwimLane, projectSwimLanes);
-            projectService.updateProject(project.get(), userEmail);
-            return  createNewSwimLaneObject(swimLaneEntity);
-        }
-        throw new ProjectNotFoundException("Project with ID: " + projectIdentifier + "not found");
+        ProjectEntity project = userProjectValidator.getUserProject(projectIdentifier, userEmail);
+        Optional<SwimLaneEntity> foundSwimLane = swimLaneRepository.findByName(swimLaneEntity.getName());
+        List<SwimLaneEntity> projectSwimLanes = project.getSwimLaneEntities();
+        insertSwimLaneToProject(swimLaneEntity, foundSwimLane, projectSwimLanes);
+        projectService.updateProject(project, userEmail);
+        return createNewSwimLaneObject(swimLaneEntity);
     }
+
 
     public Optional<SwimLaneEntity> findSwimLaneByName(String swimLaneName) {
         return swimLaneRepository.findByName(swimLaneName);
@@ -55,10 +51,13 @@ public class SwimLaneService {
             projectSwimLanes.add(foundSwimLane.get());
         }
     }
+
     private Map<String, SwimLane> createNewSwimLaneObject(SwimLaneEntity swimLaneEntity) {
         SwimLane newSwimLane = SwimLane.builder().title(swimLaneEntity.getName()).ticketIds(new ArrayList<>()).build();
         Map<String, SwimLane> swimLaneMap = new HashMap<>();
         swimLaneMap.put(swimLaneEntity.getName(), newSwimLane);
         return swimLaneMap;
     }
+
+
 }

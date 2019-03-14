@@ -7,7 +7,7 @@ import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.SwimLaneRepository;
-import com.scrumban.service.user.UserService;
+import com.scrumban.validator.UserProjectValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +36,7 @@ class SwimLaneServiceTest {
     private SwimLaneRepository swimLaneRepository;
 
     @Mock
-    private UserService userService;
+    private UserProjectValidator userProjectValidator;
 
     @InjectMocks
     private SwimLaneService swimLaneService;
@@ -47,9 +47,9 @@ class SwimLaneServiceTest {
         User user = createValidUser();
         ProjectEntity projectEntity = createProject();
         SwimLaneEntity swimLaneEntity = createSwimLaneEntity();
-        when(userService.getUser(anyString())).thenReturn(user);
+        when(userProjectValidator.getUserProject(any(), any())).thenReturn(projectEntity);
         when(swimLaneRepository.findByName(any())).thenReturn(Optional.empty());
-        when(projectService.getProject(anyString(), any())).thenReturn(Optional.of(projectEntity));
+
         when(swimLaneRepository.save(swimLaneEntity)).thenReturn(swimLaneEntity);
 
         Map<String, SwimLane> actualSwimLaneToProject = swimLaneService.addSwimLaneToProject("test", swimLaneEntity, user.getEmail());
@@ -63,16 +63,16 @@ class SwimLaneServiceTest {
     @Test
     @DisplayName("test user does not exist when trying to add new swimLane")
     void userDoesNotExist() {
-        when(userService.getUser(anyString())).thenThrow(UsernameNotFoundException.class);
+
+        when(userProjectValidator.getUserProject(any(), any())).thenThrow(UsernameNotFoundException.class);
         assertThrows(UsernameNotFoundException.class, () -> swimLaneService.addSwimLaneToProject("test", new SwimLaneEntity(), "test@test.com"));
     }
+
 
     @Test
     @DisplayName("test that ProjectNotFoundException thrown when add swimlane to project that does not exist")
     void projectDoesNotExist() {
-        User user = createValidUser();
-        when(userService.getUser(anyString())).thenReturn(user);
-        when(projectService.getProject(anyString(), any())).thenReturn(Optional.empty());
+        when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
         assertThrows(ProjectNotFoundException.class, () -> swimLaneService.addSwimLaneToProject("test", new SwimLaneEntity(), "test@test.com"));
     }
 
@@ -88,8 +88,7 @@ class SwimLaneServiceTest {
         swimLaneEntity.setProjectEntities(setOfProjects);
         projectEntityWithSwimLane.setSwimLaneEntities(singletonList(swimLaneEntity));
 
-        when(userService.getUser(anyString())).thenReturn(user);
-        when(projectService.getProject(anyString(), any())).thenReturn(Optional.of(projectEntityWithSwimLane));
+        when(userProjectValidator.getUserProject(any(), any())).thenReturn(projectEntityWithSwimLane);
         when(swimLaneRepository.findByName(any())).thenReturn(Optional.of(swimLaneEntity));
 
         assertThrows(DuplicateProjectSwimLaneException.class, () -> swimLaneService.addSwimLaneToProject("test", swimLaneEntity, "test@test.com"));
