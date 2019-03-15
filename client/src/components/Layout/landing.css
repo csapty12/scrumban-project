@@ -3,7 +3,10 @@
 body {
   background: linear-gradient(to right, #0062e6, #33aeff);
 }
-
-.btn {
+.landingButton {
+  text-decoration: none;
   margin: 0 10px;
+}
+.landingButton:hover {
+  text-decoration: none;
 }

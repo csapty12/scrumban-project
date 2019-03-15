@@ -13,6 +13,7 @@ import DeleteItem from "./DeleteItem";
 import store from "../../../store";
 import { SET_ACTIVE_PROJECT } from "../../../actions/Types";
 import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 const styles = theme => ({});
 
@@ -67,6 +68,7 @@ class ProjectItem extends Component {
     });
     const serializedState = projectIdentifier;
     localStorage.setItem("activeProject", serializedState);
+
     return;
   };
 
@@ -79,7 +81,7 @@ class ProjectItem extends Component {
     const updateOpen = Boolean(updateProject);
     return (
       <div className="col-md-6 col-lg-4 item">
-        <Card>
+        <Card onClick={() => this.activateProject(project.projectIdentifier)}>
           <CardHeader
             action={
               <Fragment>
@@ -127,20 +129,13 @@ class ProjectItem extends Component {
                 </Menu>
               </Fragment>
             }
-            title={project.projectName}
+            title={
+              <Link to={`/dashboard/${project.projectIdentifier}`}>
+                {project.projectName}
+              </Link>
+            }
             subheader={"created: " + project.createdAt}
           />
-          <CardActions>
-            <Link to={`/dashboard/${project.projectIdentifier}`}>
-              <Button
-                size="small"
-                color="primary"
-                onClick={() => this.activateProject(project.projectIdentifier)}
-              >
-                Dashboard
-              </Button>
-            </Link>
-          </CardActions>
         </Card>
       </div>
     );

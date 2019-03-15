@@ -22,6 +22,7 @@ const styles = theme => ({
   navbarText: {
     color: "#fff",
     "&:hover": {
+      color: "#fff",
       textDecoration: "none"
     }
   },
@@ -55,7 +56,7 @@ class Navbar extends Component {
             </Typography>
             {validToken && Object.entries(user).length !== 0 && (
               <Fragment>
-                <Link to="/dashboard">
+                <Link to="/dashboard" className={classes.navbarText}>
                   <Button
                     variant="text"
                     disableRipple
@@ -64,7 +65,7 @@ class Navbar extends Component {
                     {user.firstName}'s Dashboard
                   </Button>
                 </Link>
-                <Link to="/">
+                <Link to="/" className={classes.navbarText}>
                   <Button
                     variant="text"
                     disableRipple
@@ -78,7 +79,7 @@ class Navbar extends Component {
             )}
             {Object.entries(user).length === 0 && (
               <Fragment>
-                <Link to="/login">
+                <Link to="/login" className={classes.navbarText}>
                   <Button
                     variant="text"
                     disableRipple
@@ -87,7 +88,7 @@ class Navbar extends Component {
                     Login
                   </Button>
                 </Link>
-                <Link to="/register">
+                <Link to="/register" className={classes.navbarText}>
                   <Button
                     variant="text"
                     disableRipple

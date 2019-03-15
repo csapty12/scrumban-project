@@ -22,6 +22,7 @@ export default class Landing extends Component {
     }
   }
   render() {
+    const { classes } = this.props;
     return (
       <div className="container text-center">
         {this.state.redirectToDashboard && <Redirect to="/dashboard" />}
@@ -30,23 +31,13 @@ export default class Landing extends Component {
           Your Personal Project Management Tool
         </p>
         <hr />
-        <Link to="/login">
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            style={{ margin: 10 }}
-          >
+        <Link to="/login" className={"landingButton"}>
+          <Button type="button" variant="contained" color="primary">
             Login
           </Button>
         </Link>
-        <Link to="/register">
-          <Button
-            type="button"
-            variant="contained"
-            color="secondary"
-            style={{ margin: 10 }}
-          >
+        <Link to="/register" className={"landingButton"}>
+          <Button type="button" variant="contained" color="secondary">
             Register
           </Button>
         </Link>
