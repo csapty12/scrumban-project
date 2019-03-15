@@ -74,6 +74,7 @@ class ProjectDialog extends Component {
   }
 
   updateProjectInformation(projectInfo) {
+    console.log("udpated project information: " + JSON.stringify(projectInfo));
     axios
       .patch("/api/project", projectInfo)
       .then(json => {

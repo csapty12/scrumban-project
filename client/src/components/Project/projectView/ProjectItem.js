@@ -4,8 +4,6 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import Button from "@material-ui/core/Button";
-import CardActions from "@material-ui/core/CardActions";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ProjectDialog from "./ProjectDialog";
@@ -13,7 +11,6 @@ import DeleteItem from "./DeleteItem";
 import store from "../../../store";
 import { SET_ACTIVE_PROJECT } from "../../../actions/Types";
 import { Link } from "react-router-dom";
-import { Redirect } from "react-router-dom";
 
 const styles = theme => ({});
 
@@ -99,20 +96,21 @@ class ProjectItem extends Component {
                   open={menuOpen}
                   onClose={this.handleCloseMenuClick}
                 >
-                  <MenuItem key="updateItem">
-                    <span onClick={this.handleUpdateProjectClick}>
-                      Update Project
-                    </span>
-
-                    {updateOpen && (
-                      <ProjectDialog
-                        type="Update"
-                        onClose={this.handleUpdateProjectClose}
-                        projectInfo={this.state.project}
-                        updateProjectInfo={this.updateProjectInfo}
-                      />
-                    )}
-                  </MenuItem>
+                  {
+                    // <MenuItem key="updateItem">
+                    //     <span onClick={this.handleUpdateProjectClick}>
+                    //       Update Project
+                    //     </span>
+                    //     {updateOpen && (
+                    //       <ProjectDialog
+                    //         type="Update"
+                    //         onClose={this.handleUpdateProjectClose}
+                    //         projectInfo={this.state.project}
+                    //         updateProjectInfo={this.updateProjectInfo}
+                    //       />
+                    //     )}
+                    //   </MenuItem>
+                  }
 
                   <MenuItem key="deleteItem">
                     <span onClick={this.handleDeleteProjectClick}>
