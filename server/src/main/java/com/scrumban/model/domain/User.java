@@ -42,10 +42,8 @@ public class User implements UserDetails {
     @Transient
     private String confirmPassword;
 
-    //one to many relationship with the project
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
     private List<ProjectEntity> projects;
-
 
     @Override
     @JsonIgnore
@@ -56,7 +54,7 @@ public class User implements UserDetails {
     @Override
     @JsonIgnore
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override

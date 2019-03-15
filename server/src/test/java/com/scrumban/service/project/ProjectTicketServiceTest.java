@@ -35,9 +35,6 @@ class ProjectTicketServiceTest {
     private UserProjectValidator userProjectValidator;
 
     @Mock
-    private ProjectService projectService;
-
-    @Mock
     private SwimLaneService swimLaneService;
 
     @Mock
@@ -95,7 +92,7 @@ class ProjectTicketServiceTest {
             ProjectTicket projectTicket = createProjectTicket();
 
             when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.empty());
-            assertThrows(ProjectSwimLaneNotFoundException.class, ()-> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com"));
+            assertThrows(ProjectSwimLaneNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com"));
         }
 
         @Test
@@ -108,13 +105,13 @@ class ProjectTicketServiceTest {
 
             when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.of(builtSwimLane));
             when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
-            assertThrows(ProjectNotFoundException.class, ()-> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com"));
+            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com"));
         }
 
         @Test
         @DisplayName("add new ticket to project successfully")
         void addNewTicket() {
-            User validUser = createValidUser("a@a.com", 1L);
+
             ProjectEntity project = createEmptyProject();
             SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
             Set<ProjectEntity> setOfProjectEntities = new HashSet<>();
@@ -157,8 +154,7 @@ class ProjectTicketServiceTest {
 
         @Test
         @DisplayName("Delete ticket successfully from project")
-        void testDelete(){
-            User validUser = createValidUser("a@a.com", 1L);
+        void testDelete() {
             ProjectEntity project = createEmptyProject();
             SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
             Set<ProjectEntity> setOfProjectEntities = new HashSet<>();

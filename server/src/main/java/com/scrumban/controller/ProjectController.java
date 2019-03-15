@@ -33,27 +33,27 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProject(@Valid @RequestBody ProjectEntity projectEntity, BindingResult bindingResult, Authentication authentication) {
+    public ResponseEntity<?> createProject(@Valid @RequestBody ProjectEntity project, BindingResult bindingResult, Authentication authentication) {
 
         ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
         if (validationErrors != null) return validationErrors;
 
         User principal = getUser(authentication);
 
-        ProjectEntity newProject = projectService.saveProject(projectEntity, principal.getEmail());
+        ProjectEntity newProject = projectService.saveProject(project, principal.getEmail());
         return new ResponseEntity<>(newProject, HttpStatus.OK);
     }
 
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getProjectByProjectIdentifier(@PathVariable String projectIdentifier, Authentication authentication) {
         User principal = getUser(authentication);
-
         User user = userService.getUser(principal.getEmail());
+
         Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, user);
 
         if (project.isPresent()) { return new ResponseEntity<>(project, HttpStatus.OK); }
 
-        throw new ProjectIdentifierException("No project found with identifier: " + projectIdentifier);
+        throw new ProjectIdentifierException("Project with ID: " + projectIdentifier + " cannot be found.");
     }
 
     @GetMapping

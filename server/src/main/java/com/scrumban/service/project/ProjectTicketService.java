@@ -1,7 +1,5 @@
 package com.scrumban.service.project;
 
-import com.scrumban.exception.ProjectIdentifierException;
-import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.exception.ProjectSwimLaneNotFoundException;
 import com.scrumban.model.domain.ProjectDashboard;
 import com.scrumban.model.domain.ProjectDashboardSwimLane;
@@ -11,7 +9,6 @@ import com.scrumban.model.project.entity.ProjectEntity;
 import com.scrumban.model.project.entity.ProjectTicket;
 import com.scrumban.model.project.entity.SwimLaneEntity;
 import com.scrumban.repository.ProjectTicketRepository;
-import com.scrumban.service.user.UserService;
 import com.scrumban.validator.UserProjectValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,13 +22,11 @@ import java.util.stream.Collectors;
 public class ProjectTicketService {
 
     private ProjectTicketRepository projectTicketRepository;
-    private ProjectService projectService;
     private SwimLaneService swimLaneService;
     private UserProjectValidator userProjectValidator;
 
-    public ProjectTicketService(ProjectTicketRepository projectTicketRepository, ProjectService projectService, SwimLaneService swimLaneService, UserProjectValidator userProjectValidator) {
+    public ProjectTicketService(ProjectTicketRepository projectTicketRepository, SwimLaneService swimLaneService, UserProjectValidator userProjectValidator) {
         this.projectTicketRepository = projectTicketRepository;
-        this.projectService = projectService;
         this.swimLaneService = swimLaneService;
         this.userProjectValidator = userProjectValidator;
     }
@@ -244,8 +239,5 @@ public class ProjectTicketService {
         int newProjectTicketSequenceValue = currentTicketNumber + incrementValue;
         return acronym + "-" + newProjectTicketSequenceValue;
     }
-
-
-
 
 }

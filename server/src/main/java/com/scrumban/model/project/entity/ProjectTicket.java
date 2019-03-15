@@ -56,7 +56,6 @@ public class ProjectTicket {
         int totalNumberOfTickets = this.project.getCurrentTicketNumber();
         this.project.setCurrentTicketNumber(totalNumberOfTickets+1);
         this.ticketNumberPosition = this.getSwimLaneEntity().getProjectTickets().size()+1;
-
     }
 
 }

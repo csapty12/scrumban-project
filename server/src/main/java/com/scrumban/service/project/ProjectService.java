@@ -23,6 +23,7 @@ public class ProjectService {
     private ProjectTicketRepository projectTicketRepository;
     private UserService userService;
 
+
     public ProjectService(ProjectRepository projectRepository, ProjectTicketRepository projectTicketRepository, UserService userService) {
         this.projectRepository = projectRepository;
         this.projectTicketRepository = projectTicketRepository;
@@ -33,12 +34,13 @@ public class ProjectService {
         User user = userService.getUser(userEmail);
         Optional<ProjectEntity> project = getProject(projectEntity.getProjectIdentifier(), user);
 
-        log.info("attempting to save project: {}", projectEntity.getProjectName());
 
         if (project.isPresent()) {
+            log.error("Unable to save new project: {}", projectEntity.getProjectName());
             throw new ProjectIdentifierException("project ID: " + projectEntity.getProjectIdentifier() + " already exists!");
         }
 
+        log.info("attempting to save project: {}", projectEntity.getProjectName());
         List<SwimLaneEntity> swimLaneEntityList = new LinkedList<>();
         projectEntity.setUser(user);
         projectEntity.setProjectLeader(createProjectLeader(user));
@@ -56,7 +58,7 @@ public class ProjectService {
         if (allProjects.size() != 0) {
             return allProjects;
         }
-        throw new ProjectNotFoundException("No projects found");
+        throw new ProjectNotFoundException("No projects found.");
     }
 
     public ProjectEntity updateProject(ProjectEntity projectEntity, String userEmail) {
@@ -70,9 +72,8 @@ public class ProjectService {
         projectEntity.setProjectLeader(foundProjectEntity.get().getProjectLeader());
         projectEntity.setUser(foundProjectEntity.get().getUser());
         return projectRepository.save(projectEntity);
-
-
     }
+
 
     public void deleteProject(String projectIdentifier, String userEmail) {
         User user = userService.getUser(userEmail);
@@ -85,12 +86,10 @@ public class ProjectService {
     }
 
     public Optional<ProjectEntity> getProject(String projectIdentifier, User user) {
-        System.out.println("project identifier: " + projectIdentifier);
-
         Optional<ProjectEntity> project = projectRepository.findProjectEntityByProjectIdentifier(projectIdentifier);
         if (project.isPresent()) {
             if (!isUserAssociatedWithProject(user, project.get())) {
-                throw new ProjectNotFoundException("Project with ID: " + projectIdentifier + "cannot be found.");
+                throw new ProjectNotFoundException("Project with ID: " + projectIdentifier + " cannot be found.");
             }
         }
         return project;
