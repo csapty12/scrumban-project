@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import axios from "axios";
 import SwimLane from "./SwimLane";
 import Button from "@material-ui/core/Button";
@@ -18,10 +18,6 @@ const styles = theme => ({
     color: "white",
     height: 48,
     padding: "0 30px"
-  },
-  swimLane: {
-    display: "flex",
-    width: "100%"
   },
   error: {
     color: "red",
@@ -288,7 +284,6 @@ class TicketBoard extends Component {
   render() {
     const { classes } = this.props;
     const { errors } = this.state;
-    console.log("error from server: " + this.state.errors.projectError);
 
     return (
       <div className="container-fluid">
@@ -297,73 +292,71 @@ class TicketBoard extends Component {
             {this.state.errors.projectError}
           </div>
         )}
-        <section className="card-horizontal-scrollable-container">
-          <div className={classes.swimLane}>
-            <DragDropContext
-              onDragEnd={this.onDragEnd}
-              onDragStart={this.onDragStart}
-            >
-              {this.state.swimLaneOrder.map((swimLaneId, index) => {
-                const swimLane = this.state.swimLanes[index][swimLaneId];
-                const tickets = swimLane.ticketIds.map(
-                  ticketId => this.state.projectTickets[0][ticketId]
-                );
-                return (
-                  <SwimLane
-                    key={swimLane.title}
-                    swimLane={swimLane}
-                    tickets={tickets}
-                    projectIdentifier={this.props.projectIdentifier}
-                    removeTicket={this.handleTicketDelete}
-                    addTicketToSwimLane={this.handleAddTicket}
-                  />
-                );
-              })}
-            </DragDropContext>
 
-            <div className="col-10 col-lg-3">
-              {!this.state.errors.projectError && (
-                <Button
-                  variant="outlined"
-                  className={classes.newButton}
-                  onClick={this.handleClickOpen}
-                  disableRipple
-                >
-                  New Swimlane &#x2b;
-                </Button>
-              )}
-              <Dialog
-                open={this.state.open}
-                onClose={this.handleClose}
-                aria-labelledby="form-dialog-title"
+        <section class="myScrollableDiv">
+          <DragDropContext
+            onDragEnd={this.onDragEnd}
+            onDragStart={this.onDragStart}
+          >
+            {this.state.swimLaneOrder.map((swimLaneId, index) => {
+              const swimLane = this.state.swimLanes[index][swimLaneId];
+              const tickets = swimLane.ticketIds.map(
+                ticketId => this.state.projectTickets[0][ticketId]
+              );
+              return (
+                <SwimLane
+                  key={swimLane.title}
+                  swimLane={swimLane}
+                  tickets={tickets}
+                  projectIdentifier={this.props.projectIdentifier}
+                  removeTicket={this.handleTicketDelete}
+                  addTicketToSwimLane={this.handleAddTicket}
+                />
+              );
+            })}
+          </DragDropContext>
+          <div className="col-10 col-lg-3">
+            {!this.state.errors.projectError && (
+              <Button
+                variant="outlined"
+                className={classes.newButton}
+                onClick={this.handleClickOpen}
+                disableRipple
               >
-                <form onSubmit={this.handleSubmit}>
-                  <DialogContent>
-                    <TextField
-                      autoFocus
-                      margin="dense"
-                      id="name"
-                      name="name"
-                      label="Swimlane Name"
-                      type="text"
-                      fullWidth
-                      onChange={this.handleChange}
-                    />
-                    {errors.name && (
-                      <span className={classes.error}>{errors.name}</span>
-                    )}
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                      Cancel
-                    </Button>
-                    <Button color="primary" type="submit">
-                      Create
-                    </Button>
-                  </DialogActions>
-                </form>
-              </Dialog>
-            </div>
+                New Swimlane &#x2b;
+              </Button>
+            )}
+            <Dialog
+              open={this.state.open}
+              onClose={this.handleClose}
+              aria-labelledby="form-dialog-title"
+            >
+              <form onSubmit={this.handleSubmit}>
+                <DialogContent>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    name="name"
+                    label="Swimlane Name"
+                    type="text"
+                    fullWidth
+                    onChange={this.handleChange}
+                  />
+                  {errors.name && (
+                    <span className={classes.error}>{errors.name}</span>
+                  )}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.handleClose} color="primary">
+                    Cancel
+                  </Button>
+                  <Button color="primary" type="submit">
+                    Create
+                  </Button>
+                </DialogActions>
+              </form>
+            </Dialog>
           </div>
         </section>
       </div>

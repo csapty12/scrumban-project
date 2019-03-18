@@ -38,8 +38,8 @@ class SwimLane extends Component {
   };
   render() {
     return (
-      <div className="card--content col-10 col-lg-3">
-        <h4 className="display-5 text-center title-backlog__border">
+      <div className="card--content myCard">
+        <h4 className="text-center swimLane-title">
           {this.props.swimLane.title}
           <span style={{ fontSize: 11 }}>({this.props.tickets.length})</span>
         </h4>
