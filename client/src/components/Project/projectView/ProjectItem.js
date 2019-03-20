@@ -6,7 +6,6 @@ import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import ProjectDialog from "./ProjectDialog";
 import DeleteItem from "./DeleteItem";
 import store from "../../../store";
 import { SET_ACTIVE_PROJECT } from "../../../actions/Types";
@@ -58,7 +57,6 @@ class ProjectItem extends Component {
   };
 
   activateProject = projectIdentifier => {
-    console.log("am in here, with projectID: " + projectIdentifier);
     store.dispatch({
       type: SET_ACTIVE_PROJECT,
       payload: { activeProject: projectIdentifier }
@@ -72,10 +70,10 @@ class ProjectItem extends Component {
   render() {
     const { project } = this.props;
 
-    const { anchorEl, deleteProject, updateProject } = this.state;
+    const { anchorEl, deleteProject } = this.state;
+    // const { anchorEl, deleteProject, updateProject } = this.state;
     const menuOpen = Boolean(anchorEl);
     const deleteOpen = Boolean(deleteProject);
-    const updateOpen = Boolean(updateProject);
     return (
       <div className="col-md-6 col-lg-4 item">
         <Card onClick={() => this.activateProject(project.projectIdentifier)}>

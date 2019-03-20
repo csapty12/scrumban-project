@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,9 +78,10 @@ public class ProjectDashboardController {
         return new ResponseEntity<>(newTicket, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{projectIdentifier}/{id}")
+    @DeleteMapping("/{projectIdentifier}/{swimLaneId}/{ticketId}")
     public ResponseEntity<?> removeTicketFromProject(@PathVariable String projectIdentifier,
-                                                     @PathVariable Long id,
+                                                     @PathVariable String swimLaneId,
+                                                     @PathVariable Long ticketId,
                                                      @Valid @RequestBody ProjectTicket projectTicket,
                                                      BindingResult bindingResult,
                                                      Authentication authentication) {
@@ -132,6 +134,15 @@ public class ProjectDashboardController {
         projectTicketService.updateTicketInformation(projectTicket, projectIdentifier, swimLaneId, principal.getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
 
+    }
+
+    @DeleteMapping("/{projectIdentifier}/{swimLaneId}")
+    public ResponseEntity<?> removeSwimLane(@PathVariable String projectIdentifier,@PathVariable String swimLaneId, Authentication authentication) {
+        User principal = (User) authentication.getPrincipal();
+        boolean deleted = swimLaneService.removeSwimLaneFromProject(projectIdentifier, swimLaneId, principal.getEmail());
+        Map<String,Boolean> hasBeenDeleted = new HashMap<>();
+        hasBeenDeleted.put("deleted", deleted);
+        return new ResponseEntity<>(hasBeenDeleted, HttpStatus.OK);
     }
 
 

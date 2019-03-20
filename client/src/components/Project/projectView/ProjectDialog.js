@@ -74,7 +74,6 @@ class ProjectDialog extends Component {
   }
 
   updateProjectInformation(projectInfo) {
-    console.log("udpated project information: " + JSON.stringify(projectInfo));
     axios
       .patch("/api/project", projectInfo)
       .then(json => {
@@ -82,7 +81,6 @@ class ProjectDialog extends Component {
         this.props.onClose();
       })
       .catch(json => {
-        console.log("json response : " + JSON.stringify(json.response.data));
         this.setState({
           errors: {
             projectName: json.response.data.projectName,

@@ -20,7 +20,8 @@ class SwimLane extends Component {
     super(props);
     this.state = {
       isCreateTicketActive: false,
-      projectIdentifier: this.props.projectIdentifier
+      projectIdentifier: this.props.projectIdentifier,
+      isSwimLaneOptionsMenuOpen: false
     };
   }
   handleIsCreateTicketActive = () => {
@@ -36,12 +37,36 @@ class SwimLane extends Component {
   handleSubmit = ticket => {
     this.props.addTicketToSwimLane(ticket);
   };
+
+  handleSwimLaneOptionsMenu = event => {
+    // console.log("opening swimlane options menu");
+    this.setState({
+      isSwimLaneOptionsMenuOpen: !this.state.isSwimLaneOptionsMenuOpen
+    });
+  };
   render() {
     return (
       <div className="card--content myCard">
         <h4 className="text-center swimLane-title">
           {this.props.swimLane.title}
           <span style={{ fontSize: 11 }}>({this.props.tickets.length})</span>
+          {
+            // <span className="dropdown">
+            //   <button
+            //     className="btn dropdown-toggle"
+            //     type="button"
+            //     id="dropdownMenuButton"
+            //     data-toggle="dropdown"
+            //     aria-haspopup="true"
+            //     aria-expanded="false"
+            //   />
+            //   <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            //     <a className="dropdown-item" href="#">
+            //       Remove Swim Lane
+            //     </a>
+            //   </div>
+            // </span>
+          }
         </h4>
 
         <Button

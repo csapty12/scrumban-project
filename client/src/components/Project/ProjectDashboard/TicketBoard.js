@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import SwimLane from "./SwimLane";
 import Button from "@material-ui/core/Button";
@@ -43,7 +43,6 @@ class TicketBoard extends Component {
   }
 
   componentDidMount() {
-    console.log("my projet: " + this.state.projectIdentifier);
     axios
       .get(`/dashboard/${this.state.projectIdentifier}`)
       .then(json => {
@@ -54,7 +53,6 @@ class TicketBoard extends Component {
         });
       })
       .catch(json => {
-        console.log("error:  " + JSON.stringify(json.response.data.project));
         this.setState({
           errors: {
             projectError: json.response.data.project
@@ -65,9 +63,9 @@ class TicketBoard extends Component {
 
   handleTicketDelete = ticket => {
     const { projectTickets, swimLanes } = this.state;
-    const { projectIdentifier, id } = ticket;
+    const { projectIdentifier, id, swimLane } = ticket;
     axios
-      .delete(`/dashboard/${projectIdentifier}/${id}`, {
+      .delete(`/dashboard/${projectIdentifier}/${swimLane}/${id}`, {
         data: ticket
       })
       .then(() => {
@@ -116,8 +114,6 @@ class TicketBoard extends Component {
     axios
       .post(`/dashboard/${this.state.projectIdentifier}`, newSwimlane)
       .then(json => {
-        console.log("json response: " + JSON.stringify(json.data));
-        console.log(Object.keys(json.data));
         this.setState({
           swimLanes: [...this.state.swimLanes, json.data],
           swimLaneOrder: [...this.state.swimLaneOrder, Object.keys(json.data)]
@@ -293,7 +289,7 @@ class TicketBoard extends Component {
           </div>
         )}
 
-        <section class="myScrollableDiv">
+        <section className="myScrollableDiv">
           <DragDropContext
             onDragEnd={this.onDragEnd}
             onDragStart={this.onDragStart}

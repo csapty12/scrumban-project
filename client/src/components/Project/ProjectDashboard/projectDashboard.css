@@ -74,3 +74,8 @@ body {
   padding: 5px;
   width: 320px;
 }
+
+.swimLaneOptions {
+  float: right;
+  cursor: pointer;
+}

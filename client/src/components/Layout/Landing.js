@@ -22,7 +22,6 @@ export default class Landing extends Component {
     }
   }
   render() {
-    const { classes } = this.props;
     return (
       <div className="container text-center">
         {this.state.redirectToDashboard && <Redirect to="/dashboard" />}
