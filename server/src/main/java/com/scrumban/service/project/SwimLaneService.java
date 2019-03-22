@@ -39,9 +39,21 @@ public class SwimLaneService {
         ProjectEntity project = userProjectValidator.getUserProject(projectIdentifier, userEmail);
         Optional<SwimLaneEntity> foundSwimLane = swimLaneRepository.findByName(swimLaneEntity.getName());
         List<SwimLaneEntity> projectSwimLanes = project.getSwimLaneEntities();
-        insertSwimLaneToProject(swimLaneEntity, foundSwimLane, projectSwimLanes);
+
+
+        if (!foundSwimLane.isPresent()) {
+            SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
+            System.out.println("swimLane entity id : " + swimLaneEntity.getId());
+            projectSwimLanes.add(newSwimLaneEntity);
+        } else {
+            if (projectSwimLanes.contains(foundSwimLane.get())) {
+                throw new DuplicateProjectSwimLaneException("Swim lane already exists in this project");
+            }
+            projectSwimLanes.add(foundSwimLane.get());
+        }
+
         projectService.updateProject(project, userEmail);
-        return createNewSwimLaneObject(swimLaneEntity);
+        return createNewSwimLaneObject(swimLaneEntity, projectIdentifier);
     }
 
 
@@ -51,13 +63,12 @@ public class SwimLaneService {
 
 
 
-    public boolean removeSwimLaneFromProject(String projectIdentifier, String swimLaneId, String userEmail) {
+    public boolean removeSwimLaneFromProject(String projectIdentifier, int swimLaneId, String userEmail) {
         ProjectEntity project = userProjectValidator.getUserProject(projectIdentifier, userEmail);
-        Optional<SwimLaneEntity> swimLaneEntity = swimLaneRepository.findByName(swimLaneId);
-
+        Optional<SwimLaneEntity> swimLaneEntity = swimLaneRepository.findById(swimLaneId);
         try{
             List<ProjectTicket> projectTickets = project.getProjectTickets().stream()
-                    .filter(item -> item.getSwimLaneEntity().getName().equals(swimLaneId)).collect(Collectors.toList());
+                    .filter(item -> item.getSwimLaneEntity().getId()==(swimLaneId)).collect(Collectors.toList());
 
             projectTickets.forEach(ticket-> removeTicketFromProject(ticket, userEmail));
             Set<ProjectEntity> projectEntitySet = new HashSet<>();
@@ -68,26 +79,17 @@ public class SwimLaneService {
             log.error("There was an error deleting the swim lane: {}", e.getMessage());
             return false;
         }
-        log.info("swim lane has been deleted successfuly");
+        log.info("swim lane has been deleted successfully");
         return true;
     }
 
-    private void insertSwimLaneToProject(SwimLaneEntity swimLaneEntity, Optional<SwimLaneEntity> foundSwimLane, List<SwimLaneEntity> projectSwimLanes) {
-        if (!foundSwimLane.isPresent()) {
-            SwimLaneEntity newSwimLaneEntity = swimLaneRepository.save(swimLaneEntity);
-            projectSwimLanes.add(newSwimLaneEntity);
-        } else {
-            if (projectSwimLanes.contains(foundSwimLane.get())) {
-                throw new DuplicateProjectSwimLaneException("Swim lane already exists in this project");
-            }
-            projectSwimLanes.add(foundSwimLane.get());
-        }
-    }
+    private Map<String, SwimLane> createNewSwimLaneObject(SwimLaneEntity swimLaneEntity, String projectIdentifier) {
 
-    private Map<String, SwimLane> createNewSwimLaneObject(SwimLaneEntity swimLaneEntity) {
-        SwimLane newSwimLane = SwimLane.builder().title(swimLaneEntity.getName()).ticketIds(new ArrayList<>()).build();
+        SwimLane newSwimLane = SwimLane.builder().id(swimLaneEntity.getId()).title(swimLaneEntity.getName()).ticketIds(new ArrayList<>()).projectIdentifier(projectIdentifier).build();
+        System.out.println("new swimlane: " + newSwimLane);
         Map<String, SwimLane> swimLaneMap = new HashMap<>();
         swimLaneMap.put(swimLaneEntity.getName(), newSwimLane);
+        System.out.println("swimLaneMap " + swimLaneMap);
         return swimLaneMap;
     }
 

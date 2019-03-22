@@ -55,7 +55,7 @@ class SwimLaneServiceTest {
         Map<String, SwimLane> actualSwimLaneToProject = swimLaneService.addSwimLaneToProject("test", swimLaneEntity, user.getEmail());
 
         Map<String, SwimLane> expectedAddNewSwimLaneToProject = new HashMap<>();
-        SwimLane expectedSwimLane = SwimLane.builder().title("testSwimLane").ticketIds(new ArrayList<>()).build();
+        SwimLane expectedSwimLane = SwimLane.builder().id(1).title("testSwimLane").ticketIds(new ArrayList<>()).projectIdentifier("test").build();
         expectedAddNewSwimLaneToProject.put("testSwimLane", expectedSwimLane);
         assertThat(actualSwimLaneToProject, is(expectedAddNewSwimLaneToProject));
     }

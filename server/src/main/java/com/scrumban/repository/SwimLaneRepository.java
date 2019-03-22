@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface SwimLaneRepository extends CrudRepository<SwimLaneEntity, Long> {
+    Optional<SwimLaneEntity> findById(int swimLaneId);
     Optional<SwimLaneEntity> findByName(String swimLaneName);
 
     @Modifying

@@ -14,7 +14,7 @@ import java.util.Map;
 @EqualsAndHashCode
 public class ProjectDashboard {
     private List<LinkedHashMap<String, ProjectTicket>> tickets;
-    private List<Map<String, ProjectDashboardSwimLane>> swimLanes;
+    private List<Map<String, SwimLane>> swimLanes;
     private List<String> swimLaneOrder;
 
 }

@@ -161,6 +161,24 @@ class TicketBoard extends Component {
       });
   };
 
+  handleSwimLaneDelete = swimLane => {
+    axios
+      .delete(`/dashboard/${swimLane.projectIdentifier}/${swimLane.id}`)
+      .then(() => {
+        const currentSwimlanes = this.state.swimLanes;
+        let filteredSwimLanes = currentSwimlanes.forEach(
+          item => {
+            console.log(
+              JSON.stringify("swimLane order: " + this.state.swimLaneOrder)
+            );
+          }
+          // } item[Object.keys(item)]["id"] !== swimLane.id
+          // console.log(JSON.stringify(item[Object.keys(item)]))
+        );
+        // this.setState({ swimLanes: filteredSwimLanes });
+      });
+  };
+
   onDragEnd = result => {
     document.body.style.color = "inherit";
     const { destination, source, draggableId } = result;
@@ -306,6 +324,7 @@ class TicketBoard extends Component {
                   tickets={tickets}
                   projectIdentifier={this.props.projectIdentifier}
                   removeTicket={this.handleTicketDelete}
+                  removeSwimLane={this.handleSwimLaneDelete}
                   addTicketToSwimLane={this.handleAddTicket}
                 />
               );

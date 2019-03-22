@@ -2,7 +2,6 @@ package com.scrumban.service.project;
 
 import com.scrumban.exception.ProjectSwimLaneNotFoundException;
 import com.scrumban.model.domain.ProjectDashboard;
-import com.scrumban.model.domain.ProjectDashboardSwimLane;
 import com.scrumban.model.domain.SwimLane;
 import com.scrumban.model.domain.User;
 import com.scrumban.model.project.entity.ProjectEntity;
@@ -146,13 +145,6 @@ public class ProjectTicketService {
         });
     }
 
-    private ProjectDashboardSwimLane createSwimLaneAndInsertTasks(String columnName, List<ProjectTicket> allProjectTickets) {
-        return ProjectDashboardSwimLane
-                .builder()
-                .title(columnName)
-                .ticketIds(getTicketIds(allProjectTickets, columnName)).build();
-    }
-
     private ArrayList<String> getTicketIds(List<ProjectTicket> allProjectTickets, String columnName) {
         ArrayList<String> projectTaskIds = new ArrayList<>();
 
@@ -192,27 +184,36 @@ public class ProjectTicketService {
         return initials.toUpperCase();
     }
 
-    private List<Map<String, ProjectDashboardSwimLane>> addSwimLaneWithTickets(ProjectEntity projectEntity) {
-        List<String> swimLaneNames = new ArrayList<>();
+    private List<Map<String, SwimLane>> addSwimLaneWithTickets(ProjectEntity projectEntity) {
+        List<SwimLaneEntity> swimLaneNames = new ArrayList<>();
         getProjectSwimLanes(projectEntity, swimLaneNames);
 
         List<ProjectTicket> allProjectTickets = projectEntity.getProjectTickets();
-        List<Map<String, ProjectDashboardSwimLane>> listOfColumns = new ArrayList<>();
-        insertTicketsIntoSwimLanes(swimLaneNames, allProjectTickets, listOfColumns);
+        List<Map<String, SwimLane>> listOfColumns = new ArrayList<>();
+        insertTicketsIntoSwimLanes(swimLaneNames, allProjectTickets, listOfColumns, projectEntity.getProjectIdentifier());
         return listOfColumns;
     }
 
-    private void insertTicketsIntoSwimLanes (List<String> swimLaneNames, List<ProjectTicket> allProjectTickets, List<Map<String, ProjectDashboardSwimLane>> swimLanes) {
-        swimLaneNames.forEach(swimLaneName -> {
-            Map<String, ProjectDashboardSwimLane> projectDashboardSwimLanes = new HashMap<>();
-            projectDashboardSwimLanes.put(swimLaneName, createSwimLaneAndInsertTasks(swimLaneName, allProjectTickets));
+    private void insertTicketsIntoSwimLanes(List<SwimLaneEntity> swimLaneEntities, List<ProjectTicket> allProjectTickets, List<Map<String, SwimLane>> swimLanes, String projectIdentifier) {
+        swimLaneEntities.forEach(swimLane -> {
+            Map<String, SwimLane> projectDashboardSwimLanes = new HashMap<>();
+            projectDashboardSwimLanes.put(swimLane.getName(), createSwimLaneAndInsertTasks(swimLane, allProjectTickets, projectIdentifier));
             swimLanes.add(projectDashboardSwimLanes);
         });
     }
 
-    private void getProjectSwimLanes(ProjectEntity projectEntity, List<String> swimLaneNames) {
+    private SwimLane createSwimLaneAndInsertTasks(SwimLaneEntity swimLane, List<ProjectTicket> swimLaneTickets, String projectIdentifier) {
+        return SwimLane
+                .builder()
+                .id(swimLane.getId())
+                .projectIdentifier(projectIdentifier)
+                .title(swimLane.getName())
+                .ticketIds(getTicketIds(swimLaneTickets, swimLane.getName())).build();
+    }
+
+    private void getProjectSwimLanes(ProjectEntity projectEntity, List<SwimLaneEntity> swimLanes) {
         projectEntity.getSwimLaneEntities().forEach(swimLane -> {
-            swimLaneNames.add(swimLane.getName());
+            swimLanes.add(swimLane);
         });
     }
 
@@ -222,7 +223,7 @@ public class ProjectTicketService {
 
         List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
         projectDashboard.setTickets(allTickets);
-        List<Map<String, ProjectDashboardSwimLane>> swimLanesAndTicketReferences = addSwimLaneWithTickets(project);
+        List<Map<String, SwimLane>> swimLanesAndTicketReferences = addSwimLaneWithTickets(project);
         projectDashboard.setSwimLanes(swimLanesAndTicketReferences);
         List<String> swimLaneOrder = new ArrayList<>();
         swimLanesAndTicketReferences.forEach(column -> {

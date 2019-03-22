@@ -58,6 +58,8 @@ public class ProjectDashboardController {
         if (validationErrors != null) return validationErrors;
         User principal = (User) authentication.getPrincipal();
         Map<String, SwimLane> newSwimLane = swimLaneService.addSwimLaneToProject(projectIdentifier, swimLaneEntity, principal.getEmail());
+
+        System.out.println("new swimlane info: " + newSwimLane);
         return new ResponseEntity<>(newSwimLane, HttpStatus.OK);
 
     }
@@ -137,7 +139,7 @@ public class ProjectDashboardController {
     }
 
     @DeleteMapping("/{projectIdentifier}/{swimLaneId}")
-    public ResponseEntity<?> removeSwimLane(@PathVariable String projectIdentifier,@PathVariable String swimLaneId, Authentication authentication) {
+    public ResponseEntity<?> removeSwimLane(@PathVariable String projectIdentifier,@PathVariable int swimLaneId, Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
         boolean deleted = swimLaneService.removeSwimLaneFromProject(projectIdentifier, swimLaneId, principal.getEmail());
         Map<String,Boolean> hasBeenDeleted = new HashMap<>();

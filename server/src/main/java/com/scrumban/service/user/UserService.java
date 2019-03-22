@@ -28,13 +28,13 @@ public class UserService {
         this.userValidator = userValidator;
     }
 
-    public User saveNewUser(User newUser){
-        try{
+    public User saveNewUser(User newUser) {
+        try {
             newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
             newUser.setConfirmPassword("");
             User savedUser = userRepository.save(newUser);
             return savedUser;
-        }catch(Exception e){
+        } catch (Exception e) {
             log.info("there was a problem creating the user");
             throw new EmailAlreadyExistsException("Email already exists!");
         }

@@ -44,29 +44,32 @@ class SwimLane extends Component {
       isSwimLaneOptionsMenuOpen: !this.state.isSwimLaneOptionsMenuOpen
     });
   };
+
+  removeSwimLane = event => {
+    this.props.removeSwimLane(this.props.swimLane);
+  };
   render() {
     return (
       <div className="card--content myCard">
         <h4 className="text-center swimLane-title">
           {this.props.swimLane.title}
           <span style={{ fontSize: 11 }}>({this.props.tickets.length})</span>
-          {
-            // <span className="dropdown">
-            //   <button
-            //     className="btn dropdown-toggle"
-            //     type="button"
-            //     id="dropdownMenuButton"
-            //     data-toggle="dropdown"
-            //     aria-haspopup="true"
-            //     aria-expanded="false"
-            //   />
-            //   <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            //     <a className="dropdown-item" href="#">
-            //       Remove Swim Lane
-            //     </a>
-            //   </div>
-            // </span>
-          }
+
+          <span className="dropdown">
+            <button
+              className="btn dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            />
+            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <div className="dropdown-item" onClick={this.removeSwimLane}>
+                Remove Swim Lane
+              </div>
+            </div>
+          </span>
         </h4>
 
         <Button

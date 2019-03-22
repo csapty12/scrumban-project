@@ -10,7 +10,8 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode
 public class SwimLane {
-
+    private int id;
     private String title;
+    private String projectIdentifier;
     private List<String> ticketIds;
 }
