@@ -1,5 +1,6 @@
 package com.scrumban.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.scrumban.model.entity.ProjectEntity;
 import com.scrumban.model.entity.ProjectTicketEntity;
 import com.scrumban.model.entity.SwimLaneEntity;
@@ -8,18 +9,21 @@ import lombok.*;
 import java.util.Date;
 import java.util.List;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
+
 @Builder
 @ToString
 @Getter
 @Setter
 @EqualsAndHashCode
+@JsonInclude(NON_EMPTY)
 public class Project {
 
     private Long id;
     private String projectName;
     private String projectIdentifier;
     private String description;
-    private Date createdAt; //keeps track of whenever the object has been created or something has been updated.
+    private Date createdAt;
     private List<ProjectTicketEntity> projectTicketEntities;
     private int currentTicketNumber;
     private List<SwimLaneEntity> swimLaneEntities;
@@ -36,7 +40,6 @@ public class Project {
                 .projectTicketEntities(projectEntity.getProjectTicketEntities())
                 .currentTicketNumber(projectEntity.getCurrentTicketNumber())
                 .swimLaneEntities(projectEntity.getSwimLaneEntities())
-                .user(projectEntity.getUser())
                 .projectLeader(projectEntity.getProjectLeader())
                 .build();
     }

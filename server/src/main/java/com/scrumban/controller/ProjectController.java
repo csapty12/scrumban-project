@@ -55,13 +55,13 @@ public class ProjectController {
 //        throw new ProjectIdentifierException("Project with ID: " + projectIdentifier + " cannot be found.");
 //    }
 //
-//    @GetMapping
-//    public ResponseEntity<?> getAllProjects(Authentication authentication) {
-//        User principal = getUser(authentication);
-//        Iterable<ProjectEntity> allProjects = projectService.findAllProjects(principal.getEmail());
-//
-//        return new ResponseEntity<>(allProjects, HttpStatus.OK);
-//    }
+    @GetMapping
+    public ResponseEntity<?> getAllProjects(Authentication authentication) {
+        User principal = getUser(authentication);
+        Iterable<Project> allProjects = projectService.findAllProjects(principal.getEmail());
+
+        return new ResponseEntity<>(allProjects, HttpStatus.OK);
+    }
 //
 //    @PatchMapping
 //    public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, Authentication authentication,  BindingResult bindingResult) {

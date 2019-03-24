@@ -52,16 +52,17 @@ public class ProjectServiceImpl implements ProjectService{
         return savedNewProject;
     }
 
-//    public Iterable<ProjectEntity> findAllProjects(String userEmail) {
-//        User user = userService.getUser(userEmail);
-//
-//        List<ProjectEntity> allProjects = projectEntityRepository.findAllByUser(user);
-//
-//        if (allProjects.size() != 0) {
-//            return allProjects;
-//        }
-//        throw new ProjectNotFoundException("No projects found.");
-//    }
+    @Override
+    public Iterable<Project> findAllProjects(String userEmail) {
+        User user = userService.getUser(userEmail);
+
+        List<Project> allProjects = projectRepository.findAllByUser(user);
+
+        if (allProjects.size() != 0) {
+            return allProjects;
+        }
+        throw new ProjectNotFoundException("No projects found.");
+    }
 //
 //    public ProjectEntity updateProject(ProjectEntity projectEntity, String userEmail) {
 //        User user = userService.getUser(userEmail);

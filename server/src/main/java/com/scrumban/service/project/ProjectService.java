@@ -5,4 +5,6 @@ import com.scrumban.model.domain.Project;
 public interface ProjectService {
 
     Project saveProject(Project newProject, String userEmail);
+
+    Iterable<Project> findAllProjects(String email);
 }
