@@ -1,4 +1,4 @@
-package com.scrumban.model.project.entity;
+package com.scrumban.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -30,6 +30,6 @@ public class SwimLaneEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "swimLaneEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<ProjectTicket> projectTickets;
+    private List<ProjectTicketEntity> projectTicketEntities;
 
 }

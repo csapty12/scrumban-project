@@ -4,10 +4,10 @@ import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.exception.ProjectSwimLaneNotFoundException;
 import com.scrumban.model.domain.ProjectDashboard;
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectEntity;
-import com.scrumban.model.project.entity.ProjectTicket;
-import com.scrumban.model.project.entity.SwimLaneEntity;
-import com.scrumban.repository.ProjectTicketRepository;
+import com.scrumban.model.entity.ProjectEntity;
+import com.scrumban.model.entity.ProjectTicketEntity;
+import com.scrumban.model.entity.SwimLaneEntity;
+import com.scrumban.repository.entity.ProjectTicketEntityRepository;
 import com.scrumban.validator.UserProjectValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProjectTicketServiceTest {
+class ProjectTicketEntityServiceTest {
 
     @Mock
     private UserProjectValidator userProjectValidator;
@@ -38,7 +38,7 @@ class ProjectTicketServiceTest {
     private SwimLaneService swimLaneService;
 
     @Mock
-    private ProjectTicketRepository projectTicketRepository;
+    private ProjectTicketEntityRepository projectTicketEntityRepository;
 
     @InjectMocks
     private ProjectTicketService projectTicketService;
@@ -89,10 +89,10 @@ class ProjectTicketServiceTest {
 
             SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
             SwimLaneEntity builtSwimLane = swimLane.build();
-            ProjectTicket projectTicket = createProjectTicket();
+            ProjectTicketEntity projectTicketEntity = createProjectTicket();
 
             when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.empty());
-            assertThrows(ProjectSwimLaneNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com"));
+            assertThrows(ProjectSwimLaneNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com"));
         }
 
         @Test
@@ -101,11 +101,11 @@ class ProjectTicketServiceTest {
 
             SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
             SwimLaneEntity builtSwimLane = swimLane.build();
-            ProjectTicket projectTicket = createProjectTicket();
+            ProjectTicketEntity projectTicketEntity = createProjectTicket();
 
             when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.of(builtSwimLane));
             when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
-            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com"));
+            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com"));
         }
 
         @Test
@@ -119,15 +119,15 @@ class ProjectTicketServiceTest {
             swimLane.projectEntities(setOfProjectEntities);
             SwimLaneEntity builtSwimLane = swimLane.build();
             project.setSwimLaneEntities(Arrays.asList(builtSwimLane));
-            ProjectTicket projectTicket = createProjectTicket();
+            ProjectTicketEntity projectTicketEntity = createProjectTicket();
 
             when(swimLaneService.findSwimLaneByName(any())).thenReturn(Optional.of(builtSwimLane));
             when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
-            when(projectTicketRepository.save(any())).thenReturn(projectTicket);
+            when(projectTicketEntityRepository.save(any())).thenReturn(projectTicketEntity);
 
-            LinkedHashMap<String, ProjectTicket> actualNewProjectTicket = projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicket, "a@a.com");
-            LinkedHashMap<String, ProjectTicket> expectedNewProjectTicket = new LinkedHashMap<>();
-            expectedNewProjectTicket.put("T-1", projectTicket);
+            LinkedHashMap<String, ProjectTicketEntity> actualNewProjectTicket = projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com");
+            LinkedHashMap<String, ProjectTicketEntity> expectedNewProjectTicket = new LinkedHashMap<>();
+            expectedNewProjectTicket.put("T-1", projectTicketEntity);
 
             assertThat(actualNewProjectTicket, is(expectedNewProjectTicket));
         }
@@ -140,16 +140,16 @@ class ProjectTicketServiceTest {
         @DisplayName("when user does not exist, throw UsernameNotFoundException")
         void testUserDoesNotExist() {
             when(userProjectValidator.getUserProject(any(), any())).thenThrow(UsernameNotFoundException.class);
-            ProjectTicket projectTicket = createProjectTicket();
-            assertThrows(UsernameNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicket, "test@test.com"));
+            ProjectTicketEntity projectTicketEntity = createProjectTicket();
+            assertThrows(UsernameNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicketEntity, "test@test.com"));
         }
 
         @Test
         @DisplayName("when project does not exist, throw ProjectNotFoundException")
         void testProjectDoesNotExist() {
-            ProjectTicket projectTicket = createProjectTicket();
+            ProjectTicketEntity projectTicketEntity = createProjectTicket();
             when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
-            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicket, "test@test.com"));
+            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicketEntity, "test@test.com"));
         }
 
         @Test
@@ -162,12 +162,12 @@ class ProjectTicketServiceTest {
             swimLane.projectEntities(setOfProjectEntities);
             SwimLaneEntity builtSwimLane = swimLane.build();
             project.setSwimLaneEntities(Arrays.asList(builtSwimLane));
-            ProjectTicket projectTicket = createProjectTicket();
-            projectTicket.setId(1L);
+            ProjectTicketEntity projectTicketEntity = createProjectTicket();
+            projectTicketEntity.setId(1L);
 
             when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
-            projectTicketService.removeTicketFromProject(projectTicket, "a@a.com");
-            verify(projectTicketRepository, times(1)).deleteProjectTicket(projectTicket.getId());
+            projectTicketService.removeTicketFromProject(projectTicketEntity, "a@a.com");
+            verify(projectTicketEntityRepository, times(1)).deleteProjectTicket(projectTicketEntity.getId());
         }
     }
 
@@ -184,7 +184,7 @@ class ProjectTicketServiceTest {
         project.setProjectIdentifier("test");
         project.setUser(createValidUser("a@a.com", 1L));
         project.setSwimLaneEntities(new ArrayList<>());
-        project.setProjectTickets(new ArrayList<>());
+        project.setProjectTicketEntities(new ArrayList<>());
         return project;
     }
 
@@ -192,8 +192,8 @@ class ProjectTicketServiceTest {
         return SwimLaneEntity.builder().id(1).name("swimlane");
     }
 
-    private ProjectTicket createProjectTicket() {
-        return ProjectTicket.builder()
+    private ProjectTicketEntity createProjectTicket() {
+        return ProjectTicketEntity.builder()
                 .summary("")
                 .acceptanceCriteria("")
                 .complexity(1)

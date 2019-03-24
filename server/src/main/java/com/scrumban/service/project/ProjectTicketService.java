@@ -4,10 +4,10 @@ import com.scrumban.exception.ProjectSwimLaneNotFoundException;
 import com.scrumban.model.domain.ProjectDashboard;
 import com.scrumban.model.domain.SwimLane;
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectEntity;
-import com.scrumban.model.project.entity.ProjectTicket;
-import com.scrumban.model.project.entity.SwimLaneEntity;
-import com.scrumban.repository.ProjectTicketRepository;
+import com.scrumban.model.entity.ProjectEntity;
+import com.scrumban.model.entity.ProjectTicketEntity;
+import com.scrumban.model.entity.SwimLaneEntity;
+import com.scrumban.repository.entity.ProjectTicketEntityRepository;
 import com.scrumban.validator.UserProjectValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProjectTicketService {
 
-    private ProjectTicketRepository projectTicketRepository;
+    private ProjectTicketEntityRepository projectTicketEntityRepository;
     private SwimLaneService swimLaneService;
     private UserProjectValidator userProjectValidator;
 
-    public ProjectTicketService(ProjectTicketRepository projectTicketRepository, SwimLaneService swimLaneService, UserProjectValidator userProjectValidator) {
-        this.projectTicketRepository = projectTicketRepository;
+    public ProjectTicketService(ProjectTicketEntityRepository projectTicketEntityRepository, SwimLaneService swimLaneService, UserProjectValidator userProjectValidator) {
+        this.projectTicketEntityRepository = projectTicketEntityRepository;
         this.swimLaneService = swimLaneService;
         this.userProjectValidator = userProjectValidator;
     }
@@ -36,10 +36,10 @@ public class ProjectTicketService {
 
     }
 
-    public LinkedHashMap<String, ProjectTicket> addProjectTicketToProject(String projectIdentifier,
-                                                                          String swimLaneName,
-                                                                          ProjectTicket projectTicket,
-                                                                          String userEmail) {
+    public LinkedHashMap<String, ProjectTicketEntity> addProjectTicketToProject(String projectIdentifier,
+                                                                                String swimLaneName,
+                                                                                ProjectTicketEntity projectTicketEntity,
+                                                                                String userEmail) {
 
         Optional<SwimLaneEntity> swimLane = swimLaneService.findSwimLaneByName(swimLaneName);
         if (!swimLane.isPresent()) {
@@ -51,19 +51,19 @@ public class ProjectTicketService {
         int currentTicketNumber = existingProject.getCurrentTicketNumber();
         int incrementValue = 1;
         String projectSequence = createTicketIdentifier(existingProject, currentTicketNumber, incrementValue);
-        projectTicket.setProjectSequence(projectSequence);
+        projectTicketEntity.setProjectSequence(projectSequence);
 
-        projectTicket.setProject(existingProject);
-        projectTicket.setSwimLaneEntity(swimLane.get());
-        projectTicket.setProjectIdentifier(existingProject.getProjectIdentifier());
-        projectTicketRepository.save(projectTicket);
-        LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
-        singleProjectTicket.put(projectSequence, projectTicket);
+        projectTicketEntity.setProject(existingProject);
+        projectTicketEntity.setSwimLaneEntity(swimLane.get());
+        projectTicketEntity.setProjectIdentifier(existingProject.getProjectIdentifier());
+        projectTicketEntityRepository.save(projectTicketEntity);
+        LinkedHashMap<String, ProjectTicketEntity> singleProjectTicket = new LinkedHashMap<>();
+        singleProjectTicket.put(projectSequence, projectTicketEntity);
         return singleProjectTicket;
     }
 
 
-    public LinkedHashMap<String, ProjectTicket> updateTicketInformation(ProjectTicket projectTicket, String projectIdentifier, String swimLaneName, String userEmail) {
+    public LinkedHashMap<String, ProjectTicketEntity> updateTicketInformation(ProjectTicketEntity projectTicketEntity, String projectIdentifier, String swimLaneName, String userEmail) {
 
         ProjectEntity existingProject = userProjectValidator.getUserProject(projectIdentifier, userEmail);
         Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLaneName);
@@ -72,24 +72,24 @@ public class ProjectTicketService {
             throw new ProjectSwimLaneNotFoundException("Swim lane with name: " + swimLaneName + " not found");
         }
 
-        projectTicket.setProject(existingProject);
-        projectTicket.setTicketNumberPosition(projectTicket.getTicketNumberPosition());
-        projectTicket.setSwimLaneEntity(swimLaneEntity.get());
-        projectTicket.setProjectIdentifier(existingProject.getProjectIdentifier());
+        projectTicketEntity.setProject(existingProject);
+        projectTicketEntity.setTicketNumberPosition(projectTicketEntity.getTicketNumberPosition());
+        projectTicketEntity.setSwimLaneEntity(swimLaneEntity.get());
+        projectTicketEntity.setProjectIdentifier(existingProject.getProjectIdentifier());
 
-        projectTicketRepository.save(projectTicket);
+        projectTicketEntityRepository.save(projectTicketEntity);
 
-        LinkedHashMap<String, ProjectTicket> singleProjectTicket = new LinkedHashMap<>();
-        singleProjectTicket.put(projectTicket.getProjectSequence(), projectTicket);
+        LinkedHashMap<String, ProjectTicketEntity> singleProjectTicket = new LinkedHashMap<>();
+        singleProjectTicket.put(projectTicketEntity.getProjectSequence(), projectTicketEntity);
         return singleProjectTicket;
     }
 
 
-    public void removeTicketFromProject(ProjectTicket projectTicket, String userEmail) {
-        ProjectEntity existingProject = userProjectValidator.getUserProject(projectTicket.getProjectIdentifier(), userEmail);
+    public void removeTicketFromProject(ProjectTicketEntity projectTicketEntity, String userEmail) {
+        ProjectEntity existingProject = userProjectValidator.getUserProject(projectTicketEntity.getProjectIdentifier(), userEmail);
 
-        log.info("deleting ticket: " + projectTicket.getId());
-        projectTicketRepository.deleteProjectTicket(projectTicket.getId());
+        log.info("deleting ticket: " + projectTicketEntity.getId());
+        projectTicketEntityRepository.deleteProjectTicket(projectTicketEntity.getId());
 
     }
 
@@ -100,8 +100,8 @@ public class ProjectTicketService {
                 .stream()
                 .filter(swimLaneEntity -> swimLaneEntity.getName().equals(swimLane.getTitle())).collect(Collectors.toList());
 
-        List<ProjectTicket> projectSwimLaneTickets = singleSwimLane.get(0)
-                .getProjectTickets()
+        List<ProjectTicketEntity> projectSwimLaneTickets = singleSwimLane.get(0)
+                .getProjectTicketEntities()
                 .stream()
                 .filter(ticket -> ticket.getProject().getProjectIdentifier()
                         .equals(projectIdentifier)).collect(Collectors.toList()
@@ -120,9 +120,9 @@ public class ProjectTicketService {
             List<String> ticketIds = swimLane.getTicketIds();
             Optional<SwimLaneEntity> swimLaneEntity = swimLaneService.findSwimLaneByName(swimLane.getTitle());
             ticketIds.forEach(ticketId -> {
-                ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticketId);
-                projectTicket.setSwimLaneEntity(swimLaneEntity.get());
-                projectTicketRepository.save(projectTicket);
+                ProjectTicketEntity projectTicketEntity = projectTicketEntityRepository.findByProjectSequence(ticketId);
+                projectTicketEntity.setSwimLaneEntity(swimLaneEntity.get());
+                projectTicketEntityRepository.save(projectTicketEntity);
             });
         });
     }
@@ -132,23 +132,23 @@ public class ProjectTicketService {
         User user = project.getUser();
 
         swimLanes.get(0).getTicketIds().forEach(ticket -> {
-            ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticket);
-            if (projectTicket.getProject().getUser().getId().equals(user.getId())) {
-                updateTicketPositionInSwimLane(swimLanes.get(0), projectTicket);
+            ProjectTicketEntity projectTicketEntity = projectTicketEntityRepository.findByProjectSequence(ticket);
+            if (projectTicketEntity.getProject().getUser().getId().equals(user.getId())) {
+                updateTicketPositionInSwimLane(swimLanes.get(0), projectTicketEntity);
             }
         });
         swimLanes.get(1).getTicketIds().forEach(ticket -> {
-            ProjectTicket projectTicket = projectTicketRepository.findByProjectSequence(ticket);
-            if (projectTicket.getProject().getUser().getId().equals(user.getId())) {
-                updateTicketPositionInSwimLane(swimLanes.get(1), projectTicket);
+            ProjectTicketEntity projectTicketEntity = projectTicketEntityRepository.findByProjectSequence(ticket);
+            if (projectTicketEntity.getProject().getUser().getId().equals(user.getId())) {
+                updateTicketPositionInSwimLane(swimLanes.get(1), projectTicketEntity);
             }
         });
     }
 
-    private ArrayList<String> getTicketIds(List<ProjectTicket> allProjectTickets, String columnName) {
+    private ArrayList<String> getTicketIds(List<ProjectTicketEntity> allProjectTicketEntities, String columnName) {
         ArrayList<String> projectTaskIds = new ArrayList<>();
 
-        allProjectTickets.forEach(projectTicket -> {
+        allProjectTicketEntities.forEach(projectTicket -> {
             if (projectTicket.getSwimLaneEntity().getName().equals(columnName)) {
 
                 projectTaskIds.add(projectTicket.getProjectSequence());
@@ -157,22 +157,22 @@ public class ProjectTicketService {
         return projectTaskIds;
     }
 
-    private void updateTicketPositionInSwimLane(SwimLane swimLane, ProjectTicket ticket) {
+    private void updateTicketPositionInSwimLane(SwimLane swimLane, ProjectTicketEntity ticket) {
 
         int indexOfTicket = swimLane.getTicketIds().indexOf(ticket.getProjectSequence());
         ticket.setTicketNumberPosition(++indexOfTicket);
-        projectTicketRepository.save(ticket);
+        projectTicketEntityRepository.save(ticket);
     }
 
-    private List<LinkedHashMap<String, ProjectTicket>> insertAllTickets(List<ProjectTicket> allProjectTickets) {
-        if (allProjectTickets.size() == 0) {
+    private List<LinkedHashMap<String, ProjectTicketEntity>> insertAllTickets(List<ProjectTicketEntity> allProjectTicketEntities) {
+        if (allProjectTicketEntities.size() == 0) {
             return new ArrayList<>();
         }
-        List<LinkedHashMap<String, ProjectTicket>> projectTicketList = new ArrayList<>();
-        LinkedHashMap<String, ProjectTicket> projectTicketMap = new LinkedHashMap<>();
-        allProjectTickets.sort(Comparator.comparingInt(ProjectTicket::getTicketNumberPosition));
+        List<LinkedHashMap<String, ProjectTicketEntity>> projectTicketList = new ArrayList<>();
+        LinkedHashMap<String, ProjectTicketEntity> projectTicketMap = new LinkedHashMap<>();
+        allProjectTicketEntities.sort(Comparator.comparingInt(ProjectTicketEntity::getTicketNumberPosition));
 
-        allProjectTickets.forEach(ticket -> projectTicketMap.put(ticket.getProjectSequence(), ticket));
+        allProjectTicketEntities.forEach(ticket -> projectTicketMap.put(ticket.getProjectSequence(), ticket));
         projectTicketList.add(projectTicketMap);
         return projectTicketList;
     }
@@ -188,21 +188,21 @@ public class ProjectTicketService {
         List<SwimLaneEntity> swimLaneNames = new ArrayList<>();
         getProjectSwimLanes(projectEntity, swimLaneNames);
 
-        List<ProjectTicket> allProjectTickets = projectEntity.getProjectTickets();
+        List<ProjectTicketEntity> allProjectTicketEntities = projectEntity.getProjectTicketEntities();
         List<Map<String, SwimLane>> listOfColumns = new ArrayList<>();
-        insertTicketsIntoSwimLanes(swimLaneNames, allProjectTickets, listOfColumns, projectEntity.getProjectIdentifier());
+        insertTicketsIntoSwimLanes(swimLaneNames, allProjectTicketEntities, listOfColumns, projectEntity.getProjectIdentifier());
         return listOfColumns;
     }
 
-    private void insertTicketsIntoSwimLanes(List<SwimLaneEntity> swimLaneEntities, List<ProjectTicket> allProjectTickets, List<Map<String, SwimLane>> swimLanes, String projectIdentifier) {
+    private void insertTicketsIntoSwimLanes(List<SwimLaneEntity> swimLaneEntities, List<ProjectTicketEntity> allProjectTicketEntities, List<Map<String, SwimLane>> swimLanes, String projectIdentifier) {
         swimLaneEntities.forEach(swimLane -> {
             Map<String, SwimLane> projectDashboardSwimLanes = new HashMap<>();
-            projectDashboardSwimLanes.put(swimLane.getName(), createSwimLaneAndInsertTasks(swimLane, allProjectTickets, projectIdentifier));
+            projectDashboardSwimLanes.put(swimLane.getName(), createSwimLaneAndInsertTasks(swimLane, allProjectTicketEntities, projectIdentifier));
             swimLanes.add(projectDashboardSwimLanes);
         });
     }
 
-    private SwimLane createSwimLaneAndInsertTasks(SwimLaneEntity swimLane, List<ProjectTicket> swimLaneTickets, String projectIdentifier) {
+    private SwimLane createSwimLaneAndInsertTasks(SwimLaneEntity swimLane, List<ProjectTicketEntity> swimLaneTickets, String projectIdentifier) {
         return SwimLane
                 .builder()
                 .id(swimLane.getId())
@@ -218,10 +218,10 @@ public class ProjectTicketService {
     }
 
     private ProjectDashboard setupProjectDashboard(ProjectEntity project) {
-        List<ProjectTicket> allProjectTickets = project.getProjectTickets();
+        List<ProjectTicketEntity> allProjectTicketEntities = project.getProjectTicketEntities();
         ProjectDashboard projectDashboard = new ProjectDashboard();
 
-        List<LinkedHashMap<String, ProjectTicket>> allTickets = insertAllTickets(allProjectTickets);
+        List<LinkedHashMap<String, ProjectTicketEntity>> allTickets = insertAllTickets(allProjectTicketEntities);
         projectDashboard.setTickets(allTickets);
         List<Map<String, SwimLane>> swimLanesAndTicketReferences = addSwimLaneWithTickets(project);
         projectDashboard.setSwimLanes(swimLanesAndTicketReferences);

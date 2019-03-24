@@ -1,4 +1,4 @@
-package com.scrumban.model.project.entity;
+package com.scrumban.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,7 +39,7 @@ public class ProjectEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
-    private List<ProjectTicket> projectTickets;
+    private List<ProjectTicketEntity> projectTicketEntities;
 
     @Column
     private int currentTicketNumber;

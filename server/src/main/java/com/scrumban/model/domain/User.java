@@ -1,7 +1,7 @@
 package com.scrumban.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.scrumban.model.project.entity.ProjectEntity;
+import com.scrumban.model.entity.ProjectEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

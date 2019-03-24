@@ -1,4 +1,4 @@
-package com.scrumban.model.project.entity;
+package com.scrumban.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,12 +11,12 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@Table(name="projectTickets")
+@Table(name="projectTicketEntities")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class ProjectTicket {
+public class ProjectTicketEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,7 +55,7 @@ public class ProjectTicket {
         this.createdAt = new Date();
         int totalNumberOfTickets = this.project.getCurrentTicketNumber();
         this.project.setCurrentTicketNumber(totalNumberOfTickets+1);
-        this.ticketNumberPosition = this.getSwimLaneEntity().getProjectTickets().size()+1;
+        this.ticketNumberPosition = this.getSwimLaneEntity().getProjectTicketEntities().size()+1;
     }
 
 }

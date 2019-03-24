@@ -1,6 +1,6 @@
-package com.scrumban.repository;
+package com.scrumban.repository.entity;
 
-import com.scrumban.model.project.entity.ProjectTicket;
+import com.scrumban.model.entity.ProjectTicketEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 
 @Repository
-public interface ProjectTicketRepository  extends CrudRepository<ProjectTicket, Long> {
+public interface ProjectTicketEntityRepository extends CrudRepository<ProjectTicketEntity, Long> {
 
 
     @Modifying
     @Transactional
-    @Query("delete from ProjectTicket p where id = ?1")
+    @Query("delete from ProjectTicketEntity p where id = ?1")
     void deleteProjectTicket(long id);
 
-    ProjectTicket findByProjectSequence(String projectSequence);
+    ProjectTicketEntity findByProjectSequence(String projectSequence);
 
 
 

@@ -3,10 +3,10 @@ package com.scrumban.service.project;
 import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectEntity;
-import com.scrumban.model.project.entity.SwimLaneEntity;
-import com.scrumban.repository.ProjectRepository;
-import com.scrumban.repository.ProjectTicketRepository;
+import com.scrumban.model.entity.ProjectEntity;
+import com.scrumban.model.entity.SwimLaneEntity;
+import com.scrumban.repository.entity.ProjectEntityRepository;
+import com.scrumban.repository.entity.ProjectTicketEntityRepository;
 import com.scrumban.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,14 +19,14 @@ import java.util.Optional;
 @Slf4j
 public class ProjectService {
 
-    private ProjectRepository projectRepository;
-    private ProjectTicketRepository projectTicketRepository;
+    private ProjectEntityRepository projectEntityRepository;
+    private ProjectTicketEntityRepository projectTicketEntityRepository;
     private UserService userService;
 
 
-    public ProjectService(ProjectRepository projectRepository, ProjectTicketRepository projectTicketRepository, UserService userService) {
-        this.projectRepository = projectRepository;
-        this.projectTicketRepository = projectTicketRepository;
+    public ProjectService(ProjectEntityRepository projectEntityRepository, ProjectTicketEntityRepository projectTicketEntityRepository, UserService userService) {
+        this.projectEntityRepository = projectEntityRepository;
+        this.projectTicketEntityRepository = projectTicketEntityRepository;
         this.userService = userService;
     }
 
@@ -45,7 +45,7 @@ public class ProjectService {
         projectEntity.setUser(user);
         projectEntity.setProjectLeader(createProjectLeader(user));
         projectEntity.setSwimLaneEntities(swimLaneEntityList);
-        ProjectEntity savedNewProject = projectRepository.save(projectEntity);
+        ProjectEntity savedNewProject = projectEntityRepository.save(projectEntity);
         log.info("new project: {} has been saved", savedNewProject.getProjectName());
         return savedNewProject;
     }
@@ -53,7 +53,7 @@ public class ProjectService {
     public Iterable<ProjectEntity> findAllProjects(String userEmail) {
         User user = userService.getUser(userEmail);
 
-        List<ProjectEntity> allProjects = projectRepository.findAllByUser(user);
+        List<ProjectEntity> allProjects = projectEntityRepository.findAllByUser(user);
 
         if (allProjects.size() != 0) {
             return allProjects;
@@ -71,7 +71,7 @@ public class ProjectService {
 
         projectEntity.setProjectLeader(foundProjectEntity.get().getProjectLeader());
         projectEntity.setUser(foundProjectEntity.get().getUser());
-        return projectRepository.save(projectEntity);
+        return projectEntityRepository.save(projectEntity);
     }
 
 
@@ -86,7 +86,7 @@ public class ProjectService {
     }
 
     public Optional<ProjectEntity> getProject(String projectIdentifier, User user) {
-        Optional<ProjectEntity> project = projectRepository.findProjectEntityByProjectIdentifier(projectIdentifier);
+        Optional<ProjectEntity> project = projectEntityRepository.findProjectEntityByProjectIdentifier(projectIdentifier);
         if (project.isPresent()) {
             if (!isUserAssociatedWithProject(user, project.get())) {
                 throw new ProjectNotFoundException("Project with ID: " + projectIdentifier + " cannot be found.");
@@ -105,10 +105,10 @@ public class ProjectService {
 
     private void deleteProject(Optional<ProjectEntity> projectEntity) {
         deleteAllProjectTickets(projectEntity);
-        projectRepository.delete(projectEntity.get());
+        projectEntityRepository.delete(projectEntity.get());
     }
 
     private void deleteAllProjectTickets(Optional<ProjectEntity> projectEntity) {
-        projectEntity.ifPresent(project -> project.getProjectTickets().forEach(projectTicket -> projectTicketRepository.deleteProjectTicket(projectTicket.getId())));
+        projectEntity.ifPresent(project -> project.getProjectTicketEntities().forEach(projectTicket -> projectTicketEntityRepository.deleteProjectTicket(projectTicket.getId())));
     }
 }

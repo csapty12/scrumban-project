@@ -1,5 +1,6 @@
 package com.scrumban.model.domain;
 
+import com.scrumban.model.entity.SwimLaneEntity;
 import lombok.*;
 
 import java.util.List;

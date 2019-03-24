@@ -1,8 +1,7 @@
-package com.scrumban.repository;
+package com.scrumban.repository.entity;
 
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectEntity;
-import com.scrumban.model.project.entity.ProjectTicket;
+import com.scrumban.model.entity.ProjectEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
+public interface ProjectEntityRepository extends CrudRepository<ProjectEntity, Long> {
     @Override
     Iterable<ProjectEntity> findAllById(Iterable<Long> iterable);
 

@@ -3,8 +3,8 @@ package com.scrumban.controller;
 import com.scrumban.model.domain.ProjectDashboard;
 import com.scrumban.model.domain.SwimLane;
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectTicket;
-import com.scrumban.model.project.entity.SwimLaneEntity;
+import com.scrumban.model.entity.ProjectTicketEntity;
+import com.scrumban.model.entity.SwimLaneEntity;
 import com.scrumban.service.ValidationErrorService;
 import com.scrumban.service.project.ProjectService;
 import com.scrumban.service.project.ProjectTicketService;
@@ -67,7 +67,7 @@ public class ProjectDashboardController {
     @PostMapping("/{projectIdentifier}/{swimLaneId}")
     public ResponseEntity<?> addTicketToSwimLane(@PathVariable String projectIdentifier,
                                                  @PathVariable String swimLaneId,
-                                                 @Valid @RequestBody ProjectTicket projectTicket,
+                                                 @Valid @RequestBody ProjectTicketEntity projectTicketEntity,
                                                  BindingResult bindingResult,
                                                  Authentication authentication) {
 
@@ -75,8 +75,8 @@ public class ProjectDashboardController {
         if (validationErrors != null) return validationErrors;
 
         User principal = (User) authentication.getPrincipal();
-        LinkedHashMap<String, ProjectTicket> newTicket = projectTicketService.addProjectTicketToProject(projectIdentifier,
-                swimLaneId, projectTicket, principal.getEmail());
+        LinkedHashMap<String, ProjectTicketEntity> newTicket = projectTicketService.addProjectTicketToProject(projectIdentifier,
+                swimLaneId, projectTicketEntity, principal.getEmail());
         return new ResponseEntity<>(newTicket, HttpStatus.OK);
     }
 
@@ -84,7 +84,7 @@ public class ProjectDashboardController {
     public ResponseEntity<?> removeTicketFromProject(@PathVariable String projectIdentifier,
                                                      @PathVariable String swimLaneId,
                                                      @PathVariable Long ticketId,
-                                                     @Valid @RequestBody ProjectTicket projectTicket,
+                                                     @Valid @RequestBody ProjectTicketEntity projectTicketEntity,
                                                      BindingResult bindingResult,
                                                      Authentication authentication) {
 
@@ -92,7 +92,7 @@ public class ProjectDashboardController {
         if (validationErrors != null) return validationErrors;
         User principal = (User) authentication.getPrincipal();
 
-        projectTicketService.removeTicketFromProject(projectTicket, principal.getEmail());
+        projectTicketService.removeTicketFromProject(projectTicketEntity, principal.getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -125,15 +125,15 @@ public class ProjectDashboardController {
     public ResponseEntity<?> updateTicketInformation(@PathVariable String projectIdentifier,
                                                      @PathVariable String swimLaneId,
                                                      @PathVariable Long id,
-                                                     @Valid @RequestBody ProjectTicket projectTicket,
+                                                     @Valid @RequestBody ProjectTicketEntity projectTicketEntity,
                                                      BindingResult bindingResult, Authentication authentication
     ) {
         ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
         if (validationErrors != null) return validationErrors;
 
         User principal = (User) authentication.getPrincipal();
-        System.out.println("ticket postion: " + projectTicket.getTicketNumberPosition());
-        projectTicketService.updateTicketInformation(projectTicket, projectIdentifier, swimLaneId, principal.getEmail());
+        System.out.println("ticket postion: " + projectTicketEntity.getTicketNumberPosition());
+        projectTicketService.updateTicketInformation(projectTicketEntity, projectIdentifier, swimLaneId, principal.getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
 
     }

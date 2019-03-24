@@ -1,6 +1,6 @@
-package com.scrumban.repository;
+package com.scrumban.repository.entity;
 
-import com.scrumban.model.project.entity.SwimLaneEntity;
+import com.scrumban.model.entity.SwimLaneEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface SwimLaneRepository extends CrudRepository<SwimLaneEntity, Long> {
+public interface SwimLaneEntityRepository extends CrudRepository<SwimLaneEntity, Long> {
     Optional<SwimLaneEntity> findById(int swimLaneId);
     Optional<SwimLaneEntity> findByName(String swimLaneName);
 

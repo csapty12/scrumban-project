@@ -3,10 +3,10 @@ package com.scrumban.service.project;
 import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectEntity;
-import com.scrumban.model.project.entity.ProjectTicket;
-import com.scrumban.repository.ProjectRepository;
-import com.scrumban.repository.ProjectTicketRepository;
+import com.scrumban.model.entity.ProjectEntity;
+import com.scrumban.model.entity.ProjectTicketEntity;
+import com.scrumban.repository.entity.ProjectEntityRepository;
+import com.scrumban.repository.entity.ProjectTicketEntityRepository;
 import com.scrumban.service.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,13 +34,13 @@ import static org.mockito.Mockito.*;
 class ProjectServiceTest {
 
     @Mock
-    private ProjectRepository projectRepository;
+    private ProjectEntityRepository projectEntityRepository;
 
     @Mock
     private UserService userService;
 
     @Mock
-    private ProjectTicketRepository projectTicketRepository;
+    private ProjectTicketEntityRepository projectTicketEntityRepository;
 
     @InjectMocks
     private ProjectService projectService;
@@ -57,7 +57,7 @@ class ProjectServiceTest {
             ProjectEntity project = createProject();
 
             when(userService.getUser(anyString())).thenReturn(user);
-            when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(project));
+            when(projectEntityRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(project));
 
             assertThrows(ProjectIdentifierException.class, () -> projectService.saveProject(project, user.getEmail()));
         }
@@ -69,8 +69,8 @@ class ProjectServiceTest {
             ProjectEntity project = createProject();
 
             when(userService.getUser(anyString())).thenReturn(user);
-            when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
-            when(projectRepository.save(any())).thenReturn(project);
+            when(projectEntityRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
+            when(projectEntityRepository.save(any())).thenReturn(project);
 
             ProjectEntity actualSavedProject = projectService.saveProject(project, user.getEmail());
             ProjectEntity expectedSavedProject = ProjectEntity.builder().projectIdentifier("test").projectName("test").build();
@@ -102,7 +102,7 @@ class ProjectServiceTest {
         @DisplayName("Test when find all projects, throws ProjectNotFoundException excpetion")
         void testNoProjectsFound() {
             User user = createValidUser();
-            when(projectRepository.findAllByUser(user)).thenReturn(new ArrayList<>());
+            when(projectEntityRepository.findAllByUser(user)).thenReturn(new ArrayList<>());
             when(userService.getUser(anyString())).thenReturn(user);
             assertThrows(ProjectNotFoundException.class, () -> projectService.findAllProjects(user.getEmail()));
         }
@@ -114,7 +114,7 @@ class ProjectServiceTest {
             ProjectEntity projectEntity = createProject();
             when(userService.getUser(anyString())).thenReturn(user);
             List<ProjectEntity> listOfProjects = new ArrayList<>(asList(projectEntity));
-            when(projectRepository.findAllByUser(user)).thenReturn(listOfProjects);
+            when(projectEntityRepository.findAllByUser(user)).thenReturn(listOfProjects);
             Iterable<ProjectEntity> allProjects = projectService.findAllProjects(user.getEmail());
 
             List<ProjectEntity> target = new ArrayList<>();
@@ -133,9 +133,9 @@ class ProjectServiceTest {
             User user = createValidUser();
             ProjectEntity projectEntity = createProject();
             when(userService.getUser(anyString())).thenReturn(user);
-            when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
+            when(projectEntityRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
             projectService.updateProject(projectEntity, user.getEmail());
-            verify(projectRepository, times(1)).save(any());
+            verify(projectEntityRepository, times(1)).save(any());
         }
 
         @Test
@@ -155,7 +155,7 @@ class ProjectServiceTest {
             user.setId(5L);
             ProjectEntity projectEntity = createProject();
             when(userService.getUser(anyString())).thenReturn(user);
-            when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
+            when(projectEntityRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
             assertThrows(ProjectIdentifierException.class, () -> projectService.updateProject(projectEntity, user.getEmail()));
         }
 
@@ -167,7 +167,7 @@ class ProjectServiceTest {
             user.setId(5L);
             ProjectEntity projectEntity = createProject();
             when(userService.getUser(anyString())).thenReturn(user);
-            when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
+            when(projectEntityRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
             assertThrows(ProjectNotFoundException.class, () -> projectService.updateProject(projectEntity, user.getEmail()));
         }
 
@@ -193,7 +193,7 @@ class ProjectServiceTest {
             user.setId(5L);
             ProjectEntity projectEntity = createProject();
             when(userService.getUser(anyString())).thenReturn(user);
-            when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
+            when(projectEntityRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.empty());
             assertThrows(ProjectIdentifierException.class, () -> projectService.deleteProject(projectEntity.getProjectIdentifier(), user.getEmail()));
         }
 
@@ -205,7 +205,7 @@ class ProjectServiceTest {
             user.setId(5L);
             ProjectEntity projectEntity = createProject();
             when(userService.getUser(anyString())).thenReturn(user);
-            when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
+            when(projectEntityRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
             assertThrows(ProjectNotFoundException.class, () -> projectService.deleteProject(projectEntity.getProjectIdentifier(), user.getEmail()));
         }
 
@@ -216,9 +216,9 @@ class ProjectServiceTest {
             ProjectEntity projectEntity = createProject();
 
             when(userService.getUser(anyString())).thenReturn(user);
-            when(projectRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
+            when(projectEntityRepository.findProjectEntityByProjectIdentifier(any())).thenReturn(Optional.of(projectEntity));
             projectService.deleteProject(projectEntity.getProjectIdentifier(), user.getEmail());
-            verify(projectRepository, times(1)).delete(projectEntity);
+            verify(projectEntityRepository, times(1)).delete(projectEntity);
 
         }
     }
@@ -236,10 +236,10 @@ class ProjectServiceTest {
         project.setProjectIdentifier("test");
         project.setUser(createValidUser());
 
-        ProjectTicket projectTicket = new ProjectTicket();
-        projectTicket.setId(1L);
+        ProjectTicketEntity projectTicketEntity = new ProjectTicketEntity();
+        projectTicketEntity.setId(1L);
 
-        project.setProjectTickets(Arrays.asList(projectTicket));
+        project.setProjectTicketEntities(Arrays.asList(projectTicketEntity));
         return project;
     }
 

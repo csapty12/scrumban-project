@@ -4,9 +4,9 @@ import com.scrumban.exception.DuplicateProjectSwimLaneException;
 import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.domain.SwimLane;
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectEntity;
-import com.scrumban.model.project.entity.SwimLaneEntity;
-import com.scrumban.repository.SwimLaneRepository;
+import com.scrumban.model.entity.ProjectEntity;
+import com.scrumban.model.entity.SwimLaneEntity;
+import com.scrumban.repository.entity.SwimLaneEntityRepository;
 import com.scrumban.validator.UserProjectValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class SwimLaneServiceTest {
     private ProjectService projectService;
 
     @Mock
-    private SwimLaneRepository swimLaneRepository;
+    private SwimLaneEntityRepository swimLaneEntityRepository;
 
     @Mock
     private UserProjectValidator userProjectValidator;
@@ -48,9 +48,9 @@ class SwimLaneServiceTest {
         ProjectEntity projectEntity = createProject();
         SwimLaneEntity swimLaneEntity = createSwimLaneEntity();
         when(userProjectValidator.getUserProject(any(), any())).thenReturn(projectEntity);
-        when(swimLaneRepository.findByName(any())).thenReturn(Optional.empty());
+        when(swimLaneEntityRepository.findByName(any())).thenReturn(Optional.empty());
 
-        when(swimLaneRepository.save(swimLaneEntity)).thenReturn(swimLaneEntity);
+        when(swimLaneEntityRepository.save(swimLaneEntity)).thenReturn(swimLaneEntity);
 
         Map<String, SwimLane> actualSwimLaneToProject = swimLaneService.addSwimLaneToProject("test", swimLaneEntity, user.getEmail());
 
@@ -89,7 +89,7 @@ class SwimLaneServiceTest {
         projectEntityWithSwimLane.setSwimLaneEntities(singletonList(swimLaneEntity));
 
         when(userProjectValidator.getUserProject(any(), any())).thenReturn(projectEntityWithSwimLane);
-        when(swimLaneRepository.findByName(any())).thenReturn(Optional.of(swimLaneEntity));
+        when(swimLaneEntityRepository.findByName(any())).thenReturn(Optional.of(swimLaneEntity));
 
         assertThrows(DuplicateProjectSwimLaneException.class, () -> swimLaneService.addSwimLaneToProject("test", swimLaneEntity, "test@test.com"));
     }
@@ -98,18 +98,18 @@ class SwimLaneServiceTest {
     @DisplayName("test findSwimLaneByName returns a swimLane entity")
     void findSwimLaneByName() {
         SwimLaneEntity swimLaneEntity = createSwimLaneEntity();
-        when(swimLaneRepository.findByName(anyString())).thenReturn(Optional.of(swimLaneEntity));
+        when(swimLaneEntityRepository.findByName(anyString())).thenReturn(Optional.of(swimLaneEntity));
         Optional<SwimLaneEntity> actualSwimLane = swimLaneService.findSwimLaneByName("testSwimLane");
-        verify(swimLaneRepository, times(1)).findByName(any());
+        verify(swimLaneEntityRepository, times(1)).findByName(any());
         assertThat(actualSwimLane, is(Optional.of(swimLaneEntity)));
     }
 
     @Test
     @DisplayName("test findSwimLaneByName is empty")
     void swimLaneDoesNotExist() {
-        when(swimLaneRepository.findByName(anyString())).thenReturn(Optional.empty());
+        when(swimLaneEntityRepository.findByName(anyString())).thenReturn(Optional.empty());
         Optional<SwimLaneEntity> actualFoundSwimLane = swimLaneService.findSwimLaneByName("testSwimLane");
-        verify(swimLaneRepository, times(1)).findByName(any());
+        verify(swimLaneEntityRepository, times(1)).findByName(any());
         assertThat(actualFoundSwimLane, is(Optional.empty()));
     }
 

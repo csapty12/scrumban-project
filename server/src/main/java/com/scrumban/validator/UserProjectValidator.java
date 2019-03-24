@@ -2,7 +2,7 @@ package com.scrumban.validator;
 
 import com.scrumban.exception.ProjectNotFoundException;
 import com.scrumban.model.domain.User;
-import com.scrumban.model.project.entity.ProjectEntity;
+import com.scrumban.model.entity.ProjectEntity;
 import com.scrumban.service.project.ProjectService;
 import com.scrumban.service.user.UserService;
 import org.springframework.stereotype.Component;
