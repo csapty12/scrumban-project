@@ -2,6 +2,7 @@ package com.scrumban.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.scrumban.model.domain.Project;
 import com.scrumban.model.domain.User;
 import lombok.*;
 
@@ -9,12 +10,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@Table(name="project")
+@Table(name = "project")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,11 +51,27 @@ public class ProjectEntity {
     @JoinTable(name = "project_swimlane", joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "swimlane_id", referencedColumnName = "id"))
     private List<SwimLaneEntity> swimLaneEntities;
 
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
 
     private String projectLeader;
+
+
+    public static ProjectEntity from(Project project) {
+        return ProjectEntity.builder()
+                .id(project.getId())
+                .projectName(project.getProjectName())
+                .projectIdentifier(project.getProjectIdentifier())
+                .description(project.getDescription())
+                .createdAt(project.getCreatedAt())//keeps track of whenever the object has been created or something has been updated.
+                .projectTicketEntities(project.getProjectTicketEntities())
+                .currentTicketNumber(project.getCurrentTicketNumber())
+                .swimLaneEntities(project.getSwimLaneEntities())
+                .user(project.getUser())
+                .projectLeader(project.getProjectLeader())
+                .build();
+    }
 
     @PrePersist
     protected void onCreate() throws ParseException {

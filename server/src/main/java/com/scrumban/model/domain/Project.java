@@ -26,7 +26,7 @@ public class Project {
     private User user;
     private String projectLeader;
 
-    public Project from(ProjectEntity projectEntity) {
+    public static Project from(ProjectEntity projectEntity) {
         return Project.builder()
                 .id(projectEntity.getId())
                 .projectName(projectEntity.getProjectName())

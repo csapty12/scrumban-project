@@ -1,10 +1,12 @@
 package com.scrumban.repository.domain;
 
-import com.scrumban.model.entity.ProjectEntity;
+import com.scrumban.model.domain.Project;
 import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
-@Repository
 public interface ProjectRepository {
-    Optional<ProjectEntity> findProjectEntityByProjectIdentifier(String projectIdentifier);
+    Optional<Project> findProjectEntityByProjectIdentifier(String projectIdentifier);
+
+    Project save(Project newProject);
 }

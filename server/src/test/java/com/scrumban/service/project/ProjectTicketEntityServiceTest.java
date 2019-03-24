@@ -1,205 +1,205 @@
-package com.scrumban.service.project;
-
-import com.scrumban.exception.ProjectNotFoundException;
-import com.scrumban.exception.ProjectSwimLaneNotFoundException;
-import com.scrumban.model.domain.ProjectDashboard;
-import com.scrumban.model.domain.User;
-import com.scrumban.model.entity.ProjectEntity;
-import com.scrumban.model.entity.ProjectTicketEntity;
-import com.scrumban.model.entity.SwimLaneEntity;
-import com.scrumban.repository.entity.ProjectTicketEntityRepository;
-import com.scrumban.validator.UserProjectValidator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.*;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
-@ExtendWith(MockitoExtension.class)
-class ProjectTicketEntityServiceTest {
-
-    @Mock
-    private UserProjectValidator userProjectValidator;
-
-    @Mock
-    private SwimLaneService swimLaneService;
-
-    @Mock
-    private ProjectTicketEntityRepository projectTicketEntityRepository;
-
-    @InjectMocks
-    private ProjectTicketService projectTicketService;
-
-    @BeforeEach
-    void setUp() {
-    }
-
-    @Nested
-    @DisplayName("Get project dashboard tests")
-    class ProjectDashboardTest {
-
-        @Test
-        @DisplayName("when user does not exist, throw UsernameNotFoundException")
-        void testUserDoesNotExist() {
-            when(userProjectValidator.getUserProject(any(), any())).thenThrow(UsernameNotFoundException.class);
-            assertThrows(UsernameNotFoundException.class, () -> projectTicketService.getProjectDashboard("test", "test@test.com"));
-        }
-
-        @Test
-        @DisplayName("When user does exist, but project does not exist, throw ProjectNotFoundException")
-        void testProjectNotFound() {
-            User validUser = createValidUser("a@a.com", 1L);
-            ProjectEntity project = createEmptyProject();
-            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
-            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.getProjectDashboard(project.getProjectIdentifier(), validUser.getEmail()));
-        }
-
-        @Test
-        @DisplayName("When user is associated with new project, get dashboard")
-        void getFreshDashboard() {
-            User validUser = createValidUser("a@a.com", 1L);
-            ProjectEntity project = createEmptyProject();
-            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
-            ProjectDashboard projectDashboard = projectTicketService.getProjectDashboard(project.getProjectIdentifier(), validUser.getEmail());
-            assertThat(projectDashboard.getSwimLanes().size(), is(0));
-            assertThat(projectDashboard.getTickets().size(), is(0));
-        }
-    }
-
-    @Nested
-    @DisplayName("Add new Ticket to Project test")
-    class NewTicket {
-
-        @Test
-        @DisplayName("test ProjectSwimLaneNotFoundException thrown")
-        void testSwimLaneException() {
-
-            SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
-            SwimLaneEntity builtSwimLane = swimLane.build();
-            ProjectTicketEntity projectTicketEntity = createProjectTicket();
-
-            when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.empty());
-            assertThrows(ProjectSwimLaneNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com"));
-        }
-
-        @Test
-        @DisplayName("test ProjectSwimLaneNotFoundException thrown")
-        void testProjectNotFoundException() {
-
-            SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
-            SwimLaneEntity builtSwimLane = swimLane.build();
-            ProjectTicketEntity projectTicketEntity = createProjectTicket();
-
-            when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.of(builtSwimLane));
-            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
-            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com"));
-        }
-
-        @Test
-        @DisplayName("add new ticket to project successfully")
-        void addNewTicket() {
-
-            ProjectEntity project = createEmptyProject();
-            SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
-            Set<ProjectEntity> setOfProjectEntities = new HashSet<>();
-            setOfProjectEntities.add(project);
-            swimLane.projectEntities(setOfProjectEntities);
-            SwimLaneEntity builtSwimLane = swimLane.build();
-            project.setSwimLaneEntities(Arrays.asList(builtSwimLane));
-            ProjectTicketEntity projectTicketEntity = createProjectTicket();
-
-            when(swimLaneService.findSwimLaneByName(any())).thenReturn(Optional.of(builtSwimLane));
-            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
-            when(projectTicketEntityRepository.save(any())).thenReturn(projectTicketEntity);
-
-            LinkedHashMap<String, ProjectTicketEntity> actualNewProjectTicket = projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com");
-            LinkedHashMap<String, ProjectTicketEntity> expectedNewProjectTicket = new LinkedHashMap<>();
-            expectedNewProjectTicket.put("T-1", projectTicketEntity);
-
-            assertThat(actualNewProjectTicket, is(expectedNewProjectTicket));
-        }
-    }
-
-    @Nested
-    @DisplayName("Remove ticket from Project")
-    class RemoveTicket {
-        @Test
-        @DisplayName("when user does not exist, throw UsernameNotFoundException")
-        void testUserDoesNotExist() {
-            when(userProjectValidator.getUserProject(any(), any())).thenThrow(UsernameNotFoundException.class);
-            ProjectTicketEntity projectTicketEntity = createProjectTicket();
-            assertThrows(UsernameNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicketEntity, "test@test.com"));
-        }
-
-        @Test
-        @DisplayName("when project does not exist, throw ProjectNotFoundException")
-        void testProjectDoesNotExist() {
-            ProjectTicketEntity projectTicketEntity = createProjectTicket();
-            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
-            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicketEntity, "test@test.com"));
-        }
-
-        @Test
-        @DisplayName("Delete ticket successfully from project")
-        void testDelete() {
-            ProjectEntity project = createEmptyProject();
-            SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
-            Set<ProjectEntity> setOfProjectEntities = new HashSet<>();
-            setOfProjectEntities.add(project);
-            swimLane.projectEntities(setOfProjectEntities);
-            SwimLaneEntity builtSwimLane = swimLane.build();
-            project.setSwimLaneEntities(Arrays.asList(builtSwimLane));
-            ProjectTicketEntity projectTicketEntity = createProjectTicket();
-            projectTicketEntity.setId(1L);
-
-            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
-            projectTicketService.removeTicketFromProject(projectTicketEntity, "a@a.com");
-            verify(projectTicketEntityRepository, times(1)).deleteProjectTicket(projectTicketEntity.getId());
-        }
-    }
-
-    private User createValidUser(String email, long id) {
-        User user = new User();
-        user.setEmail(email);
-        user.setId(id);
-        return user;
-    }
-
-    private ProjectEntity createEmptyProject() {
-        ProjectEntity project = new ProjectEntity();
-        project.setProjectName("test");
-        project.setProjectIdentifier("test");
-        project.setUser(createValidUser("a@a.com", 1L));
-        project.setSwimLaneEntities(new ArrayList<>());
-        project.setProjectTicketEntities(new ArrayList<>());
-        return project;
-    }
-
-    private SwimLaneEntity.SwimLaneEntityBuilder createSwimLane() {
-        return SwimLaneEntity.builder().id(1).name("swimlane");
-    }
-
-    private ProjectTicketEntity createProjectTicket() {
-        return ProjectTicketEntity.builder()
-                .summary("")
-                .acceptanceCriteria("")
-                .complexity(1)
-                .priority("HIGH")
-                .build();
-    }
-
-
-}
+//package com.scrumban.service.project;
+//
+//import com.scrumban.exception.ProjectNotFoundException;
+//import com.scrumban.exception.ProjectSwimLaneNotFoundException;
+//import com.scrumban.model.domain.ProjectDashboard;
+//import com.scrumban.model.domain.User;
+//import com.scrumban.model.entity.ProjectEntity;
+//import com.scrumban.model.entity.ProjectTicketEntity;
+//import com.scrumban.model.entity.SwimLaneEntity;
+//import com.scrumban.repository.entity.ProjectTicketEntityRepository;
+//import com.scrumban.validator.UserProjectValidator;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.DisplayName;
+//import org.junit.jupiter.api.Nested;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.extension.ExtendWith;
+//import org.mockito.InjectMocks;
+//import org.mockito.Mock;
+//import org.mockito.junit.jupiter.MockitoExtension;
+//import org.springframework.security.core.userdetails.UsernameNotFoundException;
+//
+//import java.util.*;
+//
+//import static org.hamcrest.MatcherAssert.assertThat;
+//import static org.hamcrest.Matchers.is;
+//import static org.junit.jupiter.api.Assertions.assertThrows;
+//import static org.mockito.ArgumentMatchers.any;
+//import static org.mockito.ArgumentMatchers.anyString;
+//import static org.mockito.Mockito.*;
+//
+//@ExtendWith(MockitoExtension.class)
+//class ProjectTicketEntityServiceTest {
+//
+//    @Mock
+//    private UserProjectValidator userProjectValidator;
+//
+//    @Mock
+//    private SwimLaneService swimLaneService;
+//
+//    @Mock
+//    private ProjectTicketEntityRepository projectTicketEntityRepository;
+//
+//    @InjectMocks
+//    private ProjectTicketService projectTicketService;
+//
+//    @BeforeEach
+//    void setUp() {
+//    }
+//
+//    @Nested
+//    @DisplayName("Get project dashboard tests")
+//    class ProjectDashboardTest {
+//
+//        @Test
+//        @DisplayName("when user does not exist, throw UsernameNotFoundException")
+//        void testUserDoesNotExist() {
+//            when(userProjectValidator.getUserProject(any(), any())).thenThrow(UsernameNotFoundException.class);
+//            assertThrows(UsernameNotFoundException.class, () -> projectTicketService.getProjectDashboard("test", "test@test.com"));
+//        }
+//
+//        @Test
+//        @DisplayName("When user does exist, but project does not exist, throw ProjectNotFoundException")
+//        void testProjectNotFound() {
+//            User validUser = createValidUser("a@a.com", 1L);
+//            ProjectEntity project = createEmptyProject();
+//            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
+//            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.getProjectDashboard(project.getProjectIdentifier(), validUser.getEmail()));
+//        }
+//
+//        @Test
+//        @DisplayName("When user is associated with new project, get dashboard")
+//        void getFreshDashboard() {
+//            User validUser = createValidUser("a@a.com", 1L);
+//            ProjectEntity project = createEmptyProject();
+//            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
+//            ProjectDashboard projectDashboard = projectTicketService.getProjectDashboard(project.getProjectIdentifier(), validUser.getEmail());
+//            assertThat(projectDashboard.getSwimLanes().size(), is(0));
+//            assertThat(projectDashboard.getTickets().size(), is(0));
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("Add new Ticket to Project test")
+//    class NewTicket {
+//
+//        @Test
+//        @DisplayName("test ProjectSwimLaneNotFoundException thrown")
+//        void testSwimLaneException() {
+//
+//            SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
+//            SwimLaneEntity builtSwimLane = swimLane.build();
+//            ProjectTicketEntity projectTicketEntity = createProjectTicket();
+//
+//            when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.empty());
+//            assertThrows(ProjectSwimLaneNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com"));
+//        }
+//
+//        @Test
+//        @DisplayName("test ProjectSwimLaneNotFoundException thrown")
+//        void testProjectNotFoundException() {
+//
+//            SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
+//            SwimLaneEntity builtSwimLane = swimLane.build();
+//            ProjectTicketEntity projectTicketEntity = createProjectTicket();
+//
+//            when(swimLaneService.findSwimLaneByName(anyString())).thenReturn(Optional.of(builtSwimLane));
+//            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
+//            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com"));
+//        }
+//
+//        @Test
+//        @DisplayName("add new ticket to project successfully")
+//        void addNewTicket() {
+//
+//            ProjectEntity project = createEmptyProject();
+//            SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
+//            Set<ProjectEntity> setOfProjectEntities = new HashSet<>();
+//            setOfProjectEntities.add(project);
+//            swimLane.projectEntities(setOfProjectEntities);
+//            SwimLaneEntity builtSwimLane = swimLane.build();
+//            project.setSwimLaneEntities(Arrays.asList(builtSwimLane));
+//            ProjectTicketEntity projectTicketEntity = createProjectTicket();
+//
+//            when(swimLaneService.findSwimLaneByName(any())).thenReturn(Optional.of(builtSwimLane));
+//            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
+//            when(projectTicketEntityRepository.save(any())).thenReturn(projectTicketEntity);
+//
+//            LinkedHashMap<String, ProjectTicketEntity> actualNewProjectTicket = projectTicketService.addProjectTicketToProject("test", builtSwimLane.getName(), projectTicketEntity, "a@a.com");
+//            LinkedHashMap<String, ProjectTicketEntity> expectedNewProjectTicket = new LinkedHashMap<>();
+//            expectedNewProjectTicket.put("T-1", projectTicketEntity);
+//
+//            assertThat(actualNewProjectTicket, is(expectedNewProjectTicket));
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("Remove ticket from Project")
+//    class RemoveTicket {
+//        @Test
+//        @DisplayName("when user does not exist, throw UsernameNotFoundException")
+//        void testUserDoesNotExist() {
+//            when(userProjectValidator.getUserProject(any(), any())).thenThrow(UsernameNotFoundException.class);
+//            ProjectTicketEntity projectTicketEntity = createProjectTicket();
+//            assertThrows(UsernameNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicketEntity, "test@test.com"));
+//        }
+//
+//        @Test
+//        @DisplayName("when project does not exist, throw ProjectNotFoundException")
+//        void testProjectDoesNotExist() {
+//            ProjectTicketEntity projectTicketEntity = createProjectTicket();
+//            when(userProjectValidator.getUserProject(any(), any())).thenThrow(ProjectNotFoundException.class);
+//            assertThrows(ProjectNotFoundException.class, () -> projectTicketService.removeTicketFromProject(projectTicketEntity, "test@test.com"));
+//        }
+//
+//        @Test
+//        @DisplayName("Delete ticket successfully from project")
+//        void testDelete() {
+//            ProjectEntity project = createEmptyProject();
+//            SwimLaneEntity.SwimLaneEntityBuilder swimLane = createSwimLane();
+//            Set<ProjectEntity> setOfProjectEntities = new HashSet<>();
+//            setOfProjectEntities.add(project);
+//            swimLane.projectEntities(setOfProjectEntities);
+//            SwimLaneEntity builtSwimLane = swimLane.build();
+//            project.setSwimLaneEntities(Arrays.asList(builtSwimLane));
+//            ProjectTicketEntity projectTicketEntity = createProjectTicket();
+//            projectTicketEntity.setId(1L);
+//
+//            when(userProjectValidator.getUserProject(any(), any())).thenReturn(project);
+//            projectTicketService.removeTicketFromProject(projectTicketEntity, "a@a.com");
+//            verify(projectTicketEntityRepository, times(1)).deleteProjectTicket(projectTicketEntity.getId());
+//        }
+//    }
+//
+//    private User createValidUser(String email, long id) {
+//        User user = new User();
+//        user.setEmail(email);
+//        user.setId(id);
+//        return user;
+//    }
+//
+//    private ProjectEntity createEmptyProject() {
+//        ProjectEntity project = new ProjectEntity();
+//        project.setProjectName("test");
+//        project.setProjectIdentifier("test");
+//        project.setUser(createValidUser("a@a.com", 1L));
+//        project.setSwimLaneEntities(new ArrayList<>());
+//        project.setProjectTicketEntities(new ArrayList<>());
+//        return project;
+//    }
+//
+//    private SwimLaneEntity.SwimLaneEntityBuilder createSwimLane() {
+//        return SwimLaneEntity.builder().id(1).name("swimlane");
+//    }
+//
+//    private ProjectTicketEntity createProjectTicket() {
+//        return ProjectTicketEntity.builder()
+//                .summary("")
+//                .acceptanceCriteria("")
+//                .complexity(1)
+//                .priority("HIGH")
+//                .build();
+//    }
+//
+//
+//}
