@@ -1,6 +1,5 @@
 package com.scrumban.model.domain;
 
-import com.scrumban.model.entity.ProjectTicketEntity;
 import lombok.*;
 
 import java.util.LinkedHashMap;
@@ -13,7 +12,7 @@ import java.util.Map;
 @ToString
 @EqualsAndHashCode
 public class ProjectDashboard {
-    private List<LinkedHashMap<String, ProjectTicketEntity>> tickets;
+    private List<LinkedHashMap<String, ProjectTicket>> tickets;
     private List<Map<String, SwimLane>> swimLanes;
     private List<String> swimLaneOrder;
 

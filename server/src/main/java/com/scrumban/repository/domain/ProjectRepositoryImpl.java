@@ -21,13 +21,15 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
     @Override
     public Optional<Project> findProjectEntityByProjectIdentifier(String projectIdentifier) {
-
         Optional<ProjectEntity> projectEntity = projectEntityRepository.findProjectEntityByProjectIdentifier(projectIdentifier);
-        if (projectEntity.isPresent()) {
-            return Optional.of(Project.from(projectEntity.get()));
-        }
-        return Optional.empty();
+        return projectEntity.map(Project::from);
     }
+
+//        if (projectEntity.isPresent()) {
+//            return Optional.of(Project.from(projectEntity.get()));
+//        }
+//        return Optional.empty();
+
 
     @Override
     public Project save(Project newProject) {
@@ -40,5 +42,11 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     public List<Project> findAllByUser(User user) {
         List<ProjectEntity> projectEntities = projectEntityRepository.findAllByUser(user);
         return projectEntities.stream().map(Project::from).collect(Collectors.toList());
+    }
+
+    @Override
+    public void delete(Project project) {
+        ProjectEntity projectEntity = ProjectEntity.from(project);
+        projectEntityRepository.delete(projectEntity);
     }
 }

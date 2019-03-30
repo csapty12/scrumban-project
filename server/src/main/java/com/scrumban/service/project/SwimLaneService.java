@@ -1,63 +1,61 @@
-//package com.scrumban.service.project;
-//
-//import com.scrumban.exception.DuplicateProjectSwimLaneException;
-//import com.scrumban.model.domain.SwimLane;
-//import com.scrumban.model.entity.ProjectEntity;
-//import com.scrumban.model.entity.ProjectTicketEntity;
-//import com.scrumban.model.entity.SwimLaneEntity;
-//import com.scrumban.repository.entity.ProjectTicketEntityRepository;
-//import com.scrumban.repository.entity.SwimLaneEntityRepository;
-//import com.scrumban.validator.UserProjectValidator;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.*;
-//import java.util.stream.Collectors;
-//
-//@Service
-//@Slf4j
-//public class SwimLaneService {
-//
-//    private ProjectServiceImpl projectServiceImpl;
-//    private SwimLaneEntityRepository swimLaneEntityRepository;
-//    private UserProjectValidator userProjectValidator;
-//    private ProjectTicketEntityRepository projectTicketEntityRepository;
-//
-//    public SwimLaneService(ProjectServiceImpl projectServiceImpl, SwimLaneEntityRepository swimLaneEntityRepository, UserProjectValidator userProjectValidator, ProjectTicketEntityRepository projectTicketEntityRepository) {
-//        this.projectServiceImpl = projectServiceImpl;
-//        this.swimLaneEntityRepository = swimLaneEntityRepository;
-//        this.userProjectValidator = userProjectValidator;
-//        this.projectTicketEntityRepository = projectTicketEntityRepository;
-//    }
-//
-//    public Map<String, SwimLane> addSwimLaneToProject(String projectIdentifier, SwimLaneEntity swimLaneEntity, String userEmail) {
-//        ProjectEntity project = userProjectValidator.getUserProject(projectIdentifier, userEmail);
-//        Optional<SwimLaneEntity> foundSwimLane = swimLaneEntityRepository.findByName(swimLaneEntity.getName());
-//        List<SwimLaneEntity> projectSwimLanes = project.getSwimLaneEntities();
-//
-//
-//        if (!foundSwimLane.isPresent()) {
-//            SwimLaneEntity newSwimLaneEntity = swimLaneEntityRepository.save(swimLaneEntity);
-//            System.out.println("swimLane entity id : " + swimLaneEntity.getId());
-//            projectSwimLanes.add(newSwimLaneEntity);
-//        } else {
-//            if (projectSwimLanes.contains(foundSwimLane.get())) {
-//                throw new DuplicateProjectSwimLaneException("Swim lane already exists in this project");
-//            }
-//            projectSwimLanes.add(foundSwimLane.get());
-//        }
-//
-//        projectServiceImpl.updateProject(project, userEmail);
-//        return createNewSwimLaneObject(swimLaneEntity, projectIdentifier);
-//    }
-//
-//
-//    public Optional<SwimLaneEntity> findSwimLaneByName(String swimLaneName) {
-//        return swimLaneEntityRepository.findByName(swimLaneName);
-//    }
-//
-//
-//
+package com.scrumban.service.project;
+
+import com.scrumban.exception.DuplicateProjectSwimLaneException;
+import com.scrumban.model.domain.Project;
+import com.scrumban.model.domain.SwimLane;
+import com.scrumban.model.entity.SwimLaneEntity;
+import com.scrumban.repository.entity.ProjectTicketEntityRepository;
+import com.scrumban.repository.entity.SwimLaneEntityRepository;
+import com.scrumban.validator.UserProjectValidator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+@Service
+@Slf4j
+public class SwimLaneService {
+
+    private ProjectServiceImpl projectServiceImpl;
+    private SwimLaneEntityRepository swimLaneEntityRepository;
+    private UserProjectValidator userProjectValidator;
+    private ProjectTicketEntityRepository projectTicketEntityRepository;
+
+    public SwimLaneService(ProjectServiceImpl projectServiceImpl, SwimLaneEntityRepository swimLaneEntityRepository, UserProjectValidator userProjectValidator, ProjectTicketEntityRepository projectTicketEntityRepository) {
+        this.projectServiceImpl = projectServiceImpl;
+        this.swimLaneEntityRepository = swimLaneEntityRepository;
+        this.userProjectValidator = userProjectValidator;
+        this.projectTicketEntityRepository = projectTicketEntityRepository;
+    }
+
+    public Map<String, SwimLane> addSwimLaneToProject(String projectIdentifier, SwimLaneEntity swimLaneEntity, String userEmail) {
+        Project project = userProjectValidator.getUserProject(projectIdentifier, userEmail);
+        Optional<SwimLaneEntity> foundSwimLane = swimLaneEntityRepository.findByName(swimLaneEntity.getName());
+        List<SwimLaneEntity> projectSwimLanes = project.getSwimLaneEntities();
+
+
+        if (!foundSwimLane.isPresent()) {
+            SwimLaneEntity newSwimLaneEntity = swimLaneEntityRepository.save(swimLaneEntity);
+            System.out.println("swimLane entity id : " + swimLaneEntity.getId());
+            projectSwimLanes.add(newSwimLaneEntity);
+        } else {
+            if (projectSwimLanes.contains(foundSwimLane.get())) {
+                throw new DuplicateProjectSwimLaneException("Swim lane already exists in this project");
+            }
+            projectSwimLanes.add(foundSwimLane.get());
+        }
+
+        projectServiceImpl.updateProject(project, userEmail);
+        return createNewSwimLaneObject(swimLaneEntity, projectIdentifier);
+    }
+
+
+    public Optional<SwimLaneEntity> findSwimLaneByName(String swimLaneName) {
+        return swimLaneEntityRepository.findByName(swimLaneName);
+    }
+
+
+
 //    public boolean removeSwimLaneFromProject(String projectIdentifier, int swimLaneId, String userEmail) {
 //        ProjectEntity project = userProjectValidator.getUserProject(projectIdentifier, userEmail);
 //        Optional<SwimLaneEntity> swimLaneEntity = swimLaneEntityRepository.findById(swimLaneId);
@@ -77,23 +75,23 @@
 //        log.info("swim lane has been deleted successfully");
 //        return true;
 //    }
-//
-//    private Map<String, SwimLane> createNewSwimLaneObject(SwimLaneEntity swimLaneEntity, String projectIdentifier) {
-//
-//        SwimLane newSwimLane = SwimLane.builder().id(swimLaneEntity.getId()).title(swimLaneEntity.getName()).ticketIds(new ArrayList<>()).projectIdentifier(projectIdentifier).build();
-//        System.out.println("new swimlane: " + newSwimLane);
-//        Map<String, SwimLane> swimLaneMap = new HashMap<>();
-//        swimLaneMap.put(swimLaneEntity.getName(), newSwimLane);
-//        System.out.println("swimLaneMap " + swimLaneMap);
-//        return swimLaneMap;
-//    }
-//
+
+    private Map<String, SwimLane> createNewSwimLaneObject(SwimLaneEntity swimLaneEntity, String projectIdentifier) {
+
+        SwimLane newSwimLane = SwimLane.builder().id(swimLaneEntity.getId()).title(swimLaneEntity.getName()).ticketIds(new ArrayList<>()).projectIdentifier(projectIdentifier).build();
+        System.out.println("new swimlane: " + newSwimLane);
+        Map<String, SwimLane> swimLaneMap = new HashMap<>();
+        swimLaneMap.put(swimLaneEntity.getName(), newSwimLane);
+        System.out.println("swimLaneMap " + swimLaneMap);
+        return swimLaneMap;
+    }
+
 //    private void removeTicketFromProject(ProjectTicketEntity projectTicketEntity, String userEmail) {
 //        ProjectEntity existingProject = userProjectValidator.getUserProject(projectTicketEntity.getProjectIdentifier(), userEmail);
 //
 //        log.info("deleting ticket: " + projectTicketEntity.getId());
 //        projectTicketEntityRepository.deleteProjectTicket(projectTicketEntity.getId());
 //    }
-//
-//
-//}
+
+
+}

@@ -1,5 +1,6 @@
 package com.scrumban.controller;
 
+import com.scrumban.exception.ProjectIdentifierException;
 import com.scrumban.model.domain.Project;
 import com.scrumban.model.domain.User;
 import com.scrumban.service.ValidationErrorService;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/project")
@@ -43,18 +45,19 @@ public class ProjectController {
         return new ResponseEntity<>(newProject, HttpStatus.OK);
     }
 
-//    @GetMapping("/{projectIdentifier}")
-//    public ResponseEntity<?> getProjectByProjectIdentifier(@PathVariable String projectIdentifier, Authentication authentication) {
-//        User principal = getUser(authentication);
-//        User user = userService.getUser(principal.getEmail());
-//
-//        Optional<ProjectEntity> project = projectService.getProject(projectIdentifier, user);
-//
-//        if (project.isPresent()) { return new ResponseEntity<>(project, HttpStatus.OK); }
-//
-//        throw new ProjectIdentifierException("Project with ID: " + projectIdentifier + " cannot be found.");
-//    }
-//
+    @GetMapping("/{projectIdentifier}")
+    public ResponseEntity<?> getProjectByProjectIdentifier(@PathVariable String projectIdentifier, Authentication authentication) {
+        User principal = getUser(authentication);
+
+        Optional<Project> project = projectService.getProject(projectIdentifier, principal.getEmail());
+
+        if (project.isPresent()) {
+            return new ResponseEntity<>(project, HttpStatus.OK);
+        }
+
+        throw new ProjectIdentifierException("Project with ID: " + projectIdentifier + " cannot be found.");
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllProjects(Authentication authentication) {
         User principal = getUser(authentication);
@@ -62,23 +65,22 @@ public class ProjectController {
 
         return new ResponseEntity<>(allProjects, HttpStatus.OK);
     }
-//
-//    @PatchMapping
-//    public ResponseEntity<?> updateProject(@Valid @RequestBody ProjectEntity projectEntity, Authentication authentication,  BindingResult bindingResult) {
-//        ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
-//        if (validationErrors != null) return validationErrors;
-//        User principal = getUser(authentication);
-//        ProjectEntity updatedProject = projectService.updateProject(projectEntity, principal.getEmail());
-//        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
-//    }
-//
-//    @DeleteMapping("/{projectIdentifier}")
-//    public ResponseEntity<?> deleteProject(@PathVariable String projectIdentifier, Authentication authentication) {
-//        projectIdentifier = projectIdentifier.toUpperCase();
-//        User principal = getUser(authentication);
-//        projectService.deleteProject(projectIdentifier, principal.getEmail());
-//        return new ResponseEntity<>("Project deleted", HttpStatus.OK);
-//    }
+
+    @PatchMapping
+    public ResponseEntity<?> updateProject(@Valid @RequestBody Project projectEntity, Authentication authentication, BindingResult bindingResult) {
+        ResponseEntity<?> validationErrors = validateIncomingRequest(bindingResult);
+        if (validationErrors != null) return validationErrors;
+        User principal = getUser(authentication);
+        Project updatedProject = projectService.updateProject(projectEntity, principal.getEmail());
+        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{projectIdentifier}")
+    public ResponseEntity<?> deleteProject(@PathVariable String projectIdentifier, Authentication authentication) {
+        User principal = getUser(authentication);
+        projectService.deleteProject(projectIdentifier, principal.getEmail());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     private ResponseEntity<?> validateIncomingRequest(BindingResult bindingResult) {
         ResponseEntity<?> errorMap = validationErrorService.validateObject(bindingResult);

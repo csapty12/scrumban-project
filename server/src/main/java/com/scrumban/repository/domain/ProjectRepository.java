@@ -10,4 +10,5 @@ public interface ProjectRepository {
     Optional<Project> findProjectEntityByProjectIdentifier(String projectIdentifier);
     Project save(Project newProject);
     List<Project> findAllByUser(User user);
+    void delete(Project project);
 }

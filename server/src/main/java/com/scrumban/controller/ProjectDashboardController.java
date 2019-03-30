@@ -1,53 +1,53 @@
-//package com.scrumban.controller;
-//
-//import com.scrumban.model.domain.ProjectDashboard;
-//import com.scrumban.model.domain.SwimLane;
-//import com.scrumban.model.domain.User;
-//import com.scrumban.model.entity.ProjectTicketEntity;
-//import com.scrumban.model.entity.SwimLaneEntity;
-//import com.scrumban.service.ValidationErrorService;
-//import com.scrumban.service.project.ProjectServiceImpl;
-//import com.scrumban.service.project.ProjectTicketService;
-//import com.scrumban.service.project.SwimLaneService;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.MediaType;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.validation.BindingResult;
-//import org.springframework.web.bind.annotation.*;
-//
-//import javax.validation.Valid;
-//import java.util.HashMap;
-//import java.util.LinkedHashMap;
-//import java.util.List;
-//import java.util.Map;
-//
-//@RestController
-//@RequestMapping("/dashboard")
-//@CrossOrigin
-//@Slf4j
-//public class ProjectDashboardController {
-//
-//    private ValidationErrorService validationErrorService;
-//    private SwimLaneService swimLaneService;
-//    private ProjectTicketService projectTicketService;
-//    private ProjectServiceImpl projectServiceImpl;
-//
-//    public ProjectDashboardController(ValidationErrorService validationErrorService, SwimLaneService swimLaneService, ProjectTicketService projectTicketService, ProjectServiceImpl projectServiceImpl) {
-//        this.validationErrorService = validationErrorService;
-//        this.swimLaneService = swimLaneService;
-//        this.projectTicketService = projectTicketService;
-//        this.projectServiceImpl = projectServiceImpl;
-//    }
-//
-//    @GetMapping(value = "/{projectIdentifier}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//    public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier, Authentication authentication) {
-//        User principal = (User) authentication.getPrincipal();
-//        ProjectDashboard allProjectDashboardForProject = projectTicketService.getProjectDashboard(projectIdentifier, principal.getEmail());
-//        return new ResponseEntity<>(allProjectDashboardForProject, HttpStatus.OK);
-//
-//    }
+package com.scrumban.controller;
+
+import com.scrumban.model.domain.ProjectDashboard;
+import com.scrumban.model.domain.SwimLane;
+import com.scrumban.model.domain.User;
+import com.scrumban.model.entity.ProjectTicketEntity;
+import com.scrumban.model.entity.SwimLaneEntity;
+import com.scrumban.service.ValidationErrorService;
+import com.scrumban.service.project.ProjectServiceImpl;
+import com.scrumban.service.project.ProjectTicketService;
+import com.scrumban.service.project.SwimLaneService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/dashboard")
+@CrossOrigin
+@Slf4j
+public class ProjectDashboardController {
+
+    private ValidationErrorService validationErrorService;
+    private SwimLaneService swimLaneService;
+    private ProjectTicketService projectTicketService;
+    private ProjectServiceImpl projectServiceImpl;
+
+    public ProjectDashboardController(ValidationErrorService validationErrorService, SwimLaneService swimLaneService, ProjectTicketService projectTicketService, ProjectServiceImpl projectServiceImpl) {
+        this.validationErrorService = validationErrorService;
+        this.swimLaneService = swimLaneService;
+        this.projectTicketService = projectTicketService;
+        this.projectServiceImpl = projectServiceImpl;
+    }
+
+    @GetMapping(value = "/{projectIdentifier}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> getAllTickets(@PathVariable String projectIdentifier, Authentication authentication) {
+        User principal = (User) authentication.getPrincipal();
+        ProjectDashboard allProjectDashboardForProject = projectTicketService.getProjectDashboard(projectIdentifier, principal.getEmail());
+        return new ResponseEntity<>(allProjectDashboardForProject, HttpStatus.OK);
+
+    }
 //
 //    @PostMapping(value = "/{projectIdentifier}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 //    public ResponseEntity<?> AddSwimLaneToProject(@PathVariable String projectIdentifier,
@@ -155,4 +155,4 @@
 //        }
 //        return null;
 //    }
-//}
+}

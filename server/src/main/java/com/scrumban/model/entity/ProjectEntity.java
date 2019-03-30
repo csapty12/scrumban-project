@@ -65,9 +65,7 @@ public class ProjectEntity {
                 .projectIdentifier(project.getProjectIdentifier())
                 .description(project.getDescription())
                 .createdAt(project.getCreatedAt())//keeps track of whenever the object has been created or something has been updated.
-                .projectTicketEntities(project.getProjectTicketEntities())
                 .currentTicketNumber(project.getCurrentTicketNumber())
-                .swimLaneEntities(project.getSwimLaneEntities())
                 .user(project.getUser())
                 .projectLeader(project.getProjectLeader())
                 .build();
